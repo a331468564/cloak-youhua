@@ -51,7 +51,7 @@ B2B lead research for Australian restaurant/hotel industry. Two task zones:
 6. **A区 and B区 independent** — do not mix updates.
 7. **Run report after every batch** — A区用 `generate_run_report.py --auto-stats --auto-timing`，B区用 `generate_keyword_report.py --auto-timing`，汇总用 `generate_summary.py`
 8. **输出使用中文** — 所有对用户的文字回复、状态更新、任务说明使用中文。代码注释、变量名、commit message、技术术语保持英文。
-9. **MD 文档风格一致** — 新增或修改 `.md` 文件时，保持与该文件现有内容的语言、风格、格式一致。不混用中英文风格，不引入矛盾格式。
+9. **MD 文档风格一致** — 新增或修改 `.md` 文件时，参考该文件现有条目风格（标题、列表、标点、粗体），保持一致。中文描述 + 英文技术术语是标准风格。
 
 ## Commands Quick Reference
 

@@ -113,7 +113,7 @@ Run 报告生成（每轮任务跑完后执行）：
 
 ## Documentation Rules
 
-- **MD 文档风格一致性：** 新增或修改任何 `.md` 文件时，必须保持与该文件现有内容的语言（中文/英文）、风格（条目格式、标点、缩进）、模式（表格/列表/代码块）相一致。不得在同一文件中混用中英文风格，不得引入与现有格式矛盾的新格式。
+- **MD 文档风格一致性：** 新增或修改任何 `.md` 文件时，必须参考该文件现有条目的风格（标题格式、列表缩进、标点、粗体用法），保持一致。中文描述 + 英文技术术语是项目标准风格，不需要翻译。
 - `docs/request-solution-log.md`: durable user requests, workflow/tool behavior changes, file-changing tasks, achievements, issues, follow-up.
 - `docs/current-progress.md`: only account/session handoff, context-risk checkpoint, meaningful completed stage, major data/tool milestone, or resume-critical next plan.
 - `docs/workflows/lead-enrichment-workflow.md`: contact/KP confidence, LinkedIn boundaries, extraction helper behavior.
