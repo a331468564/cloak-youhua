@@ -1,1 +1,6 @@
 ﻿batch_id,run_id,keyword_id,keyword_source_query,collection_round,run_date,target_leads_count,actual_leads_collected,ready_to_contact_count,contact_found_count,direct_key_contact_count,company_contact_only_count,duplicate_count,news_only_count,no_contact_count,discovery_quality_score,contactability_score,run_status,notes,last_updated,change_note
+BATCH-KW-20260529141515,RUN-20260529141515-KW-0002,KW-0002,restaurant owner Australia contact,,2026-05-29 14:15,,1,0,0,,,,,,,,completed
+BATCH-KW-20260529141515,RUN-20260529141515-KW-0004,KW-0004,restaurant owner owner Australia,,2026-05-29 14:15,,1,0,0,,,,,,,,completed
+BATCH-KW-20260529141515,RUN-20260529141515-KW-0001,KW-0001,restaurant group Australia contact,,2026-05-29 14:15,,1,0,0,,,,,,,,completed
+BATCH-KW-20260529141515,RUN-20260529141515-KW-0003,KW-0003,restaurant group owner Australia,,2026-05-29 14:15,,1,0,0,,,,,,,,completed
+BATCH-KW-20260529141515,RUN-20260529141515-KW-0005,KW-0005,group restaurant group head office Australia,,2026-05-29 14:15,,1,0,0,,,,,,,,completed
