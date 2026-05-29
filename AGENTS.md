@@ -113,9 +113,9 @@ Run 报告生成（每轮任务跑完后执行）：
 
 ## Documentation Rules
 
-- **MD 文档风格一致性：** 新增或修改 `.md` 文件时，参考该文件现有条目风格（标题格式、列表缩进、标点、粗体用法），保持一致。中文描述 + 英文技术术语是项目标准风格，不需要翻译。
-- **Run 报告（每轮跑完必须生成）：** 表单收集、KP 富化、关键词发现等任务跑完后，用 `scripts/reports/generate_run_report.py` 生成人类可读报告，输出到 `E:\自动跑表单的成果和情况\`。用 `--title` 区分任务类型。报告仅用于人类观察，agent 不需要回读。
-- **CODEx 标记治理：** 标记按大类划分（如 `keyword_strategy`、`enrichment_stopping_rules`），不要拆成细粒度子标记。新增标记前必须确认：(1) 现有标记确实无法覆盖该内容；(2) 该环节是工作流中缺失的步骤。A 区和 B 区的标记名不重复。禁止为了"规范化"或"细分"而拆分已有标记。
+- **MD style consistency:** When adding or modifying `.md` files, match the target file's existing language (CN/EN), style (heading format, list indentation, punctuation, bold usage), and format (table/list/code block). Do not introduce conflicting styles.
+- **Run reports (required after every batch):** Generate human-readable report after form collection, KP enrichment, or keyword discovery. Use `scripts/reports/generate_run_report.py --auto-stats --auto-timing`. Output to `E:\自动跑表单的成果和情况\`. Reports are for human review only.
+- **CODEx tag governance:** Tags must be high-level categories (e.g. `keyword_strategy`, `enrichment_stopping_rules`). Do not split into fine-grained subtags. Before adding a new tag: (1) confirm existing tags cannot cover the content; (2) confirm the tag fills a missing step in the workflow. A区 and B区 tags must not overlap.
 - `docs/request-solution-log.md`: durable user requests, workflow/tool behavior changes, file-changing tasks, achievements, issues, follow-up.
 - `docs/current-progress.md`: only account/session handoff, context-risk checkpoint, meaningful completed stage, major data/tool milestone, or resume-critical next plan.
 - `docs/workflows/lead-enrichment-workflow.md`: contact/KP confidence, LinkedIn boundaries, extraction helper behavior.
