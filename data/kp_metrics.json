@@ -318,5 +318,16 @@
     "auto_rejected": 332,
     "human_review": 7,
     "auto_approve_rate": 0.0
+  },
+  {
+    "run_id": "S2-20260529-161147",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-05-29T16:22:17.903647",
+    "candidates_processed": 20,
+    "enriched": 7,
+    "direct_contacts_found": 4,
+    "additional_contacts": 0,
+    "skipped": 0,
+    "direct_contact_rate": 0.2
   }
 ]
