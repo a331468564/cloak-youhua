@@ -51,6 +51,23 @@ B2B lead research for Australian restaurant/hotel industry. Two task zones:
 6. **A区 and B区 independent** — do not mix updates.
 7. **Run report after every batch** — `python scripts/reports/generate_run_report.py --auto-stats`
 
+## Commands Quick Reference
+
+```bash
+# A区 — KP 管线（表单收集）
+python -m scripts.kp_pipeline.run_pipeline --stage all --limit 40
+
+# B区 — 关键词调度器
+python -m scripts.keyword_scheduler.scheduler --limit 10
+python -m scripts.keyword_scheduler.generator --dry-run --max 50
+
+# Run 报告
+python scripts/reports/generate_run_report.py --auto-stats
+
+# 看板
+.\scripts\utils\start_dashboard.ps1
+```
+
 ## Detailed Rules (auto-loaded by path)
 
 | Rule File | paths | Content |
