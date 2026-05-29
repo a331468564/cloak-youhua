@@ -11,6 +11,20 @@ delete_when: 功能废弃后删除
 **Status:** Draft
 **Scope:** CloakBrowser 仿人多IP轮换方案，用于关键词发现的 Google 搜索
 
+## 适用范围
+
+**本方案仅在使用 CloakBrowser（指纹浏览器）时生效。** 不影响系统其他软件的代理流量。
+
+**触发场景：**
+- `keyword_discovery.py` 调用 `search_google()` 时
+- `scheduler.py` 执行关键词搜索时
+- 任何通过 `cloak_fetch()` 访问 Google 的操作
+
+**不触发场景：**
+- 用户手动浏览器访问 Google
+- 其他项目的 Google 搜索
+- 系统其他软件的网络请求
+
 ## Problem
 
 Google 429 rate limit blocks keyword discovery. Current setup uses a single proxy IP (via Clash Verge Rev port 7897). After ~75 searches in Run 20, the IP was rate-limited. Running 107 keywords in the scheduler all returned 0 results.
@@ -22,6 +36,37 @@ Google 429 rate limit blocks keyword discovery. Current setup uses a single prox
 - Real IP must be protected at all times
 - Balanced mode: 5-10s per search, key human behaviors enabled
 
+## 闭环工作流
+
+```
+keyword_discovery.py / scheduler.py
+  │
+  ├─ 调用 search_google(query)
+  │    │
+  │    ▼
+  │  proxy_manager.py
+  │    ├─ 检查 mihomo 进程是否运行
+  │    ├─ 验证代理 IP ≠ 本机 IP
+  │    ├─ 如遇 429 → 自动切换节点 → 重建浏览器
+  │    └─ 返回代理端口 7898 给 cloak_fetcher
+  │    │
+  │    ▼
+  │  cloak_fetcher.py
+  │    ├─ CloakBrowser humanize=True, careful preset
+  │    ├─ 随机 UA/分辨率/语言/时区
+  │    ├─ proxy={"server": "http://127.0.0.1:7898"}
+  │    ├─ 执行 Google 搜索
+  │    └─ 返回搜索结果 URL 列表
+  │    │
+  │    ▼
+  │  keyword_discovery.py
+  │    ├─ 5 层过滤（域名/URL/地理/行业/联系信号）
+  │    ├─ 提取公司信息
+  │    └─ 写入 data/leads.csv
+  │
+  └─ 更新 keyword_runs.csv
+```
+
 ## Architecture
 
 ```
@@ -30,7 +75,7 @@ CloakBrowser (humanize=True, careful preset)
   ▼
 Independent mihomo instance (verge-mihomo.exe)
   Port: 7898 (HTTP) / API: 9091
-  Config: config/cloak-clash.yaml
+  Config: config/proxy-rotation/cloak-clash.yaml
   Nodes: copied from user's Clash config (JP/TW/SG/HK/US)
   ▼
 Proxy node pool (trojan/ss/hysteria2)
@@ -41,7 +86,7 @@ Proxy node pool (trojan/ss/hysteria2)
 
 ## Components
 
-### 1. Independent Clash Instance (`config/cloak-clash.yaml`)
+### 1. Independent Clash Instance (`config/proxy-rotation/cloak-clash.yaml`)
 
 Standalone mihomo config with (binary: `D:\Clash Verge\verge-mihomo.exe`):
 - `mixed-port: 7898` (HTTP proxy for CloakBrowser)
@@ -118,19 +163,37 @@ GET  http://127.0.0.1:9091/providers/proxies → get proxy provider info
 | WebRTC exposure | CloakBrowser Chromium privacy mode disables WebRTC |
 | DNS exposure | Independent mihomo uses fake-ip DNS mode |
 | Process residue | Script exits: force `close_browser()` + terminate mihomo subprocess |
-| Config file exposure | `config/cloak-clash.yaml` in .gitignore (contains proxy credentials) |
+| Config file exposure | `config/proxy-rotation/cloak-clash.yaml` in .gitignore (contains proxy credentials) |
 | Log exposure | mihomo log-level: warning (no search content) |
 | IP verification | Before each session: fetch httpbin.org/ip via proxy, confirm ≠ local IP |
+
+## File Structure
+
+```
+config/proxy-rotation/           ← 独立管理目录
+  cloak-clash.yaml               ← mihomo 配置（节点 + 端口 + API）
+  nodes.json                     ← 节点池配置（可选，便于维护）
+  README.md                      ← 使用说明
+
+scripts/kp_pipeline/
+  proxy_manager.py               ← 新增：mihomo 进程管理 + 节点轮换
+  cloak_fetcher.py               ← 修改：代理改走 7898 + humanize
+  cloak_fetcher.py.bak           ← 备份原文件
+
+scripts/keyword_scheduler/
+  scheduler.py                   ← 已有：pre-flight + 延迟 + 退出逻辑
+```
 
 ## File Changes
 
 | File | Type | Description |
 |------|------|-------------|
-| `config/cloak-clash.yaml` | New | Independent mihomo config (nodes + port 7898 + API 9091) |
+| `config/proxy-rotation/cloak-clash.yaml` | New | Independent mihomo config (nodes + port 7898 + API 9091) |
+| `config/proxy-rotation/README.md` | New | Usage guide for the proxy rotation system |
 | `scripts/kp_pipeline/proxy_manager.py` | New | mihomo process management + Clash API rotation + 429 handling |
 | `scripts/kp_pipeline/cloak_fetcher.py` | Modify | Proxy → 7898 + humanize + UA/resolution/locale rotation + IP verification |
 | `scripts/keyword_scheduler/scheduler.py` | Keep | Existing pre-flight + 5s delay + 3-empty-exit (already done) |
-| `.gitignore` | Modify | Add `config/cloak-clash.yaml` |
+| `.gitignore` | Modify | Add `config/proxy-rotation/cloak-clash.yaml` |
 
 ## Node Pool
 

@@ -91,7 +91,7 @@ Each blocker entry must include:
 | `DATA-FORMAT-CSV-QUOTE` | 2026-05-26 | QUOTE_ALL overwrote original file format |
 | `DATA-FORMAT-URL-ENCODE` | 2026-05-26 | Extraction results contained URL-encoded values needing decode |
 | `DATA-QUALITY-FILTER` | 2026-05-28 | 关键词发现脚本过滤器太宽松，53% 新闻/文章误入库 |
-| `NET-FETCH-HTTP-429` | 2026-05-28 | 关键词发现跑太多次谷歌搜索触发限流，需控制搜索频率 |
+| `NET-FETCH-HTTP-429` | 2026-05-28 | 关键词发现跑太多次谷歌搜索触发限流，需控制搜索频率（scheduler 已加防护） |
 
 ---
 
@@ -169,8 +169,8 @@ Each blocker entry must include:
 `[NET-FETCH-HTTP-429]` **关键词发现跑太多次谷歌搜索触发限流**
 
 - **症状：** 谷歌搜索返回 0 结果，直接请求返回 HTTP 429。
-- **根因：** 单次会话跑 15 个关键词 × 每个关键词抓取 5 个结果页，总计 75+ 次请求，触发谷歌限流。
-- **修复：** 等待限流恢复。后续控制单次会话搜索次数（建议 ≤ 30 次请求）。
+- **根因：** 单次会话跑 15 个关键词 × 每个关键词抓取 5 个结果页，总计 75+ 次请求，触发谷歌限流。5/29 跑 107 关键词全部返回 0（429 仍未恢复）。
+- **修复：** 等待限流恢复。scheduler.py 新增三项防护：(1) pre-flight Google 检查、(2) 搜索间隔 5 秒、(3) 连续 3 次空结果自动退出。
 - **最佳 practice：** 关键词发现脚本应加请求计数器，超过阈值时自动暂停并提示。单次运行建议 ≤ 8 个关键词，每个 ≤ 5 个结果。
 
 ---

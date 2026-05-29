@@ -61,12 +61,41 @@ def _domain_of(url):
 
 # --- CloakBrowser 管理（同步 API）---
 
+_PROXY_URL = "http://127.0.0.1:7897"
+_current_proxy_ip = None  # 当前代理出口 IP，用于检测节点切换
+
+
+def _detect_proxy_ip():
+    """检测当前代理出口 IP（通过 httpbin.org，走本地代理）。"""
+    import urllib.request
+    try:
+        proxy_handler = urllib.request.ProxyHandler({"http": _PROXY_URL, "https": _PROXY_URL})
+        opener = urllib.request.build_opener(proxy_handler)
+        req = urllib.request.Request("https://httpbin.org/ip", method="GET")
+        with opener.open(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+            return data.get("origin", "")
+    except Exception:
+        return ""
+
+
 def _get_browser():
-    """复用全局 CloakBrowser 同步实例。"""
-    global _browser
+    """复用全局 CloakBrowser 同步实例，自动检测代理 IP 变化并重建。"""
+    global _browser, _current_proxy_ip
+    # 检测当前代理 IP
+    new_ip = _detect_proxy_ip()
+    if new_ip and new_ip != _current_proxy_ip:
+        if _browser is not None:
+            # 代理节点已切换，关闭旧浏览器
+            try:
+                _browser.close()
+            except Exception:
+                pass
+            _browser = None
+        _current_proxy_ip = new_ip
     if _browser is None:
         from cloakbrowser import launch
-        _browser = launch(headless=True)
+        _browser = launch(headless=True, proxy={"server": _PROXY_URL})
     return _browser
 
 

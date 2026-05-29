@@ -50,6 +50,7 @@ B2B lead research for Australian restaurant/hotel industry. Two task zones:
 5. **Hooks are active** — `.claude/settings.json` enforces destructive command blocking, post-script artifact check, DOC_META check on new docs, pre-exit stray file check.
 6. **A区 and B区 independent** — do not mix updates.
 7. **Run report after every batch** — A区用 `generate_run_report.py --auto-stats --auto-timing`，B区用 `generate_keyword_report.py --auto-timing`，汇总用 `generate_summary.py`
+8. **输出使用中文** — 所有对用户的文字回复、状态更新、任务说明使用中文。代码注释、变量名、commit message、技术术语保持英文。
 
 ## Commands Quick Reference
 
@@ -88,3 +89,13 @@ python scripts/reports/generate_summary.py
 |-------|---------|---------|
 | `/kp-discovery` | KP pipeline tasks | KP 三阶段流程 + 阻塞处理 |
 | `/keyword-discovery` | Keyword discovery tasks | 关键词调度器 + 发现脚本 + 过滤器 |
+
+## Proxy Rotation (CloakBrowser 专用)
+
+CloakBrowser 使用独立代理实例（端口 7898），支持多 IP 自动轮换 + 仿人浏览行为。
+
+- **配置目录：** `config/proxy-rotation/`（独立管理，含 mihomo 配置和使用说明）
+- **设计文档：** `docs/superpowers/specs/2026-05-29-stealth-proxy-rotation-design.md`
+- **使用说明：** `config/proxy-rotation/README.md`
+- **触发场景：** `search_google()` / `cloak_fetch()` 访问 Google 时自动生效
+- **不影响：** 系统其他软件的代理流量（主 Clash Verge Rev 端口 7897 不变）

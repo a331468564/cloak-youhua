@@ -35,6 +35,12 @@ close_browser()
 - CloakBrowser 使用同步 `launch()` API，不要用 `asyncio.run()` 或 `nest_asyncio`
 - Scrapling 传 cookies/UA 用 `headers` 参数，不是 `extra_headers`
 
+**代理轮换（CloakBrowser 专用）：**
+- CloakBrowser 走独立代理端口 7898（不走系统代理 7897）
+- 遇到 429 时自动切换代理节点，重建浏览器
+- 配置目录：`config/proxy-rotation/`（详见 README.md）
+- 设计文档：`docs/superpowers/specs/2026-05-29-stealth-proxy-rotation-design.md`
+
 ## KP Pipeline
 
 Three-stage pipeline for key person discovery and enrichment.
