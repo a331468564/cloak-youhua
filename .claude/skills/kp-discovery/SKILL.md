@@ -115,9 +115,10 @@ python -m scripts.kp_pipeline.run_pipeline --stage 3 --limit 50
 
 每轮跑完后生成报告：
 ```bash
-python scripts/reports/generate_run_report.py --auto-stats --title "KP Pipeline Run N"
+python scripts/reports/generate_run_report.py --auto-stats --auto-timing --task "KP Pipeline Run N"
 ```
-输出到 `E:\自动跑表单的成果和情况\`
+输出到 `E:\自动跑表单的成果和情况\run-log.md`（A-Run 格式）
+自动计时：用 `RunTimer` 包装管线脚本，`--auto-timing` 自动读取时间
 
 ## 关键文件
 

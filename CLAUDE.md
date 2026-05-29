@@ -49,7 +49,7 @@ B2B lead research for Australian restaurant/hotel industry. Two task zones:
 4. **ALWAYS clean up test artifacts** — `git status` after scripts, delete `temp_*` / `test_*` / `debug_*`.
 5. **Hooks are active** — `.claude/settings.json` enforces destructive command blocking, post-script artifact check, DOC_META check on new docs, pre-exit stray file check.
 6. **A区 and B区 independent** — do not mix updates.
-7. **Run report after every batch** — `python scripts/reports/generate_run_report.py --auto-stats`
+7. **Run report after every batch** — A区用 `generate_run_report.py --auto-stats --auto-timing`，B区用 `generate_keyword_report.py --auto-timing`，汇总用 `generate_summary.py`
 
 ## Commands Quick Reference
 
@@ -61,8 +61,14 @@ python -m scripts.kp_pipeline.run_pipeline --stage all --limit 40
 python -m scripts.keyword_scheduler.scheduler --limit 10
 python -m scripts.keyword_scheduler.generator --dry-run --max 50
 
-# Run 报告
-python scripts/reports/generate_run_report.py --auto-stats
+# Run 报告（A区）
+python scripts/reports/generate_run_report.py --auto-stats --auto-timing
+
+# Run 报告（B区）
+python scripts/reports/generate_keyword_report.py --auto-timing
+
+# 汇总仪表盘
+python scripts/reports/generate_summary.py
 
 # 看板
 .\scripts\utils\start_dashboard.ps1

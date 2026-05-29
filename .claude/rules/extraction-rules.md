@@ -137,10 +137,12 @@ python scripts/extraction/extract_public_contact_candidates.py \
 
 ## Rule 10: Run Report Generation
 
-**每轮任务跑完后必须生成报告（表单收集、KP 富化、关键词发现等）：**
-- 脚本：`scripts/reports/generate_run_report.py`
-- 输出目录：`D:\TestProject-v3\reports\`
-- 报告内容：进度快照、亮点、问题（可选）、系统优化（可选）
-- 用 `--title` 区分任务类型，`--task` 描述本次具体任务
+**每轮任务跑完后必须生成报告，A区和B区分开记录：**
+- A区（表单收集、KP 富化）→ `python scripts/reports/generate_run_report.py --auto-stats --auto-timing`
+- B区（关键词发现）→ `python scripts/reports/generate_keyword_report.py --auto-timing`
+- 汇总仪表盘 → `python scripts/reports/generate_summary.py`
+- 输出目录：`E:\自动跑表单的成果和情况\`（run-log.md / keyword-log.md / summary.md）
+- 自动计时：用 `scripts/reports/timer.py` 的 `RunTimer` 包装管线，报告脚本通过 `--auto-timing` 自动读取 `data/.last_run_timing.json`
+- 用 `--task` 描述本次任务，`--highlights` / `--issues` 记录亮点和问题
 - 报告仅用于人类观察，agent 不需要回读
-- 使用 `--auto-stats` 自动从 CSV 读取跑后统计
+- hook `post_run_progress_check.py` 会在管线脚本执行后检查是否需要更新进度
