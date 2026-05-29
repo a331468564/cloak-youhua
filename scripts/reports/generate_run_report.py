@@ -52,6 +52,8 @@ def load_lead_stats():
         "au_no_contact": au_no,
         "has_email": sum(1 for l in leads if l.get("email_address", "").strip() or l.get("company_email", "").strip()),
         "has_phone": sum(1 for l in leads if l.get("phone_number", "").strip() or l.get("company_phone", "").strip()),
+        "has_kc_email": sum(1 for l in leads if l.get("key_contact_email", "").strip()),
+        "has_kc_phone": sum(1 for l in leads if l.get("key_contact_phone", "").strip()),
         "has_form": sum(1 for l in leads if l.get("company_contact_form_url", "").strip() or l.get("contact_form_url", "").strip()),
     }
 
@@ -104,12 +106,15 @@ def generate_section(data: dict) -> str:
     ai_turns = data.get("ai_turns")
     ai_tool_calls = data.get("ai_tool_calls")
 
+    end_time = data.get("end_time", "")
+
     lines = []
-    lines.append(f"## Run {run}")
+    lines.append(f"## A-Run {run}")
     lines.append("")
-    meta = f"> {ts}  |  耗时 {duration}  |  {batches} 批 / {candidates} 候选"
-    if ai_turns is not None and ai_tool_calls is not None:
-        meta += f"  |  AI {ai_turns} 轮 / {ai_tool_calls} 次调用"
+    if end_time:
+        meta = f"> {ts} → {end_time}（耗时 {duration}）"
+    else:
+        meta = f"> {ts}（耗时 {duration}）"
     lines.append(meta)
     if task:
         lines.append(f"> **任务：** {task}")
@@ -119,6 +124,7 @@ def generate_section(data: dict) -> str:
     cov_before = leads_before.get("has_any_contact", "?")
     cov_after = leads_after.get("has_any_contact", "?")
     total = leads_after.get("total_leads", "?")
+    total_contacts = leads_after.get("total_contacts", "?")
 
     if isinstance(cov_before, int) and isinstance(cov_after, int) and isinstance(total, int) and total > 0:
         p_diff = (cov_after - cov_before) * 100 / total
@@ -126,15 +132,26 @@ def generate_section(data: dict) -> str:
     else:
         cov_diff = "—"
 
-    lines.append(f"| 指标 | 跑前 | 跑后 | 变化 |")
-    lines.append(f"|------|------|------|------|")
+    # 直联率 = (人名邮箱 + 手机) / 联系人数
+    kc_email = leads_after.get("has_kc_email", "?")
+    kc_phone = leads_after.get("has_kc_phone", "?")
+    if isinstance(kc_email, int) and isinstance(kc_phone, int) and isinstance(total_contacts, int) and total_contacts > 0:
+        direct_rate = f"{(kc_email + kc_phone) * 100 / total_contacts:.1f}%"
+    else:
+        direct_rate = "—"
+
+    lines.append("| 指标 | 跑前 | 跑后 | 变化 |")
+    lines.append("|------|------|------|------|")
     lines.append(f"| 公司数 | — | {total} | — |")
-    lines.append(f"| 联系人数 | — | {leads_after.get('total_contacts', '?')} | — |")
+    lines.append(f"| 联系人数 | — | {total_contacts} | — |")
     lines.append(f"| 覆盖率 | {pct(cov_before, total)} | {pct(cov_after, total)} | {cov_diff} |")
     lines.append(f"| AU 无联系 | {au_before} | {au_after} | {diff_str(au_before, au_after)} |")
     lines.append(f"| 有邮箱 | {leads_before.get('has_email', '?')} | {leads_after.get('has_email', '?')} | {diff_str(leads_before.get('has_email', '?'), leads_after.get('has_email', '?'))} |")
     lines.append(f"| 有电话 | {leads_before.get('has_phone', '?')} | {leads_after.get('has_phone', '?')} | {diff_str(leads_before.get('has_phone', '?'), leads_after.get('has_phone', '?'))} |")
     lines.append(f"| 有表单 | {leads_before.get('has_form', '?')} | {leads_after.get('has_form', '?')} | {diff_str(leads_before.get('has_form', '?'), leads_after.get('has_form', '?'))} |")
+    lines.append(f"| 直联率 | — | {direct_rate} | — |")
+    lines.append(f"| 批次数 | — | {batches} | — |")
+    lines.append(f"| 候选数 | — | {candidates} | — |")
     lines.append("")
 
     # 亮点
@@ -231,6 +248,7 @@ def main():
         timing = RunTimer.load()
         if timing:
             data["timestamp"] = timing["start"]
+            data["end_time"] = timing["end"]
             seconds = timing["duration_seconds"]
             if seconds < 60:
                 data["duration"] = f"{seconds:.0f}s"
@@ -259,7 +277,7 @@ def main():
         # 删除已有该 run 的 section
         text = REPORT_FILE.read_text(encoding="utf-8")
         import re
-        pattern = rf"\n---\n\n## Run {run_num} —.*?(?=\n---\n\n## Run \d+|$)"
+        pattern = rf"\n---\n\n## A-Run {run_num}\n.*?(?=\n---\n\n## (?:A-Run|Run) \d+|$)"
         text = re.sub(pattern, "", text, flags=re.DOTALL)
         REPORT_FILE.write_text(text.rstrip() + "\n", encoding="utf-8")
 
