@@ -255,6 +255,14 @@ def main():
             else:
                 m, s = divmod(int(seconds), 60)
                 data["duration"] = f"{m}m{s:02d}s" if m < 60 else f"{m // 60}h{m % 60:02d}m{s:02d}s"
+            # 跑前快照
+            if "leads_before" in timing:
+                data["leads_before"] = timing["leads_before"]
+                data["au_no_contact_before"] = timing["leads_before"].get("au_no_contact", "?")
+            # 跑后快照（仅当未指定 --auto-stats 时使用 timing.json 中的）
+            if "leads_after" in timing and not args.auto_stats:
+                data["leads_after"] = timing["leads_after"]
+                data["au_no_contact_after"] = timing["leads_after"].get("au_no_contact", "?")
         else:
             print("Warning: timing.json not found, using current time")
 
