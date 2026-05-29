@@ -145,23 +145,23 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-05-25T16:38:12"
+    "updated": "2026-05-29T15:48:30"
   },
   "ibisworld.com": {
     "status": "blocked",
-    "updated": "2026-05-25T16:38:27"
+    "updated": "2026-05-29T15:48:43"
   },
   "zoominfo.com": {
     "status": "blocked",
-    "updated": "2026-05-25T16:40:06"
+    "updated": "2026-05-29T15:48:50"
   },
   "prospeo.io": {
     "status": "scrapling_ok",
     "updated": "2026-05-20T18:13:21"
   },
   "rocketreach.co": {
-    "status": "blocked",
-    "updated": "2026-05-25T16:41:16"
+    "status": "scrapling_ok",
+    "updated": "2026-05-29T15:50:42"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -446,5 +446,13 @@
   "bargroup.com.au": {
     "status": "blocked",
     "updated": "2026-05-25T10:23:19"
+  },
+  "google.cn": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-29T15:48:25"
+  },
+  "tmdg.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-29T15:53:45"
   }
 }
