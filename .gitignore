@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+*.log
+*.tmp
+
+# 含代理凭证，不提交
+config/cloak-clash.yaml

@@ -1,0 +1,96 @@
+# CloakBrowser 独立 mihomo 配置（模板）
+#
+# 使用步骤：
+# 1. 复制本文件为 cloak-clash.yaml
+# 2. 填入你自己的代理节点信息
+# 3. cloak-clash.yaml 在 .gitignore 中，不会被提交
+#
+# cp config/cloak-clash.yaml.example config/cloak-clash.yaml
+
+mixed-port: 7898
+allow-lan: false
+mode: rule
+log-level: warning
+ipv6: false
+external-controller: 127.0.0.1:9091
+
+profile:
+  tracing: false
+
+dns:
+  enable: true
+  ipv6: false
+  listen: 0.0.0.0:7878
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "*.localhost"
+  nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+    - 114.114.114.114
+  fallback:
+    - tls://223.5.5.5:853
+    - tls://223.6.6.6:853
+
+# ============================================================
+# 在下面填入你的代理节点
+# 支持 SS/Trojan/Hysteria2/Vmess 等 mihomo 支持的协议
+# ============================================================
+
+proxies:
+  # 示例：Shadowsocks 节点
+  # - {name: "JP-01", server: your-server.com, port: 14121, type: ss, cipher: chacha20-ietf-poly1305, password: your-password, udp: true}
+  # - {name: "JP-02", server: your-server.com, port: 14122, type: ss, cipher: chacha20-ietf-poly1305, password: your-password, udp: true}
+  # - {name: "US-01", server: your-server.com, port: 14131, type: ss, cipher: chacha20-ietf-poly1305, password: your-password, udp: true}
+
+# ============================================================
+# 代理组：按区域组织节点
+# proxy_manager.py 的 REGIONS 字典需要与此对应
+# ============================================================
+
+proxy-groups:
+  - name: CloakGoogle
+    type: select
+    proxies:
+      - JP
+      - TW
+      - SG
+      - HK
+      - US
+
+  - name: JP
+    type: select
+    proxies:
+      - JP-01
+      - JP-02
+
+  - name: TW
+    type: select
+    proxies:
+      - TW-01
+
+  - name: SG
+    type: select
+    proxies:
+      - SG-01
+
+  - name: HK
+    type: select
+    proxies:
+      - HK-01
+
+  - name: US
+    type: select
+    proxies:
+      - US-01
+
+rules:
+  - DOMAIN-SUFFIX,google.com,CloakGoogle
+  - DOMAIN-SUFFIX,googleapis.com,CloakGoogle
+  - DOMAIN-SUFFIX,gstatic.com,CloakGoogle
+  - DOMAIN-SUFFIX,google.com.au,CloakGoogle
+  - DOMAIN-KEYWORD,google,CloakGoogle
+  - MATCH,DIRECT
