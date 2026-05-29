@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "max_candidates": 200,
+  "dimensions": {
+    "customer_type": [
+      "restaurant group", "restaurant owner", "hotel group", "hotel F&B manager",
+      "pub group", "brewery venue", "catering company", "event venue",
+      "aged care food service", "corporate catering", "cafe chain",
+      "food court operator", "winery restaurant", "resort F&B",
+      "hospitality recruitment", "restaurant renovation",
+      "restaurant fit-out company", "restaurant design company",
+      "multi-location restaurant", "hospitality venue group",
+      "hotel procurement manager", "new restaurant opening",
+      "restaurant supply chain", "ghost kitchen operator",
+      "hotel housekeeping supplier", "restaurant equipment supplier",
+      "restaurant furniture supplier", "commercial kitchen supplier",
+      "hotel FF&E supplier", "hospitality technology supplier",
+      "restaurant POS supplier", "bar equipment supplier",
+      "food packaging supplier", "hotel amenities supplier",
+      "restaurant lighting supplier", "hospitality linen supplier",
+      "cloud kitchen", "dark kitchen", "food delivery platform",
+      "restaurant franchise", "hotel chain", "motel group",
+      "student accommodation food service", "hospital food service",
+      "stadium catering", "airline catering", "cruise ship catering",
+      "restaurant management company", "hotel management company",
+      "hospitality consulting firm", "restaurant insurance broker",
+      "hotel technology provider", "restaurant marketing agency"
+    ],
+    "role": [
+      "owner", "director", "CEO", "founder", "general manager",
+      "procurement manager", "operations manager", "head chef",
+      "F&B director", "purchasing manager", "venue manager",
+      "group executive chef", "supply chain manager", "regional manager",
+      "chief operating officer", "chief procurement officer",
+      "business development manager", "category manager",
+      "contracts manager", "vendor manager", "sourcing manager",
+      "hospitality manager", "food and beverage manager",
+      "executive housekeeper", "maintenance manager",
+      "project manager", "interior designer", "architect",
+      "specification writer", "FF&E coordinator"
+    ],
+    "geo": [
+      "Australia", "Sydney", "Melbourne", "Brisbane", "Perth",
+      "Adelaide", "Gold Coast", "Canberra", "Hobart", "Darwin",
+      "Newcastle", "Wollongong", "NSW", "VIC", "QLD", "WA", "SA",
+      "Sunshine Coast", "Geelong", "Townsville", "Cairns",
+      "Toowoomba", "Launceston", "Alice Springs",
+      "Mornington Peninsula", "Barossa Valley", "Hunter Valley",
+      "Byron Bay", "Noosa", "Port Douglas", "Broome",
+      "Margaret River", "Yarra Valley", "McLaren Vale"
+    ],
+    "intent": [
+      "contact", "email", "phone", "supplier registration",
+      "become a supplier", "vendor application", "procurement",
+      "request a quote", "tender", "partnership enquiry",
+      "directory", "team page", "about us", "leadership"
+    ],
+    "org_form": [
+      "group", "holdings", "collective", "hospitality",
+      "venues", "collection", "management", "enterprises"
+    ],
+    "source_modifier": [
+      "site:.com.au", "site:.com.au intitle:contact",
+      "filetype:pdf", "inurl:team", "inurl:about",
+      "intitle:\"meet the team\"", "intitle:leadership"
+    ],
+    "trigger_event": [
+      "new opening", "new venue", "expansion", "rebranding",
+      "new management", "acquisition", "renovation",
+      "just opened", "now hiring", "coming soon",
+      "refurbishment", "fit-out", "menu refresh",
+      "seasonal hiring", "award winner", "new head chef",
+      "franchise opportunity", "liquidation", "reopening",
+      "catering tender", "supply contract"
+    ]
+  },
+  "query_templates": [
+    {"id": "T1", "pattern": "{customer_type} {geo} {intent}", "priority_hint": "high"},
+    {"id": "T2", "pattern": "{customer_type} {role} {geo}", "priority_hint": "high"},
+    {"id": "T3", "pattern": "{org_form} {customer_type} head office {geo}", "priority_hint": "medium"},
+    {"id": "T4", "pattern": "\"{role}\" \"{customer_type}\" {geo}", "priority_hint": "high"},
+    {"id": "T5", "pattern": "{source_modifier} {customer_type} {intent} {geo}", "priority_hint": "medium"},
+    {"id": "T6", "pattern": "filetype:pdf {customer_type} procurement {geo}", "priority_hint": "low"},
+    {"id": "T7", "pattern": "\"{trigger_event}\" {customer_type} {geo}", "priority_hint": "high"},
+    {"id": "T8", "pattern": "{customer_type} {geo} {trigger_event} {intent}", "priority_hint": "medium"},
+    {"id": "T9", "pattern": "{role} {customer_type} {geo} email OR phone OR contact", "priority_hint": "high"},
+    {"id": "T10", "pattern": "{customer_type} {geo} \"{intent}\" -jobs -careers", "priority_hint": "medium"},
+    {"id": "T11", "pattern": "{customer_type} {geo} supplier contact", "priority_hint": "high"},
+    {"id": "T12", "pattern": "{customer_type} {geo} procurement team", "priority_hint": "high"},
+    {"id": "T13", "pattern": "{customer_type} {geo} purchasing department email", "priority_hint": "high"},
+    {"id": "T14", "pattern": "{customer_type} {geo} {trigger_event} supplier needed", "priority_hint": "high"},
+    {"id": "T15", "pattern": "{source_modifier} {customer_type} {geo} {role}", "priority_hint": "medium"}
+  ],
+  "dimension_weights": {
+    "customer_type": 1.0,
+    "role": 0.8,
+    "geo": 0.6,
+    "intent": 0.9,
+    "org_form": 0.5,
+    "source_modifier": 0.4,
+    "trigger_event": 0.7
+  }
+}

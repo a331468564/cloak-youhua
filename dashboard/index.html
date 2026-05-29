@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ron Group 线索补全台</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Ron Group 线索补全台</h1>
+      <p>按国家查看线索，人工补充公司联系、联系表单和所有联系人信息。</p>
+    </div>
+    <div class="actions">
+      <label class="operator-label">
+        编辑人
+        <input id="editorNameInput" type="text" placeholder="填写你的名字">
+      </label>
+      <button id="loadDefaultBtn" type="button">加载默认 CSV</button>
+      <label class="file-label">
+        导入 leads.csv
+        <input id="leadsCsvInput" type="file" accept=".csv,text/csv">
+      </label>
+      <label class="file-label">
+        导入 contacts.csv
+        <input id="contactsCsvInput" type="file" accept=".csv,text/csv">
+      </label>
+      <button id="exportLeadsBtn" type="button">导出最新 leads.csv</button>
+      <button id="exportContactsBtn" type="button">导出最新 contacts.csv</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="message" class="message">
+      正在尝试读取本地 CSV。如果浏览器限制本地读取，请手动导入 `data/leads.csv` 和 `data/contacts.csv`。
+    </section>
+
+    <section class="summary" aria-label="数据概览">
+      <div><strong id="totalCount">0</strong><span>当前线索</span></div>
+      <div><strong id="missingCoreCount">0</strong><span>缺基础信息</span></div>
+      <div><strong id="missingCompanyContactCount">0</strong><span>缺公司联系</span></div>
+      <div><strong id="missingKeyContactCount">0</strong><span>缺关键人</span></div>
+      <div><strong id="directKeyCount">0</strong><span>已有关键人直联</span></div>
+    </section>
+
+    <section class="controls">
+      <label>
+        国家
+        <select id="countryFilter"></select>
+      </label>
+      <label>
+        缺失筛选
+        <select id="missingFilter">
+          <option value="">全部</option>
+          <option value="core">缺基础信息</option>
+          <option value="company_contact">缺公司联系或表单</option>
+          <option value="key_person">缺关键人</option>
+          <option value="direct_key">缺关键人直联</option>
+        </select>
+      </label>
+      <label>
+        搜索
+        <input id="searchInput" type="search" placeholder="公司名、网站、备注、来源">
+      </label>
+      <button id="resetBtn" type="button">重置</button>
+    </section>
+
+    <section class="workspace">
+      <section class="lead-panel">
+        <div class="result-bar">
+          <h2>线索列表</h2>
+          <span id="visibleCount">0</span>
+        </div>
+        <div id="leadList" class="lead-list"></div>
+      </section>
+
+      <aside class="editor-panel">
+        <div class="editor-head">
+          <div>
+            <h2 id="editorTitle">选择一条线索</h2>
+            <p id="editorSubtitle">选择公司后，可编辑公司字段和该公司所有联系人。</p>
+          </div>
+          <button id="saveEditBtn" type="button">应用当前修改</button>
+        </div>
+
+        <div id="editFields" class="edit-grid empty-editor"></div>
+
+        <section class="preset-panel">
+          <h3>常用中文备注</h3>
+          <div class="preset-grid">
+            <label>
+              下一步
+              <select id="nextActionPreset"></select>
+            </label>
+            <button id="applyNextActionPresetBtn" type="button">填入下一步</button>
+            <label>
+              备注
+              <select id="notesPreset"></select>
+            </label>
+            <button id="appendNotesPresetBtn" type="button">追加备注</button>
+            <label>
+              补全备注
+              <select id="enrichmentNotesPreset"></select>
+            </label>
+            <button id="appendEnrichmentPresetBtn" type="button">追加补全备注</button>
+          </div>
+        </section>
+
+        <div class="contacts-head">
+          <h3>联系人</h3>
+          <button id="addContactBtn" type="button">新增联系人</button>
+        </div>
+        <div id="contactList" class="contact-list"></div>
+        <div id="newContactFields" class="edit-grid contact-form"></div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

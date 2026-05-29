@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<string>", line 40, in <module>
+    print(m)
+    ~~~~~^^^
+UnicodeEncodeError: 'gbk' codec can't encode character '\U0001f3af' in position 44: illegal multibyte sequence
+
+=== 360b428a (31 matches) ===

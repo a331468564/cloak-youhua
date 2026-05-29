@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "cooldown_enforcement": true,
+  "default_cooldown_days": 14,
+  "default_country": "Australia",
+  "template_expansions": {
+    "[city]": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast", "Canberra", "Hobart"],
+    "[country]": ["Australia"]
+  },
+  "priority_weights": {
+    "high": 1.0,
+    "medium": 0.7,
+    "low": 0.4
+  },
+  "max_keywords_per_run": 5,
+  "extraction_defaults": {
+    "follow_links": 2,
+    "fetcher": "static",
+    "delay": 2,
+    "skip_existing": true
+  }
+}

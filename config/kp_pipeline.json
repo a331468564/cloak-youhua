@@ -1,0 +1,74 @@
+{
+  "version": "1.1",
+  "fetch_strategy": {
+    "description": "Scrapling + CloakBrowser 深度联动配置",
+    "google_search": "cloak_only",
+    "company_pages": "scrapling_first_with_cloak_fallback",
+    "cookie_handoff": true,
+    "route_memory_file": "data/fetch_routes.json",
+    "route_expiry_minutes": 10,
+    "max_cookies_stored": 20
+  },
+  "stages": {
+    "stage1_discover": {
+      "enabled": true,
+      "reuse_script": "scripts/extraction/extract_public_contact_candidates.py",
+      "reuse_queue_script": "scripts/extraction/build_form_kp_candidate_queue.py",
+      "reuse_task_script": "scripts/extraction/generate_kp_search_tasks.py",
+      "default_args": {
+        "--skip-existing": true,
+        "--follow-links": 2,
+        "--fetcher": "static",
+        "--limit": 10
+      }
+    },
+    "stage2_enrich": {
+      "enabled": true,
+      "max_pages_per_lead": 2,
+      "max_time_per_lead_seconds": 90,
+      "follow_links": 1,
+      "fetcher_mode": "static",
+      "delay_between_requests_seconds": 2.0,
+      "search_patterns_for_known_kp": [
+        "site:{domain} \"{key_contact_name}\"",
+        "\"{key_contact_name}\" \"{company_name}\" email OR phone OR contact",
+        "\"{key_contact_name}\" \"{company_name}\" director OR operations OR procurement"
+      ],
+      "noisy_domains_blocklist": [
+        "linkedin.com", "facebook.com", "instagram.com",
+        "youtube.com", "yelp.com", "tripadvisor.com",
+        "zomato.com", "menulog.com.au"
+      ]
+    },
+    "stage3_validate": {
+      "enabled": true,
+      "auto_approve_threshold": 85,
+      "auto_reject_threshold": 30,
+      "validation_rules": {
+        "require_source_link": true,
+        "min_name_length": 4,
+        "max_name_length": 50,
+        "reject_common_false_positives": [
+          "Contact", "Dining", "Menu", "Home", "About", "Team",
+          "Leadership", "Management", "Staff", "People", "Careers",
+          "Read More", "Learn More", "Click Here"
+        ]
+      }
+    }
+  },
+  "automation_gates": {
+    "stage1_auto": {
+      "condition": "false_positive_rate < 0.15 AND kp_identification_rate > 0.5"
+    },
+    "stage2_auto": {
+      "condition": "direct_contact_rate > 0.1 AND false_positive_rate < 0.1"
+    },
+    "stage3_auto_approve": {
+      "condition": "auto_approve_accuracy > 0.95"
+    }
+  },
+  "metrics": {
+    "log_file": "data/kp_metrics.json",
+    "validation_log": "data/kp_validation_log.csv"
+  }
+}

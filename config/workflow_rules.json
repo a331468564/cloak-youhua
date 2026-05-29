@@ -1,0 +1,117 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-05-19",
+  "thresholds": {
+    "company_info": {
+      "max_pages_to_search": 3,
+      "stop_conditions": [
+        "found_contact_page",
+        "found_email",
+        "found_phone",
+        "found_linkedin_company",
+        "no_new_discoveries_after_3_pages"
+      ],
+      "skip_conditions": [
+        "already_in_leads_with_contact_status",
+        "already_has_contact_page_in_leads"
+      ]
+    },
+    "key_person_search": {
+      "trigger_conditions": [
+        "company_info_complete",
+        "no_key_person_identified",
+        "has_team_or_about_page"
+      ],
+      "max_time_minutes": 5,
+      "max_pages_to_search": 3,
+      "max_unhelpful_page_ratio": 0.7,
+      "abandon_conditions": [
+        "timeout_reached",
+        "no_linkedin_after_2_attempts",
+        "no_public_team_page"
+      ],
+      "skip_conditions": [
+        "already_has_key_contact_in_leads",
+        "already_has_contact_in_contacts",
+        "sole_proprietor"
+      ]
+    },
+    "extraction": {
+      "default_follow_links": 3,
+      "default_delay_seconds": 2.0,
+      "skip_existing_by_default": true
+    }
+  },
+  "data_quality": {
+    "email_classification": {
+      "company_low_value": ["info", "admin", "contact", "hello", "enquiries"],
+      "department_medium": ["sales", "procurement", "accounts", "marketing", "media"],
+      "person_high": ["firstname.lastname", "firstname"],
+      "skip_patterns": ["noreply", "no-reply", "careers", "jobs", "hr", "privacy"]
+    },
+    "phone_classification": {
+      "company_low_value": ["1300", "1800"],
+      "company_medium": ["02", "03", "07", "08"],
+      "person_high": ["04"]
+    },
+    "confidence_levels": {
+      "high": "Verified person contact (name + title + direct contact)",
+      "medium": "Likely person contact (name + role match)",
+      "low": "Company/department contact only"
+    }
+  },
+  "review_priority": [
+    {
+      "type": "key_person_name",
+      "score_range": [85, 89],
+      "action": "verify_before_saving",
+      "priority": 1
+    },
+    {
+      "type": "email",
+      "score_range": [100, 114],
+      "action": "classify_and_save",
+      "priority": 2
+    },
+    {
+      "type": "phone",
+      "score_range": [90, 94],
+      "action": "verify_and_save",
+      "priority": 3
+    },
+    {
+      "type": "contact_form",
+      "score_range": [88, 88],
+      "action": "verify_form_type",
+      "priority": 4
+    },
+    {
+      "type": "team_link",
+      "score_range": [68, 76],
+      "action": "manual_review_for_kp",
+      "priority": 5
+    }
+  ],
+  "status_values": {
+    "lead_status": {
+      "needs_research": "需要继续研究",
+      "contact_path_found": "已找到联系路径",
+      "needs_manual_confirm": "需人工确认",
+      "low_priority": "低优先级",
+      "ready_for_outreach": "可联系"
+    },
+    "contact_status": {
+      "identified": "已识别联系人",
+      "direct_contact_found": "已找到直联",
+      "needs_verification": "需验证联系方式"
+    }
+  },
+  "file_paths": {
+    "leads": "data/leads.csv",
+    "contacts": "data/contacts.csv",
+    "keyword_runs": "data/keyword_runs.csv",
+    "search_keywords": "data/search_keywords.csv",
+    "reports_dir": "reports/",
+    "scripts_dir": "scripts/"
+  }
+}
