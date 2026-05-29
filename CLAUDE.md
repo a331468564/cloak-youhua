@@ -90,12 +90,12 @@ python scripts/reports/generate_summary.py
 | `/kp-discovery` | KP pipeline tasks | KP 三阶段流程 + 阻塞处理 |
 | `/keyword-discovery` | Keyword discovery tasks | 关键词调度器 + 发现脚本 + 过滤器 |
 
-## Proxy Rotation (CloakBrowser 专用)
+## Proxy Rotation — CloakBrowser Only
 
-CloakBrowser 使用独立代理实例（端口 7898），支持多 IP 自动轮换 + 仿人浏览行为。
+CloakBrowser uses independent proxy (port 7898) with multi-IP rotation + humanized browsing. **Only active when CloakBrowser is in use.** Does not affect system proxy (port 7897).
 
-- **配置目录：** `config/proxy-rotation/`（独立管理，含 mihomo 配置和使用说明）
-- **设计文档：** `docs/superpowers/specs/2026-05-29-stealth-proxy-rotation-design.md`
-- **使用说明：** `config/proxy-rotation/README.md`
-- **触发场景：** `search_google()` / `cloak_fetch()` 访问 Google 时自动生效
-- **不影响：** 系统其他软件的代理流量（主 Clash Verge Rev 端口 7897 不变）
+- Config → `config/proxy-rotation/` (standalone, with README).
+- Design → `docs/superpowers/specs/2026-05-29-stealth-proxy-rotation-design.md`.
+- Trigger → `search_google()` / `cloak_fetch()` accessing Google.
+- 429 handling → auto-rotate proxy node, rebuild browser, resume.
+- Detailed rules in `.claude/rules/tool-config.md` (auto-loaded when accessing `scripts/**`).

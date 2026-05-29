@@ -35,11 +35,21 @@ close_browser()
 - CloakBrowser 使用同步 `launch()` API，不要用 `asyncio.run()` 或 `nest_asyncio`
 - Scrapling 传 cookies/UA 用 `headers` 参数，不是 `extra_headers`
 
-**代理轮换（CloakBrowser 专用）：**
-- CloakBrowser 走独立代理端口 7898（不走系统代理 7897）
-- 遇到 429 时自动切换代理节点，重建浏览器
-- 配置目录：`config/proxy-rotation/`（详见 README.md）
+**代理轮换 — 仅 CloakBrowser 使用时生效：**
+
+CloakBrowser 走独立代理实例（端口 7898），不影响系统代理（端口 7897）。遇到 429 自动切换节点、重建浏览器。
+
+```python
+# 代理轮换在 search_google() 内部自动触发
+# 无需手动调用，只需确保 mihomo 进程运行
+from scripts.kp_pipeline.proxy_manager import ProxyManager
+pm = ProxyManager()
+pm.start()  # 启动独立 mihomo 实例
+```
+
+- 配置目录：`config/proxy-rotation/`（含 mihomo 配置和使用说明）
 - 设计文档：`docs/superpowers/specs/2026-05-29-stealth-proxy-rotation-design.md`
+- 节点池：日本/台湾/新加坡/香港/美国（19 个节点随机轮换）
 
 ## KP Pipeline
 
