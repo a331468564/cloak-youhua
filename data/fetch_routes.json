@@ -152,16 +152,16 @@
     "updated": "2026-05-29T15:48:43"
   },
   "zoominfo.com": {
-    "status": "blocked",
-    "updated": "2026-05-29T15:48:50"
+    "status": "scrapling_ok",
+    "updated": "2026-05-29T17:28:00"
   },
   "prospeo.io": {
     "status": "scrapling_ok",
     "updated": "2026-05-20T18:13:21"
   },
   "rocketreach.co": {
-    "status": "scrapling_ok",
-    "updated": "2026-05-29T15:50:42"
+    "status": "blocked",
+    "updated": "2026-05-29T17:27:55"
   },
   "google.com.hk": {
     "status": "scrapling_ok",

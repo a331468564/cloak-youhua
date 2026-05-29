@@ -329,5 +329,34 @@
     "additional_contacts": 0,
     "skipped": 0,
     "direct_contact_rate": 0.2
+  },
+  {
+    "run_id": "S1-20260529-163502",
+    "stage": "stage1_discover",
+    "timestamp": "2026-05-29T16:38:52.763019",
+    "candidates_found": 359,
+    "leads_processed": 20
+  },
+  {
+    "run_id": "S2-20260529-164420",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-05-29T17:01:45.042397",
+    "candidates_processed": 20,
+    "enriched": 6,
+    "direct_contacts_found": 3,
+    "additional_contacts": 0,
+    "skipped": 0,
+    "direct_contact_rate": 0.15
+  },
+  {
+    "run_id": "S2-20260529-172509",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-05-29T17:30:36.206132",
+    "candidates_processed": 5,
+    "enriched": 2,
+    "direct_contacts_found": 0,
+    "additional_contacts": 0,
+    "skipped": 0,
+    "direct_contact_rate": 0.0
   }
 ]
