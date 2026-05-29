@@ -1,0 +1,450 @@
+{
+  "huntersthospitality.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:03:22"
+  },
+  "bentleyrestaurantgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:03:49"
+  },
+  "thechilliegroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:04:10"
+  },
+  "jlwinteriors.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:04:32"
+  },
+  "360shopfitters.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:05:10"
+  },
+  "jarroldandbailie.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:05:46"
+  },
+  "grossi.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:06:21"
+  },
+  "hcgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:06:32"
+  },
+  "blankcreatives.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:06:47"
+  },
+  "thegreatindoors.net.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:06:56"
+  },
+  "alandcohausofdesign.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:07:11"
+  },
+  "mymymy.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:07:33"
+  },
+  "tablefive.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:08:19"
+  },
+  "pleysierperkins.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:09:15"
+  },
+  "alleywaygroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:09:27"
+  },
+  "hjrestaurants.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:09:48"
+  },
+  "elementsgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:09:58"
+  },
+  "applejackhospitality.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:10:27"
+  },
+  "ausvenueco.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:11:26"
+  },
+  "liquidandlarder.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:12:44"
+  },
+  "themaybegroup.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:13:04"
+  },
+  "traderhouse.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:13:20"
+  },
+  "tablefor.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:14:09"
+  },
+  "crystalbrookcollection.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:14:17"
+  },
+  "tfehotels.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:15:43"
+  },
+  "veriu.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:17:40"
+  },
+  "speakeasygroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-22T11:25:42"
+  },
+  "swillhouse.com": {
+    "status": "blocked",
+    "updated": "2026-05-22T11:26:02"
+  },
+  "kickongroup.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:18:59"
+  },
+  "dedesgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:19:21"
+  },
+  "housemadehospitality.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:19:28"
+  },
+  "housemadeevents.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:19:31"
+  },
+  "lucascollective.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:20:02"
+  },
+  "melbournecupday.merivale.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:20:14"
+  },
+  "oscarsgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T17:20:30"
+  },
+  "gstatic.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T18:12:10"
+  },
+  "contactout.com": {
+    "status": "blocked",
+    "updated": "2026-05-25T16:38:12"
+  },
+  "ibisworld.com": {
+    "status": "blocked",
+    "updated": "2026-05-25T16:38:27"
+  },
+  "zoominfo.com": {
+    "status": "blocked",
+    "updated": "2026-05-25T16:40:06"
+  },
+  "prospeo.io": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T18:13:21"
+  },
+  "rocketreach.co": {
+    "status": "blocked",
+    "updated": "2026-05-25T16:41:16"
+  },
+  "google.com.hk": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T18:17:21"
+  },
+  "maps.google.com.hk": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-20T22:30:23"
+  },
+  "signaturehospitalitygroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T10:38:29"
+  },
+  "alhgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:38:31"
+  },
+  "epcglobalresources.com": {
+    "status": "blocked",
+    "updated": "2026-05-21T10:38:48"
+  },
+  "resortandhotelsupplies.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:38:56"
+  },
+  "infinitytradesgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:38:59"
+  },
+  "studioy.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:39:14"
+  },
+  "rizenatelier.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:39:16"
+  },
+  "fastfitouts.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:39:29"
+  },
+  "ckestainless.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T10:39:33"
+  },
+  "msmetal.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T10:39:36"
+  },
+  "protechfitouts.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:39:53"
+  },
+  "eatscape.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:40:39"
+  },
+  "finexfitouts.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:40:41"
+  },
+  "bimss.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:40:53"
+  },
+  "absolutecommercialkitchens.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:40:55"
+  },
+  "impeccabuild.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T10:41:16"
+  },
+  "0813studio.com": {
+    "status": "blocked",
+    "updated": "2026-05-21T10:42:08"
+  },
+  "pleysierperkins.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:01:21"
+  },
+  "elements-hospitality.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:01:35"
+  },
+  "connoisseurqld.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T11:01:57"
+  },
+  "merivale.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T11:03:59"
+  },
+  "australianvenueco.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T11:04:07"
+  },
+  "lucascollection.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:04:26"
+  },
+  "dedeswaterfrontgroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:04:28"
+  },
+  "thespeakeasygroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:04:41"
+  },
+  "themaybegroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:04:45"
+  },
+  "solotel.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:05:42"
+  },
+  "meriton.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T11:05:46"
+  },
+  "liquidlarder.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:07:58"
+  },
+  "illourahospitality.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:08:06"
+  },
+  "finkgroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:08:26"
+  },
+  "trippaswhitegroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T11:08:32"
+  },
+  "kickongroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:08:48"
+  },
+  "fghgroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:08:55"
+  },
+  "maevahospitality.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:09:01"
+  },
+  "theahg.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:09:08"
+  },
+  "pm360.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:09:11"
+  },
+  "aygprojects.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-21T11:09:16"
+  },
+  "commercialfitoutsolutions.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T11:09:21"
+  },
+  "hospitalitymagazine.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T14:48:32"
+  },
+  "designshow.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-21T14:50:04"
+  },
+  "hcgroup.global": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-22T11:11:42"
+  },
+  "architects.nsw.gov.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-22T11:13:51"
+  },
+  "interioresminimalistas.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-22T11:15:23"
+  },
+  "fortunealley.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-22T11:16:00"
+  },
+  "cloudland.tv": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:24"
+  },
+  "achefstouch.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:28"
+  },
+  "barsgroup.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:29"
+  },
+  "franchisebuyer.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:32"
+  },
+  "jbshospitality.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:35"
+  },
+  "tagvenue.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:36"
+  },
+  "bargroup.au": {
+    "status": "blocked",
+    "updated": "2026-05-25T10:05:43"
+  },
+  "vanillablue.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:46"
+  },
+  "bargrp.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:50"
+  },
+  "catering.coffeeclub.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:05:51"
+  },
+  "bar83sydneytower.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:06"
+  },
+  "barbellaccino.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:15"
+  },
+  "alemre.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:19"
+  },
+  "bluestonelane.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:26"
+  },
+  "shop.bluestonelane.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:31"
+  },
+  "tilleyandwills.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:40"
+  },
+  "abhpubgroup.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:53"
+  },
+  "dapandco.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:20:57"
+  },
+  "ganleygroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:21:06"
+  },
+  "tassisgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:21:14"
+  },
+  "brickfieldhospitality.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-25T10:21:22"
+  },
+  "phmg.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-25T10:22:23"
+  },
+  "comiskey.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-25T10:22:59"
+  },
+  "bargroup.com.au": {
+    "status": "blocked",
+    "updated": "2026-05-25T10:23:19"
+  }
+}
