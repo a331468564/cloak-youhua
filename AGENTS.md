@@ -16,6 +16,7 @@ For broad, unclear, configuration, tooling, or workflow tasks, read these files 
 - `docs/guides/codex-agent-usage.md`
 - `docs/workflows/lead-enrichment-workflow.md`
 - `docs/workflows/lead-collection-workflow.md`
+- `docs/workflows/keyword-discovery-workflow.md`
 - `docs/architecture/lead-table-fields.md`
 
 For narrow tasks, read `docs/guides/cli-operating-rules.md` first, then follow its task-specific context list. For Codex hook, agent, config, or startup errors, also read `docs/guides/codex-agent-usage.md` before editing or troubleshooting.
@@ -117,6 +118,7 @@ Run 报告生成（每轮任务跑完后执行）：
 - `docs/current-progress.md`: only account/session handoff, context-risk checkpoint, meaningful completed stage, major data/tool milestone, or resume-critical next plan.
 - `docs/workflows/lead-enrichment-workflow.md`: contact/KP confidence, LinkedIn boundaries, extraction helper behavior.
 - `docs/workflows/lead-collection-workflow.md`: source/tool access and collection scope.
+- `docs/workflows/keyword-discovery-workflow.md`: keyword discovery flow, quality rules, stopping rules, batch validation, health metrics.
 - `docs/guides/cli-operating-rules.md`: agent behavior, checkpoint rules, project-level boundaries.
 - **Run 报告（每轮跑完必须生成）：** 表单收集、KP 富化、关键词发现等任务跑完后，用 `scripts/reports/generate_run_report.py` 生成人类可读报告，输出到 `D:\TestProject-v3\reports\`。用 `--title` 区分任务类型。报告仅用于人类观察，agent 不需要回读。
 - **CODEx 标记治理：** 标记按大类划分（如 `keyword_strategy`、`enrichment_stopping_rules`），不要拆成细粒度子标记。新增标记前必须确认：(1) 现有标记确实无法覆盖该内容；(2) 该环节是工作流中缺失的步骤。A 区和 B 区的标记名不重复。禁止为了"规范化"或"细分"而拆分已有标记。
