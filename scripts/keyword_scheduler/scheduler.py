@@ -5,6 +5,13 @@ import random
 from datetime import datetime
 from pathlib import Path
 
+try:
+    from scripts.reports.timer import RunTimer
+except ImportError:
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "reports"))
+    from timer import RunTimer
+
 _ACTIVE_STATUSES = {"Active", "Testing", "New"}
 
 def select_eligible_keywords(keywords_csv: Path, config: dict) -> list[dict]:
@@ -124,43 +131,19 @@ def build_query_queue(keywords_csv: Path, config: dict) -> list[dict]:
     return queue
 
 
-def _parse_extraction_results(output_csv: Path) -> dict[str, dict[str, int]]:
-    """Parse extraction output CSV and count results per keyword_id.
-
-    Returns dict: keyword_id -> {"leads": N, "contacts": N}
-    """
-    _CONTACT_TYPES = {"email", "phone", "mobile", "person_email", "person_phone"}
-    counts: dict[str, dict[str, int]] = {}
-    if not output_csv or not output_csv.exists():
-        return counts
-
-    with open(output_csv, "r", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f):
-            kid = (row.get("lead_id") or "").strip()
-            if not kid:
-                continue
-            if kid not in counts:
-                counts[kid] = {"leads": 0, "contacts": 0}
-            counts[kid]["leads"] += 1
-            ctype = (row.get("candidate_type") or "").strip().lower()
-            if ctype in _CONTACT_TYPES:
-                counts[kid]["contacts"] += 1
-
-    return counts
-
-
 # --- CLI entry point ---
 
 def main():
     import argparse
-    from scripts.keyword_scheduler.config import load_config, get_extraction_defaults
-    from scripts.keyword_scheduler.executor import build_extraction_queue, run_extraction
+    from scripts.keyword_scheduler.config import load_config
     from scripts.keyword_scheduler.tracker import update_keyword_stats, append_run_log
+    from scripts.extraction.keyword_discovery import discover_from_keyword, save_to_leads, load_existing_leads, close_browser
 
-    parser = argparse.ArgumentParser(description="Keyword scheduler — bridges search_keywords.csv to extraction pipeline")
+    parser = argparse.ArgumentParser(description="Keyword scheduler — discovers new companies via Google search")
     parser.add_argument("--keywords", default=str(Path(__file__).resolve().parents[2] / "data" / "search_keywords.csv"))
     parser.add_argument("--runs-log", default=str(Path(__file__).resolve().parents[2] / "data" / "keyword_runs.csv"))
     parser.add_argument("--limit", type=int, default=None, help="Override max keywords per run")
+    parser.add_argument("--max-results", type=int, default=5, help="Google results per keyword")
     parser.add_argument("--dry-run", action="store_true", help="Show selected keywords without executing")
     parser.add_argument("--batch-id", default=None, help="Batch ID for run log")
     args = parser.parse_args()
@@ -187,49 +170,54 @@ def main():
         print("[Scheduler] Dry run — not executing.")
         return
 
-    # Build extraction queue
-    queue_path = Path(__file__).resolve().parents[2] / "reports" / "kw-scheduler-queue.csv"
-    build_extraction_queue(queue, queue_path)
-    print(f"[Scheduler] Wrote queue to {queue_path}")
+    with RunTimer():
+        # Load existing leads for dedup
+        existing_names, existing_domains, _ = load_existing_leads()
+        print(f"[Scheduler] Existing: {len(existing_names)} companies, {len(existing_domains)} domains")
 
-    # Run extraction
-    ext_defaults = get_extraction_defaults(config)
-    exit_code, output_csv = run_extraction(
-        queue_path,
-        output_prefix="kw-scheduler-",
-        limit=ext_defaults.get("limit", 10),
-        follow_links=ext_defaults.get("follow_links", 2),
-        fetcher=ext_defaults.get("fetcher", "static"),
-        skip_existing=ext_defaults.get("skip_existing", True),
-    )
+        # Discover companies for each keyword
+        batch_id = args.batch_id or f"BATCH-KW-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        all_new = []
+        result_counts = {}
 
-    if exit_code != 0:
-        print(f"[Scheduler] Extraction exited with code {exit_code}")
-    else:
-        print(f"[Scheduler] Extraction complete. Results: {output_csv}")
+        for item in queue:
+            kid = item["keyword_id"]
+            query = item["source_query"]
+            print(f"\n[Scheduler] Searching: {kid} — {query}")
 
-    # Parse extraction results for feedback
-    result_counts = _parse_extraction_results(output_csv) if output_csv and output_csv.exists() else {}
+            new_companies = discover_from_keyword(
+                query, args.max_results, existing_names, existing_domains
+            )
+            print(f"  Found {len(new_companies)} new companies")
 
-    # Update tracking with actual results
-    batch_id = args.batch_id or f"BATCH-KW-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-    for item in queue:
-        kid = item["keyword_id"]
-        counts = result_counts.get(kid, {"leads": 0, "contacts": 0})
-        update_keyword_stats(
-            keywords_csv, kid,
-            leads_collected=counts["leads"],
-            contacts_found=counts["contacts"],
-        )
-        append_run_log(
-            runs_csv,
-            batch_id=batch_id,
-            keyword_id=kid,
-            keyword_source_query=item["source_query"],
-            leads_collected=counts["leads"],
-            contacts_found=counts["contacts"],
-        )
+            # Count contacts found
+            contacts = sum(1 for c in new_companies if c.get("email") or c.get("phone"))
+            result_counts[kid] = {"leads": len(new_companies), "contacts": contacts}
+            all_new.extend(new_companies)
 
+            # Update tracking per keyword
+            update_keyword_stats(
+                keywords_csv, kid,
+                leads_collected=len(new_companies),
+                contacts_found=contacts,
+            )
+            append_run_log(
+                runs_csv,
+                batch_id=batch_id,
+                keyword_id=kid,
+                keyword_source_query=query,
+                leads_collected=len(new_companies),
+                contacts_found=contacts,
+            )
+
+        # Save all new companies to leads.csv
+        if all_new:
+            added = save_to_leads(all_new)
+            print(f"\n[Scheduler] Added {added} new leads to data/leads.csv")
+        else:
+            print("\n[Scheduler] No new companies discovered.")
+
+        close_browser()
     print(f"[Scheduler] Updated tracking for {len(queue)} keywords.")
 
 

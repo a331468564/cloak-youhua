@@ -15,6 +15,12 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))  # Add scripts directory to path
 from workflow_checker import checker as workflow_checker
 
+try:
+    from scripts.reports.timer import RunTimer
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts" / "reports"))
+    from timer import RunTimer
+
 
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # Go up from scripts/extraction to project root
@@ -918,57 +924,59 @@ def main():
 
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     prefix = Path(args.output_prefix) if args.output_prefix else REPORTS / f"au-public-contact-candidates-{ts}"
-    rows = []
-    errors = []
-    seen = {}
 
-    # Load existing data to avoid duplicates using workflow checker
-    existing_data = None
-    if args.skip_existing:
-        existing_data = workflow_checker.load_existing_data()
-        print(f"Loaded existing data: {len(existing_data['emails'])} emails, {len(existing_data['phones'])} phones, {len(existing_data['contact_names'])} contact names")
+    with RunTimer():
+        rows = []
+        errors = []
+        seen = {}
 
-    input_rows = read_csv(args.input)
-    if args.skip < 0:
-        raise SystemExit("--skip must be zero or greater")
-    for lead in input_rows[args.skip:args.skip + args.limit]:
-        add_lead_level_candidates(lead, rows, seen, existing_data)
-        url = normalize_url(lead.get("website"))
-        if not url:
-            continue
-        try:
-            links = extract_from_page(lead, url, rows, seen, args.fetcher, existing_data)
-            for link in links[:args.follow_links]:
-                time.sleep(args.delay)
-                try:
-                    extract_from_page(lead, link, rows, seen, args.fetcher, existing_data)
-                except Exception as exc:
-                    errors.append(f"{lead.get('company_name')} ({link}): {exc.__class__.__name__}: {exc}")
-        except Exception as exc:
-            errors.append(f"{lead.get('company_name')} ({url}): {exc.__class__.__name__}: {exc}")
-        time.sleep(args.delay)
+        # Load existing data to avoid duplicates using workflow checker
+        existing_data = None
+        if args.skip_existing:
+            existing_data = workflow_checker.load_existing_data()
+            print(f"Loaded existing data: {len(existing_data['emails'])} emails, {len(existing_data['phones'])} phones, {len(existing_data['contact_names'])} contact names")
 
-    rows = sorted(rows, key=sort_key)
-    fields = [
-        "priority_score",
-        "review_bucket",
-        "queue_rank",
-        "lead_id",
-        "company_name",
-        "source_url",
-        "source_count",
-        "additional_source_urls",
-        "candidate_type",
-        "candidate_value",
-        "candidate_context",
-        "confidence_suggestion",
-        "save_recommendation",
-    ]
-    write_csv(prefix.with_suffix(".csv"), rows, fields)
-    write_markdown(prefix.with_suffix(".md"), rows, errors, args.input, args.skip, args.limit, args.follow_links, args.fetcher)
-    print(f"Wrote {len(rows)} candidates to {prefix.with_suffix('.csv')} and {prefix.with_suffix('.md')}")
-    if errors:
-        print(f"Errors: {len(errors)}")
+        input_rows = read_csv(args.input)
+        if args.skip < 0:
+            raise SystemExit("--skip must be zero or greater")
+        for lead in input_rows[args.skip:args.skip + args.limit]:
+            add_lead_level_candidates(lead, rows, seen, existing_data)
+            url = normalize_url(lead.get("website"))
+            if not url:
+                continue
+            try:
+                links = extract_from_page(lead, url, rows, seen, args.fetcher, existing_data)
+                for link in links[:args.follow_links]:
+                    time.sleep(args.delay)
+                    try:
+                        extract_from_page(lead, link, rows, seen, args.fetcher, existing_data)
+                    except Exception as exc:
+                        errors.append(f"{lead.get('company_name')} ({link}): {exc.__class__.__name__}: {exc}")
+            except Exception as exc:
+                errors.append(f"{lead.get('company_name')} ({url}): {exc.__class__.__name__}: {exc}")
+            time.sleep(args.delay)
+
+        rows = sorted(rows, key=sort_key)
+        fields = [
+            "priority_score",
+            "review_bucket",
+            "queue_rank",
+            "lead_id",
+            "company_name",
+            "source_url",
+            "source_count",
+            "additional_source_urls",
+            "candidate_type",
+            "candidate_value",
+            "candidate_context",
+            "confidence_suggestion",
+            "save_recommendation",
+        ]
+        write_csv(prefix.with_suffix(".csv"), rows, fields)
+        write_markdown(prefix.with_suffix(".md"), rows, errors, args.input, args.skip, args.limit, args.follow_links, args.fetcher)
+        print(f"Wrote {len(rows)} candidates to {prefix.with_suffix('.csv')} and {prefix.with_suffix('.md')}")
+        if errors:
+            print(f"Errors: {len(errors)}")
 
 
 if __name__ == "__main__":

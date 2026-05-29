@@ -24,6 +24,13 @@ from .metrics import log_run_metrics, compute_accuracy_metrics, init_metrics_log
 from .stage2_enrich import run_stage2
 from .stage3_validate import run_stage3
 
+try:
+    from scripts.reports.timer import RunTimer
+except ImportError:
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts" / "reports"))
+    from timer import RunTimer
+
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 SCRIPTS = PROJECT_ROOT / "scripts"
 DATA = PROJECT_ROOT / "data"
@@ -249,75 +256,74 @@ def main():
     print(f"阶段: {args.stage}")
     print()
 
-    # Keyword-driven discovery: run scheduler before Stage 1
-    if args.keyword_driven:
-        print("--- Keyword Scheduler (pre-stage) ---")
-        from scripts.keyword_scheduler.scheduler import main as scheduler_main
-        old_argv = sys.argv
-        sys.argv = ["scheduler", "--limit", str(args.limit or 5)]
-        try:
-            scheduler_main()
-        finally:
-            sys.argv = old_argv
-        print("--- Keyword Scheduler complete ---")
-        print()
-
-    results = {}
-    metrics_all = {}
-
-    # Stage 1
-    if args.stage in ("1", "all"):
-        print("--- Stage 1: KP 发现 ---")
-        candidates_s1, metrics_s1 = run_stage1_via_existing_scripts(leads, config, limit=args.limit)
-        results["stage1_candidates"] = candidates_s1
-        metrics_all["stage1"] = metrics_s1
-        print(f"  结果: {metrics_s1.get('candidates_found', 0)} 个候选人")
-        print()
-
-    # Stage 2
-    if args.stage in ("2", "all"):
-        print("--- Stage 2: 直联富化 ---")
-        # 找出需要富化的线索
-        need_enrichment = find_leads_needing_kp(leads)[:args.limit]
-        if not need_enrichment:
-            print("  没有需要富化的线索（已有 KP + 缺直联）。")
-            metrics_all["stage2"] = {"skipped": True, "reason": "no_candidates"}
-        else:
-            print(f"  找到 {len(need_enrichment)} 条需富化线索")
-            enriched, metrics_s2 = run_stage2(need_enrichment, config)
-            results["stage2_enriched"] = enriched
-            metrics_all["stage2"] = metrics_s2
-            print(f"  富化: {metrics_s2.get('enriched', 0)} 条")
-            print(f"  直联: {metrics_s2.get('direct_contacts_found', 0)} 条")
+    with RunTimer():
+        # Keyword-driven discovery: run scheduler before Stage 1
+        if args.keyword_driven:
+            print("--- Keyword Scheduler (pre-stage) ---")
+            from scripts.keyword_scheduler.scheduler import main as scheduler_main
+            old_argv = sys.argv
+            sys.argv = ["scheduler", "--limit", str(args.limit or 5)]
+            try:
+                scheduler_main()
+            finally:
+                sys.argv = old_argv
+            print("--- Keyword Scheduler complete ---")
             print()
 
-    # Stage 3
-    if args.stage in ("3", "all"):
-        print("--- Stage 3: 验证门控 ---")
-        # 合并 Stage 1 和 Stage 2 的候选人
-        s1_candidates = results.get("stage1_candidates", [])
-        s2_candidates = results.get("stage2_enriched", [])
-        all_candidates = s2_candidates + [
-            c for c in s1_candidates
-            if not any(c2.get("source_url") == c.get("source_url") for c2 in s2_candidates)
-        ]
+        results = {}
+        metrics_all = {}
 
-        if not all_candidates:
-            print("  没有候选人需要验证。")
-            results["stage3"] = {"metrics": {"total_candidates": 0}}
-        else:
-            stage3_results = run_stage3(all_candidates, config)
-            results["stage3"] = stage3_results
-            s3m = stage3_results.get("metrics", {})
-            print(f"  自动批准: {s3m.get('auto_approved', 0)}")
-            print(f"  自动拒绝: {s3m.get('auto_rejected', 0)}")
-            print(f"  人工审核: {s3m.get('human_review', 0)}")
+        # Stage 1
+        if args.stage in ("1", "all"):
+            print("--- Stage 1: KP 发现 ---")
+            candidates_s1, metrics_s1 = run_stage1_via_existing_scripts(leads, config, limit=args.limit)
+            results["stage1_candidates"] = candidates_s1
+            metrics_all["stage1"] = metrics_s1
+            print(f"  结果: {metrics_s1.get('candidates_found', 0)} 个候选人")
             print()
 
-    # 写报告
-    report_path = prefix.with_suffix(".md")
-    write_report(report_path, results, metrics_all)
-    print(f"报告: {report_path}")
+        # Stage 2
+        if args.stage in ("2", "all"):
+            print("--- Stage 2: 直联富化 ---")
+            need_enrichment = find_leads_needing_kp(leads)[:args.limit]
+            if not need_enrichment:
+                print("  没有需要富化的线索（已有 KP + 缺直联）。")
+                metrics_all["stage2"] = {"skipped": True, "reason": "no_candidates"}
+            else:
+                print(f"  找到 {len(need_enrichment)} 条需富化线索")
+                enriched, metrics_s2 = run_stage2(need_enrichment, config)
+                results["stage2_enriched"] = enriched
+                metrics_all["stage2"] = metrics_s2
+                print(f"  富化: {metrics_s2.get('enriched', 0)} 条")
+                print(f"  直联: {metrics_s2.get('direct_contacts_found', 0)} 条")
+                print()
+
+        # Stage 3
+        if args.stage in ("3", "all"):
+            print("--- Stage 3: 验证门控 ---")
+            s1_candidates = results.get("stage1_candidates", [])
+            s2_candidates = results.get("stage2_enriched", [])
+            all_candidates = s2_candidates + [
+                c for c in s1_candidates
+                if not any(c2.get("source_url") == c.get("source_url") for c2 in s2_candidates)
+            ]
+
+            if not all_candidates:
+                print("  没有候选人需要验证。")
+                results["stage3"] = {"metrics": {"total_candidates": 0}}
+            else:
+                stage3_results = run_stage3(all_candidates, config)
+                results["stage3"] = stage3_results
+                s3m = stage3_results.get("metrics", {})
+                print(f"  自动批准: {s3m.get('auto_approved', 0)}")
+                print(f"  自动拒绝: {s3m.get('auto_rejected', 0)}")
+                print(f"  人工审核: {s3m.get('human_review', 0)}")
+                print()
+
+        # 写报告
+        report_path = prefix.with_suffix(".md")
+        write_report(report_path, results, metrics_all)
+        print(f"报告: {report_path}")
 
     print("\n完成。")
 
