@@ -194,3 +194,37 @@ See the "Log Entry Locations" section above for full details.
 **Issues / limits:**
 - 已运行的 VS Code/Claude Code 进程可能仍缓存旧环境，必须重启窗口或退出 VS Code 后重新打开。
 - `ANTHROPIC_API_KEY` 仍保留，因为用户验证可工作的终端命令未清除此项；如后续官方登录仍异常，再单独移除或轮换。
+
+## 2026-05-29 - 报告系统 V2 重构
+
+**User request:** 按设计文档 `docs/superpowers/specs/2026-05-29-run-report-redesign.md` 实施报告系统重构，A区/B区报告分离，自动计时，汇总仪表盘。
+
+**Handling plan:** 分 5 步实施：timer.py → generate_run_report.py 改造 → generate_keyword_report.py 新建 → generate_summary.py 新建 → 集成测试。后续修复了格式问题（时间行、跑前/跑后快照）。
+
+**Files changed:**
+- `scripts/reports/timer.py` — 新建，RunTimer context manager，记录跑前/跑后 lead stats + 计时
+- `scripts/reports/generate_run_report.py` — 改造，A-Run 前缀、字段说明表、--auto-timing、跑前/跑后变化对比
+- `scripts/reports/generate_keyword_report.py` — 新建，B-Run 关键词报告
+- `scripts/reports/generate_summary.py` — 新建，汇总仪表盘
+- `scripts/kp_pipeline/run_pipeline.py` — 集成 RunTimer
+- `scripts/keyword_scheduler/scheduler.py` — 集成 RunTimer
+- `scripts/extraction/extract_public_contact_candidates.py` — 集成 RunTimer
+- `.claude/rules/extraction-rules.md` Rule 10 — 更新报告规则
+- `.claude/hooks/post_run_progress_check.py` — 触发列表加入新脚本
+- `AGENTS.md` / `CLAUDE.md` / `.claude/skills/kp-discovery/SKILL.md` — 更新命令和文档规则
+- `E:\自动跑表单的成果和情况\run-log.md` — 更新头部格式
+
+**Result:** 报告系统 V2 完成。管线脚本跑完自动写 timing.json（含跑前/跑后快照），报告脚本 `--auto-timing` 自动读取并输出完整变化对比。
+
+**Achievements:**
+- A区/B区报告分离（A-Run / B-Run）
+- 自动计时：RunTimer 记录 start/end/duration + lead stats before/after
+- 跑前/跑后变化对比：覆盖率、AU 无联系、有邮箱/电话/表单等指标自动计算差值
+- 汇总仪表盘：解析 run-log + keyword-log 生成最新状态 + 趋势
+
+**Issues / limits:**
+- 旧 Run 1-21 条目无跑前数据（历史遗留，无法补录）
+- `--force` 删除旧条目的正则匹配已修复，但旧格式条目仍需手动清理
+- `post_run_progress_check.py` hook 会在 git commit 涉及报告脚本时误触发（false positive）
+
+**Follow-up:** 下次管线跑完后验证完整流程：RunTimer 写 timing.json → generate_run_report.py --auto-timing 生成报告 → 检查跑前/跑后数据是否正确。
