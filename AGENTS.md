@@ -1,3 +1,10 @@
+<!-- DOC_META
+lifecycle:  long-term
+audience:   both
+write_when: 操作规则、数据安全、阻塞处理变更时更新
+read_when:  每次会话启动时首先读取
+delete_when: 不删除
+-->
 # AGENTS.md
 
 ## Project Purpose
