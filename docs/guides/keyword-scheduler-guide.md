@@ -362,3 +362,7 @@ python -m scripts.keyword_scheduler.scheduler --dry-run
 # 检查无临时文件
 git status --short | grep -E "(_tmp_|temp_|debug_)"
 ```
+
+---
+
+> 详细过滤器规则（5 层过滤、质量标准、停止条件、批次验证、健康指标）见 `docs/workflows/keyword-discovery-workflow.md`。
