@@ -1,29 +1,53 @@
 """
-表单收集 Run 报告生成器（合并版）
-==================================
+表单收集 Run 报告生成器（V2）
+==============================
 每轮跑完后由 agent 调用，追加到单一报告文件。
 输出：E:\自动跑表单的成果和情况\run-log.md
 
 用法：
   python scripts/reports/generate_run_report.py --input run_data.json --auto-stats
-  python scripts/reports/generate_run_report.py --run 15 --title "表单收集" --task "提取联系路由" ...
+  python scripts/reports/generate_run_report.py --run 15 --title "表单收集" --task "提取联系路由" --auto-timing
 """
 
 import argparse
 import csv
 import json
+import re
 from datetime import datetime
 from pathlib import Path
+
+try:
+    from scripts.reports.timer import RunTimer
+except ImportError:
+    from timer import RunTimer
 
 REPORT_DIR = Path(r"E:\自动跑表单的成果和情况")
 REPORT_FILE = REPORT_DIR / "run-log.md"
 DATA_DIR = Path("data")
 
-HEADER = """# 运行记录
+FIELD_TABLE = """\
+> **字段说明**
 
-> 表单收集、KP 富化、关键词发现等任务的每轮运行汇总。
+| 字段 | 含义 | 计算方式 |
+|------|------|----------|
+| 公司数 | leads.csv 总行数 | csv 行计数 |
+| 联系人数 | contacts.csv 总行数 | csv 行计数 |
+| 覆盖率 | 有至少一种联系信息的公司比例 | 有联系的公司数 / 总公司数 × 100% |
+| AU 无联系 | 澳洲公司中无任何联系信息的数量 | country=Australia 且无邮箱/电话/表单 |
+| 有邮箱 | 有公司邮箱或人名邮箱的公司数 | company_email 或 email_address 非空 |
+| 有电话 | 有公司电话或手机的公司数 | company_phone 或 phone_number 非空 |
+| 有表单 | 有联系表单 URL 的公司数 | company_contact_form_url 非空 |
+| 直联率 | 有人名邮箱+手机的联系人比例 | (人名邮箱+手机) / 联系人数 × 100% |
+| 批次数 | 本次 extraction 跑了几批 | --limit 参数值 |
+| 候选数 | extraction 产出的原始候选总数 | 报告 CSV 行数 |
+"""
+
+HEADER = f"""# A-Run 运行记录
+
+> A区（表单收集、KP 富化）每轮运行汇总。
 > 详细数据见 `docs/current-progress.md`。
 
+{FIELD_TABLE}
 """
 
 
@@ -55,8 +79,7 @@ def next_run_number():
     if not REPORT_FILE.exists():
         return 1
     text = REPORT_FILE.read_text(encoding="utf-8")
-    import re
-    nums = [int(m) for m in re.findall(r"^## Run (\d+)", text, re.MULTILINE)]
+    nums = [int(m) for m in re.findall(r"^## A-Run (\d+)", text, re.MULTILINE)]
     return max(nums) + 1 if nums else 1
 
 
@@ -80,8 +103,7 @@ def diff_str(before, after):
 def generate_section(data: dict) -> str:
     """生成单个 run 的 section（不含文件 header）。"""
     run = data.get("run", "?")
-    title = data.get("title", "表单收集批次")
-    ts = data.get("timestamp", datetime.now().strftime("%Y-%m-%d %H:%M"))
+    ts = data.get("timestamp", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     duration = data.get("duration", "未知")
     batches = data.get("batches", 0)
     candidates = data.get("candidates", 0)
@@ -100,7 +122,7 @@ def generate_section(data: dict) -> str:
     ai_tool_calls = data.get("ai_tool_calls")
 
     lines = []
-    lines.append(f"## Run {run}")
+    lines.append(f"## A-Run {run}")
     lines.append("")
     meta = f"> {ts}  |  耗时 {duration}  |  {batches} 批 / {candidates} 候选"
     if ai_turns is not None and ai_tool_calls is not None:
@@ -121,8 +143,8 @@ def generate_section(data: dict) -> str:
     else:
         cov_diff = "—"
 
-    lines.append(f"| 指标 | 跑前 | 跑后 | 变化 |")
-    lines.append(f"|------|------|------|------|")
+    lines.append("| 指标 | 跑前 | 跑后 | 变化 |")
+    lines.append("|------|------|------|------|")
     lines.append(f"| 公司数 | — | {total} | — |")
     lines.append(f"| 联系人数 | — | {leads_after.get('total_contacts', '?')} | — |")
     lines.append(f"| 覆盖率 | {pct(cov_before, total)} | {pct(cov_after, total)} | {cov_diff} |")
@@ -132,20 +154,17 @@ def generate_section(data: dict) -> str:
     lines.append(f"| 有表单 | {leads_before.get('has_form', '?')} | {leads_after.get('has_form', '?')} | {diff_str(leads_before.get('has_form', '?'), leads_after.get('has_form', '?'))} |")
     lines.append("")
 
-    # 亮点
     if highlights:
         for item in highlights:
             lines.append(f"- {item}")
         lines.append("")
 
-    # 问题
     if issues:
         lines.append("**问题：**")
         for item in issues:
             lines.append(f"- {item}")
         lines.append("")
 
-    # 系统优化
     if optimizations:
         lines.append("**系统优化：**")
         for item in optimizations:
@@ -155,27 +174,36 @@ def generate_section(data: dict) -> str:
     return "\n".join(lines)
 
 
+def format_duration(seconds: float) -> str:
+    """Format duration_seconds into human-readable string."""
+    if seconds < 60:
+        return f"{seconds:.0f}s"
+    m, s = divmod(int(seconds), 60)
+    if m < 60:
+        return f"{m}m{s:02d}s"
+    h, m = divmod(m, 60)
+    return f"{h}h{m:02d}m{s:02d}s"
+
+
 def append_to_log(section: str, run_num):
     """追加 section 到合并文件。"""
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     if REPORT_FILE.exists():
         existing = REPORT_FILE.read_text(encoding="utf-8")
-        # 检查是否已有该 run
-        if f"## Run {run_num} —" in existing:
-            print(f"Run {run_num} already exists in {REPORT_FILE}, skipping")
+        if f"## A-Run {run_num}" in existing:
+            print(f"A-Run {run_num} already exists in {REPORT_FILE}, skipping")
             return
-        # 追加
         content = existing.rstrip() + "\n\n---\n\n" + section + "\n"
     else:
         content = HEADER + section + "\n"
 
     REPORT_FILE.write_text(content, encoding="utf-8")
-    print(f"Run {run_num} appended to {REPORT_FILE}")
+    print(f"A-Run {run_num} appended to {REPORT_FILE}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="生成表单收集 Run 报告")
+    parser = argparse.ArgumentParser(description="生成表单收集 A-Run 报告")
     parser.add_argument("--input", help="JSON 输入文件路径")
     parser.add_argument("--run", type=int, help="Run 编号（不指定则自动递增）")
     parser.add_argument("--title", default="表单收集批次")
@@ -192,6 +220,7 @@ def main():
     parser.add_argument("--ai-turns", type=int)
     parser.add_argument("--ai-tool-calls", type=int)
     parser.add_argument("--auto-stats", action="store_true")
+    parser.add_argument("--auto-timing", action="store_true", help="从 timing.json 自动读取时间")
     parser.add_argument("--force", action="store_true", help="强制覆盖已有 run")
     args = parser.parse_args()
 
@@ -203,7 +232,7 @@ def main():
             "run": args.run or next_run_number(),
             "title": args.title,
             "task": args.task,
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "duration": args.duration,
             "batches": args.batches,
             "candidates": args.candidates,
@@ -220,10 +249,18 @@ def main():
         if args.au_no_contact_after is not None:
             data["au_no_contact_after"] = args.au_no_contact_after
 
+    # Auto-timing from timing.json
+    if args.auto_timing:
+        timing = RunTimer.load()
+        if timing:
+            data["timestamp"] = timing["start"]
+            data["duration"] = format_duration(timing["duration_seconds"])
+        else:
+            print("Warning: timing.json not found, using current time")
+
     if args.auto_stats:
         stats = load_lead_stats()
         data["leads_after"] = stats
-        # 也加载联系人统计
         contacts_path = DATA_DIR / "contacts.csv"
         if contacts_path.exists():
             with open(contacts_path, "r", encoding="utf-8-sig") as f:
@@ -236,10 +273,8 @@ def main():
     section = generate_section(data)
 
     if args.force and REPORT_FILE.exists():
-        # 删除已有该 run 的 section
         text = REPORT_FILE.read_text(encoding="utf-8")
-        import re
-        pattern = rf"\n---\n\n## Run {run_num} —.*?(?=\n---\n\n## Run \d+|$)"
+        pattern = rf"\n---\n\n## A-Run {run_num}.*?(?=\n---\n\n## A-Run \d+|$)"
         text = re.sub(pattern, "", text, flags=re.DOTALL)
         REPORT_FILE.write_text(text.rstrip() + "\n", encoding="utf-8")
 
