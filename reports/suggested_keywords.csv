@@ -1,0 +1,46 @@
+﻿keyword_pattern,template_id,generation_source,risk_level,priority_hint,score,customer_type,role,geo,intent,org_form,source_modifier,trigger_event,review_status
+hotel group Australia contact,T1,generator,low,high,0.5,hotel group,,Australia,contact,,,,approved
+hotel F&B manager Australia contact,T1,generator,low,high,0.5,hotel F&B manager,,Australia,contact,,,,approved
+pub group Australia contact,T1,generator,low,high,0.5,pub group,,Australia,contact,,,,approved
+hotel group owner Australia,T2,generator,medium,high,0.5,hotel group,owner,Australia,,,,,approved
+hotel F&B manager owner Australia,T2,generator,medium,high,0.5,hotel F&B manager,owner,Australia,,,,,approved
+pub group owner Australia,T2,generator,medium,high,0.5,pub group,owner,Australia,,,,,approved
+group restaurant owner head office Australia,T3,generator,low,medium,0.5,restaurant owner,,Australia,,group,,,approved
+group hotel group head office Australia,T3,generator,low,medium,0.5,hotel group,,Australia,,group,,,approved
+group hotel F&B manager head office Australia,T3,generator,low,medium,0.5,hotel F&B manager,,Australia,,group,,,approved
+"""owner"" ""restaurant group"" Australia",T4,generator,medium,high,0.5,restaurant group,owner,Australia,,,,,approved
+"""owner"" ""restaurant owner"" Australia",T4,generator,medium,high,0.5,restaurant owner,owner,Australia,,,,,approved
+"""owner"" ""hotel group"" Australia",T4,generator,medium,high,0.5,hotel group,owner,Australia,,,,,approved
+site:.com.au restaurant group contact Australia,T5,generator,medium,medium,0.45,restaurant group,,Australia,contact,,site:.com.au,,approved
+site:.com.au restaurant owner contact Australia,T5,generator,medium,medium,0.45,restaurant owner,,Australia,contact,,site:.com.au,,approved
+site:.com.au hotel group contact Australia,T5,generator,medium,medium,0.45,hotel group,,Australia,contact,,site:.com.au,,approved
+filetype:pdf restaurant group procurement Australia,T6,generator,low,low,0.45,restaurant group,,Australia,,,,,approved
+filetype:pdf restaurant owner procurement Australia,T6,generator,low,low,0.45,restaurant owner,,Australia,,,,,approved
+filetype:pdf hotel group procurement Australia,T6,generator,low,low,0.45,hotel group,,Australia,,,,,approved
+"""new opening"" restaurant group Australia",T7,generator,medium,high,0.45,restaurant group,,Australia,,,,new opening,approved
+"""new opening"" restaurant owner Australia",T7,generator,medium,high,0.45,restaurant owner,,Australia,,,,new opening,approved
+"""new opening"" hotel group Australia",T7,generator,medium,high,0.45,hotel group,,Australia,,,,new opening,approved
+restaurant group Australia new opening contact,T8,generator,medium,medium,0.45,restaurant group,,Australia,contact,,,new opening,approved
+restaurant owner Australia new opening contact,T8,generator,medium,medium,0.45,restaurant owner,,Australia,contact,,,new opening,approved
+hotel group Australia new opening contact,T8,generator,medium,medium,0.45,hotel group,,Australia,contact,,,new opening,approved
+owner restaurant group Australia email OR phone OR contact,T9,generator,medium,high,0.45,restaurant group,owner,Australia,,,,,approved
+owner restaurant owner Australia email OR phone OR contact,T9,generator,medium,high,0.45,restaurant owner,owner,Australia,,,,,approved
+owner hotel group Australia email OR phone OR contact,T9,generator,medium,high,0.45,hotel group,owner,Australia,,,,,approved
+"restaurant group Australia ""contact"" -jobs -careers",T10,generator,low,medium,0.35,restaurant group,,Australia,contact,,,,rejected
+"restaurant owner Australia ""contact"" -jobs -careers",T10,generator,low,medium,0.35,restaurant owner,,Australia,contact,,,,rejected
+"hotel group Australia ""contact"" -jobs -careers",T10,generator,low,medium,0.35,hotel group,,Australia,contact,,,,rejected
+restaurant group Australia supplier contact,T11,generator,low,high,0.35,restaurant group,,Australia,,,,,rejected
+restaurant owner Australia supplier contact,T11,generator,low,high,0.35,restaurant owner,,Australia,,,,,rejected
+hotel group Australia supplier contact,T11,generator,low,high,0.35,hotel group,,Australia,,,,,rejected
+restaurant group Australia procurement team,T12,generator,low,high,0.3,restaurant group,,Australia,,,,,rejected
+restaurant owner Australia procurement team,T12,generator,low,high,0.3,restaurant owner,,Australia,,,,,rejected
+hotel group Australia procurement team,T12,generator,low,high,0.3,hotel group,,Australia,,,,,rejected
+restaurant group Australia purchasing department email,T13,generator,low,high,0.3,restaurant group,,Australia,,,,,rejected
+restaurant owner Australia purchasing department email,T13,generator,low,high,0.3,restaurant owner,,Australia,,,,,rejected
+hotel group Australia purchasing department email,T13,generator,low,high,0.3,hotel group,,Australia,,,,,rejected
+restaurant group Australia new opening supplier needed,T14,generator,medium,high,0.25,restaurant group,,Australia,,,,new opening,rejected
+restaurant owner Australia new opening supplier needed,T14,generator,medium,high,0.25,restaurant owner,,Australia,,,,new opening,rejected
+hotel group Australia new opening supplier needed,T14,generator,medium,high,0.25,hotel group,,Australia,,,,new opening,rejected
+site:.com.au restaurant group Australia owner,T15,generator,high,medium,0.2,restaurant group,owner,Australia,,,site:.com.au,,rejected
+site:.com.au restaurant owner Australia owner,T15,generator,high,medium,0.2,restaurant owner,owner,Australia,,,site:.com.au,,rejected
+site:.com.au hotel group Australia owner,T15,generator,high,medium,0.2,hotel group,owner,Australia,,,site:.com.au,,rejected

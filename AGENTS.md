@@ -1,10 +1,3 @@
-<!-- DOC_META
-lifecycle:  long-term
-audience:   both
-write_when: 操作规则、数据安全、阻塞处理变更时更新
-read_when:  每次会话启动时首先读取
-delete_when: 不删除
--->
 # AGENTS.md
 
 ## Project Purpose
@@ -23,7 +16,6 @@ For broad, unclear, configuration, tooling, or workflow tasks, read these files 
 - `docs/guides/codex-agent-usage.md`
 - `docs/workflows/lead-enrichment-workflow.md`
 - `docs/workflows/lead-collection-workflow.md`
-- `docs/workflows/keyword-discovery-workflow.md`
 - `docs/architecture/lead-table-fields.md`
 
 For narrow tasks, read `docs/guides/cli-operating-rules.md` first, then follow its task-specific context list. For Codex hook, agent, config, or startup errors, also read `docs/guides/codex-agent-usage.md` before editing or troubleshooting.
@@ -98,7 +90,7 @@ Capability check:
 Python compile check:
 
 ```powershell
-.\.venv\Scripts\python -m py_compile scripts\extraction\build_form_kp_candidate_queue.py scripts\extraction\extract_public_contact_candidates.py scripts\extraction\generate_kp_form_queries.py scripts\utils\check_capability_inventory.py
+.\.venv\Scripts\python -m py_compile scripts\extraction\build_form_kp_candidate_queue.py scripts\extraction\extract_public_contact_candidates.py scripts\utils\check_capability_inventory.py
 ```
 
 Small public candidate extraction test:
@@ -116,17 +108,8 @@ Dashboard:
 Run 报告生成（每轮任务跑完后执行）：
 
 ```powershell
-# A区（表单收集、KP 富化）
-python scripts/reports/generate_run_report.py --auto-stats --auto-timing --task "任务描述"
-
-# B区（关键词发现）
-python scripts/reports/generate_keyword_report.py --auto-timing --task "任务描述"
-
-# 汇总仪表盘
-python scripts/reports/generate_summary.py
+.\.venv\Scripts\python scripts\reports\generate_run_report.py --input run_data.json --auto-stats
 ```
-
-自动计时：用 `scripts/reports/timer.py` 的 `RunTimer` 包装管线脚本，报告脚本通过 `--auto-timing` 自动读取时间。
 
 ## Documentation Rules
 
@@ -134,9 +117,8 @@ python scripts/reports/generate_summary.py
 - `docs/current-progress.md`: only account/session handoff, context-risk checkpoint, meaningful completed stage, major data/tool milestone, or resume-critical next plan.
 - `docs/workflows/lead-enrichment-workflow.md`: contact/KP confidence, LinkedIn boundaries, extraction helper behavior.
 - `docs/workflows/lead-collection-workflow.md`: source/tool access and collection scope.
-- `docs/workflows/keyword-discovery-workflow.md`: keyword discovery flow, quality rules, stopping rules, batch validation, health metrics.
 - `docs/guides/cli-operating-rules.md`: agent behavior, checkpoint rules, project-level boundaries.
-- **Run 报告（每轮跑完必须生成）：** 表单收集、KP 富化用 `generate_run_report.py`（A-Run），关键词发现用 `generate_keyword_report.py`（B-Run），汇总用 `generate_summary.py`。输出到 `E:\自动跑表单的成果和情况\`。用 `--auto-timing` 自动读取计时数据。报告仅用于人类观察，agent 不需要回读。
+- **Run 报告（每轮跑完必须生成）：** 表单收集、KP 富化、关键词发现等任务跑完后，用 `scripts/reports/generate_run_report.py` 生成人类可读报告，输出到 `E:\自动跑表单的成果和情况\`。用 `--title` 区分任务类型。报告仅用于人类观察，agent 不需要回读。
 - **CODEx 标记治理：** 标记按大类划分（如 `keyword_strategy`、`enrichment_stopping_rules`），不要拆成细粒度子标记。新增标记前必须确认：(1) 现有标记确实无法覆盖该内容；(2) 该环节是工作流中缺失的步骤。A 区和 B 区的标记名不重复。禁止为了"规范化"或"细分"而拆分已有标记。
 
 ## Safety Boundaries

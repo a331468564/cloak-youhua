@@ -174,3 +174,23 @@ See the "Log Entry Locations" section above for full details.
 - 等谷歌 429 恢复后重跑验证有效率
 - 考虑为关键词发现脚本生成专用短关键词（区别于调度器的长关键词）
 
+## 2026-05-29 - Claude Code IDE API 400 修复
+
+**User request:** 排查项目 IDE 里的 Claude Code 报错 `API Error: 400 messages[1].role must be either 'user' or 'assistant', but got 'system'`，终端手动清理 `ANTHROPIC_BASE_URL` / `ANTHROPIC_AUTH_TOKEN` / `ANTHROPIC_MODEL` 后可正常输出，但 IDE Claude Code 仍不可用。
+
+**Handling plan:** 对比终端和 IDE 的环境变量来源，检查 VS Code 用户设置、项目 `.vscode/settings.json`、用户级 `.claude/settings.json` 和 Windows HKCU 环境变量。
+
+**Files changed:**
+- `C:\Users\Administrator\AppData\Roaming\Code\User\settings.json` - 从 `claudeCode.environmentVariables` 移除第三方 `ANTHROPIC_*` 中转和模型覆盖，仅保留非必要流量/遥测关闭项。
+- `C:\Users\Administrator\.claude\settings.json` - 清空用户级 `env` 中的默认 mimo 模型覆盖。
+- Windows HKCU Environment - 移除 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN`、`ANTHROPIC_MODEL` 及默认模型覆盖项。
+
+**Result:** 配置回读验证通过；VS Code 用户设置和 Claude 用户设置已不包含第三方 Anthropic 覆盖项，HKCU 仅剩 `ANTHROPIC_API_KEY`。需要重启 VS Code / Reload Window 后 IDE Claude Code 才会使用新环境。
+
+**Achievements:**
+- 定位根因是 IDE panel 继承了持久化中转配置，不是项目 `.claude` hook 脚本语法问题。
+- 修复了 VS Code Claude Code 插件层和 Windows 用户环境变量层的冲突配置。
+
+**Issues / limits:**
+- 已运行的 VS Code/Claude Code 进程可能仍缓存旧环境，必须重启窗口或退出 VS Code 后重新打开。
+- `ANTHROPIC_API_KEY` 仍保留，因为用户验证可工作的终端命令未清除此项；如后续官方登录仍异常，再单独移除或轮换。

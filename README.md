@@ -55,8 +55,6 @@ project-folder/
       extract_public_contact_candidates.py
       build_form_kp_candidate_queue.py
       generate_kp_search_tasks.py
-      generate_kp_form_queries.py
-      build_au_review_queue.py
     analysis/
       build_boss_report.py
     utils/
@@ -94,10 +92,8 @@ project-folder/
 
 - `dashboard/index.html`, `dashboard/app.js`, `dashboard/style.css`: Manual fill dashboard for reviewing country-level lead gaps, editing company/contact fields, and exporting canonical CSV files.
 - `scripts/utils/start_dashboard.ps1`: Starts the local dashboard server so the browser can read default CSV files.
-- `scripts/extraction/build_au_review_queue.py`: Auxiliary historical Australia review queue; this segmentation path is paused unless explicitly requested.
 - `scripts/extraction/build_form_kp_candidate_queue.py`: Builds the current Australia form/KP queue from existing CSV data and marks missing form, KP, or direct-contact gaps.
 - `scripts/extraction/generate_kp_search_tasks.py`: Builds direct KP search-task queues from existing leads, prioritizing Australia restaurant/hotel final-customer candidates, known KP names, official-site queries, PDF/news queries, and LinkedIn manual-review entry points.
-- `scripts/extraction/generate_kp_form_queries.py`: Generates KP form queries for lead enrichment.
 - `scripts/extraction/extract_public_contact_candidates.py`: Uses Scrapling static, dynamic, or stealth fetching to extract candidate emails, phones, contact/team links, LinkedIn URLs, and role snippets from queued official websites. Supports one-level same-domain link follow-up and outputs candidate evidence for CSV registration with confidence/status notes.
 - `scripts/analysis/build_boss_report.py`: Builds boss-level summary reports from lead data.
 - `scripts/utils/check_capability_inventory.py`: Checks whether the current computer has the project capabilities needed for the current workflow and suggests setup commands when something is missing.

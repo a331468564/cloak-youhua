@@ -1,0 +1,19 @@
+[
+  {
+    "run_id": "S1-20260529-145033",
+    "stage": "stage1_discover",
+    "timestamp": "2026-05-29T14:50:45.965753",
+    "candidates_found": 7,
+    "leads_processed": 10
+  },
+  {
+    "run_id": "S3-20260529-145045",
+    "stage": "stage3_validate",
+    "timestamp": "2026-05-29T14:50:45.966377",
+    "total_candidates": 7,
+    "auto_approved": 0,
+    "auto_rejected": 7,
+    "human_review": 0,
+    "auto_approve_rate": 0.0
+  }
+]

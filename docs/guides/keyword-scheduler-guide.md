@@ -37,7 +37,7 @@ data/search_keywords.csv     ← 关键词库（人工维护 + 自动导入）
          │
          ▼
 ┌─────────────────────┐
-│  executor.py        │  调用 extract_public_contact_candidates.py
+│  keyword_discovery.py        │  调用 extract_public_contact_candidates.py
 │  → run_extraction   │  执行搜索，产出报告 CSV
 └────────┬────────────┘
          │
@@ -350,7 +350,7 @@ python scripts/extraction/keyword_discovery.py --limit 10 --max-results 8
 
 ```bash
 # 运行所有单元测试
-pytest tests/test_scheduler.py tests/test_tracker.py tests/test_executor.py \
+pytest tests/test_scheduler.py tests/test_tracker.py tests/test_keyword_discovery.py \
        tests/test_generator.py tests/test_market_intel.py tests/test_import_suggestions.py -v
 
 # 验证生成器
@@ -362,7 +362,3 @@ python -m scripts.keyword_scheduler.scheduler --dry-run
 # 检查无临时文件
 git status --short | grep -E "(_tmp_|temp_|debug_)"
 ```
-
----
-
-> 详细过滤器规则（5 层过滤、质量标准、停止条件、批次验证、健康指标）见 `docs/workflows/keyword-discovery-workflow.md`。
