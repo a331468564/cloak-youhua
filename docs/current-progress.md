@@ -8,7 +8,7 @@ delete_when: 新会话读取后可覆盖
 # Current Progress
 
 <!-- CODEx_START: current_progress -->
-*Updated: 2026-05-28 (V3 初始化，数据已清空)*
+*Updated: 2026-05-29 (V3 Step 1+2 完成 — B区架构整改 + CLAUDE.md 精简)*
 
 ## 更新规则
 
@@ -220,6 +220,31 @@ python -m scripts.keyword_scheduler.scheduler --dry-run
 python -m scripts.keyword_scheduler.scheduler --limit 10
 python -m scripts.keyword_scheduler.generator --dry-run --max 50
 ```
+
+## V3 结构建设进度
+
+**Step 1 (B区架构整改):** ✅ 完成
+- ✅ `.claude/rules/data-safety.md` — 79 行，`paths: data/**`
+- ✅ `.claude/rules/extraction-rules.md` — 146 行，`paths: scripts/extraction/**, reports/**`
+- ✅ `.claude/rules/tool-config.md` — 65 行，`paths: scripts/**`
+- ✅ `docs/workflows/keyword-discovery-workflow.md` — 218 行，6 CODEx 区块
+- ✅ Skills: kp-discovery (138行) + keyword-discovery (148行) + spec-checker (195行)
+
+**Step 2 (CLAUDE.md 精简):** ✅ 完成
+- ✅ CLAUDE.md 360→84 行（含命令速查），前 20 行放数据安全+阻塞查表
+- ✅ AGENTS.md 已添加 DOC_META
+- ✅ spec-checker 验证通过
+
+**V3 vs V2 结构差异：**
+
+| 项目 | V2 | V3 |
+|------|----|----|
+| CLAUDE.md | 360 行，Rule 1-10 全部内联 | 84 行，规则迁移到 `.claude/rules/` |
+| .claude/rules/ | 不存在 | 3 个文件（paths 按需加载） |
+| keyword-discovery-workflow.md | 不存在 | 218 行，6 CODEx 区块 |
+| Skills | 2 个 (kp/keyword) | 3 个 (+spec-checker) |
+| 数据 | 340 leads / 168 contacts / 624 keywords | 全部 0 行 |
+| Git | 有历史 | 5 commits |
 
 ## 守则（共享）
 
