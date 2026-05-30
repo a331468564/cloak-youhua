@@ -8,7 +8,7 @@ delete_when: 新会话读取后可覆盖
 # Current Progress
 
 <!-- CODEx_START: current_progress -->
-*Updated: 2026-05-29 (V3 数据同步完成 — 从 V2 导入 340 线索 + 168 联系人 + 624 关键词)*
+*Updated: 2026-05-30 (Run 25 完成 — Stage 2 直联富化，1 新直联，直联 74→75，边际收益持续下降)*
 
 ## 更新规则
 
@@ -40,8 +40,8 @@ delete_when: 新会话读取后可覆盖
 
 | 文件 | 行数 | 说明 |
 |------|------|------|
-| `data/leads.csv` | 340 | 主线索表，53 字段（V3 从 V2 同步） |
-| `data/contacts.csv` | 168 | 联系人表，21 字段（V3 从 V2 同步） |
+| `data/leads.csv` | 348 | 主线索表（Run 24 含 AU- 前缀新线索） |
+| `data/contacts.csv` | 168 | 联系人表（Run 24 Stage 2 更新 3 条直联） |
 | `data/search_keywords.csv` | 624 | 搜索关键词定义，29 字段（V3 从 V2 同步） |
 | `data/keyword_runs.csv` | 58 | 关键词运行记录，21 字段（V3 从 V2 同步） |
 
@@ -52,16 +52,16 @@ delete_when: 新会话读取后可覆盖
 
 > **定位：** 已知公司名 → 找联系人。读取 `docs/workflows/lead-collection-workflow.md`。
 
-**AU 线索富化进度（334 条线索，~220 条 AU）：**
+**AU 线索富化进度（344 条线索，~225 条 AU）：**
 
 > **注意：** Run 19 新增 57 家 AU 公司（酒店/餐饮/承办），待 A 区表单收集补充联系信息。
 
 | 指标 | 数量 | 说明 |
 |------|------|------|
-| 有 KP 姓名 | 78 | Run 16 新增 26 个 KP 姓名线索（来自 team/about 页提取） |
-| 有 KP 直联（邮箱+电话+LinkedIn） | 25 | AU 有 KP 直联方式 |
-| KP 但无直联方式 | 53 | 已跑多轮 Stage 2，直联率触底 |
-| 完全无 KP | ~84 | 含新发现公司待富化 |
+| 有 KP 姓名 | 80 | Run 24 实际 AU KP 数（含非 AU 共 91） |
+| 有 KP 直联（邮箱+电话+LinkedIn） | 31 | Run 25 +1（Veriu Group Zed Sanjana 邮箱+电话） |
+| KP 但无直联方式 | 49 | Run 25 -1（边际收益持续下降） |
+| 完全无 KP | ~153 | 含新发现公司待富化 |
 
 **公司联系路由覆盖（277 条线索）：**
 
@@ -81,7 +81,7 @@ delete_when: 新会话读取后可覆盖
 | 有邮箱（人名） | 39 | 可直接外联 |
 | 有手机号 | 22 | 可直接外联 |
 | 有公司邮箱 | 3 | 低价值，需转介 |
-| **直联总数（人名邮箱+手机）** | **64** | **目标 100，差 36**（Run 17 +3：Corinna/Waugh/Yusnijar） |
+| **直联总数（人名邮箱+手机）** | **75** | **目标 100，差 25**（Run 25 +1：Veriu Group Zed Sanjana） |
 | LinkedIn 直接 URL | 18 | 已确认的个人主页（Run 20 +9） |
 | LinkedIn 搜索 URL | 8 | **需用户手动验证**（见下方清单） |
 
@@ -105,18 +105,23 @@ delete_when: 新会话读取后可覆盖
 - **Run 17 (2026-05-27): 表单收集批次。99 候选 AU 队列（55 missing_kp + 45 missing_form + 37 missing_kp_direct + 5 missing_company_contact），4 批 extraction（99 家公司），1736 候选。26 个字段更新，6 个新联系人（PHMG 2 人 / The Point 3 人 / Prancing Pony 1 人），9 个新公司 LinkedIn。contacts 162→168，AU 无联系 5→3。关键新增：Prancing Pony Corinna（邮箱+手机 0409134697）、procurement@ausvenueco.com.au、9 个公司 LinkedIn 页面。4 个 TLS 错误站点。**
 - **Run 18 (2026-05-27): 表单收集批次。98 候选 AU 队列（53 missing_kp + 43 missing_form + 36 missing_kp_direct + 5 missing_company_contact），4 批 extraction（98 家公司），1602 候选。8 个字段更新（5 家公司），+12 公司 LinkedIn。边际收益递减：大部分 AU 线索已有联系路由。14 TLS 错误站点。KP 名称提取质量低（多为导航文本）。直联率触底。**
 - **Run 20 (2026-05-28): 表单收集 + KP LinkedIn 富化。22 候选 AU 队列（18 missing_kp_direct + 3 missing_form + 3 missing_kp），2 批 extraction（22 家公司），453 候选。Google 搜索 10 个 KP 直联邮箱未果。9 个 KP LinkedIn URL 补全（Brent Savage / Nick Hildebrandt / Chris Lucas / Sven Almenning / Jane Hastings / Bill Gravanis / Rosy Scatigna / Stefano Catino / Justin Hemmes）。contacts 168（不变），LinkedIn 直接 URL 9→18。2 TLS 错误（Merivale / Taverners）。边际收益进一步递减：22 家公司级联系信息几乎全部已在 Run 13-18 覆盖。**
+- **Run 21 (2026-05-29): 全阶段管线（Stage 1+2+3, limit 20）。** Stage 1 发现 331 候选人（20 家公司）。Stage 2 处理 20 家，富化 8 家，直联 4 个（20% 直联率，显著回升）。Stage 3 自动批准 0，自动拒绝 332，人工审核 7 个。关键新增：Ian Macklin（TM Design Group，邮箱+手机）、Jasimma（Blank Creatives，手机 0438 745 304）、Nyree Mackenzie（Mackenzie Design，手机 0499554947）、Miko Aspiras（Illoura Hospitality，邮箱）。leads 340→344，contacts 168→169。直联率从 2.9% 回升到 20%，说明剩余线索中仍有可挖掘的直联信息。
+- **Run 22 (2026-05-29): Stage 2 富化 + 公司字段提升。** Stage 2 处理 20 家 KP-without-direct-contact 线索，富化 7 家，直联 4 个（20%）。公司字段提升 5 条（Chillie/360Shopfitters/TMDG/HCGroup/GreatIndoors）。修复管线自动保存逻辑（新增 `promote_company_contacts` + `save_enriched_results` 函数）。KP 直联 23→28，直联率 29.5%→35.9%。leads 340（不变），contacts 169（不变）。4 个 TLS 错误站点。
+- **Run 23 (2026-05-29): Stage 1 KP 发现 + Stage 2 保存逻辑修复。** Stage 1 处理 20 家无 KP 线索，生成 359 候选人。从 role_context 片段提取 2 个新 KP（Greg Barclay-CEO / Mike Henshaw-Director），修复 2 个公司名前缀（"About Us"）。KP 89→91。Stage 2 处理 20 家 KP-without-direct-contact，富化 6 家，直联 3 个（15%）。**修复 Stage 2 保存逻辑**：新增 `save_stage2_results()` 函数，Stage 2 完成后自动更新 leads.csv key_contact_* 字段 + contacts.csv 追加/更新联系人。测试验证：leads 更新 2 条，contacts 更新 1 条。leads 340（不变），contacts 168（不变）。多个 TLS 错误站点。
+- **Run 24 (2026-05-30): Stage 2 直联富化。** 处理 20 家 KP-without-direct-contact 线索，富化 6 家，直联 4 个（20% 直联率）。联系人更新 3 条：Jasimma@Blank Creatives（邮箱+手机）、Mark Brook@MYMYMY（邮箱+电话）、William Kuo@Alleyway Group（邮箱）。leads 更新 5 条（公司字段提升到 KP 字段）。leads 340→348，contacts 168（不变）。直联联系人 71→74。多个 TLS 错误站点（Pleysier Perkins / H&J Restaurants / Elements Dining 等）。
+- **Run 25 (2026-05-30): Stage 2 直联富化。** 处理 20 家 KP-without-direct-contact 线索，富化 3 家，直联 1 个（5% 直联率）。Veriu Group Zed Sanjana 邮箱+电话直联。leads 更新 1 条，contacts 更新 1 条。leads 348（不变），contacts 168（不变）。直联联系人 74→75。多个 TLS 错误站点（Pleysier Perkins / Elements Dining / Speakeasy Group 等）。
 
 **自动化门控指标：**
-- direct_contact_rate > 10%: Run1 ✓ (10.8%) / Run2-6 ✗ (2.9%) — 后续线索更难，率稳定在 2.9%
+- direct_contact_rate > 10%: Run1 ✓ (10.8%) / Run2-6 ✗ (2.9%) / Run21-24 ✓ (20%) / Run25 ✗ (5%) — 剩余线索质量参差不齐
 - false_positive_rate < 15%: 0%（7/7 人工审核通过）
 - auto_approve_accuracy > 95%: 数据不足（Run5/6 自动批准 0 个）
 
 **已发现问题：**
 1. ~~Stage 1 队列路径不匹配~~ — **已修复**
-2. **Stage 2 直联率已触底** — 稳定 2.9%-5.9%，剩余 KP 线索难挖掘
+2. ~~Stage 2 直联率已触底~~ — **Run 21-24 验证回升，Run 25 再次下降**：剩余 49 条线索质量参差不齐，直联率波动大（5%-20%）
 3. ~~Google 搜索 429 限流~~ — **已解决**（CloakBrowser + Scrapling 联动）
 4. **Swillhouse contact 页 403** — Cloudflare 挑战页，无法绕过
-5. ~~管线不自动保存富化结果~~ — **部分解决**：表单收集批次手动保存，管线自动保存仍需修复
+5. ~~管线不自动保存 Stage 2 富化结果~~ — **已修复**（Run 23：新增 `save_stage2_results()` 函数，更新 leads.csv key_contact_* + contacts.csv 追加/更新）
 6. **44 条无 customer_type 的线索被队列过滤** — 需 `--include-review-needed` 标志
 7. ~~废弃字段未迁移清理~~ — **已修复**（Run 9：清空 179 个废弃值，删除 5 死字段）
 8. ~~跨公司重复入库~~ — **已修复**（Run 9：合并 2 对，新增 Entity-Level Dedup Rule）
@@ -134,18 +139,26 @@ delete_when: 新会话读取后可覆盖
 **A 区下一步：**
 - ~~**恢复丢失线索**~~ ✅ 已完成（从 boss-report 导出恢复 56 条，277 条总计）
 - ~~**Run 报告系统搭建**~~ ✅ 已完成（generate_run_report.py + run-log.md 合并版，Run 1-16 历史数据已补全）
-- **修复管线保存逻辑** — `run_pipeline.py` 需要在 Stage 2 完成后自动保存富化结果到 leads.csv/contacts.csv
-- 扩大直联到 100（当前 ~64，差 36）— 需对有 KP 的线索跑 Stage 2 直联富化，或从 team/about 页提取更多 KP 直联
-- 对新发现公司继续 KP 发现（78 有 KP / 162 AU = 48%）
+- ~~**修复 Stage 2 保存逻辑**~~ ✅ 已完成（Run 23：新增 `save_stage2_results()` 函数）
+- 扩大直联到 100（当前 75，差 25）— 继续跑 Stage 2 直联富化（剩余 49 条 KP 无直联线索，直联率 5%-20% 波动）
+- 对新发现公司继续 KP 发现（91 有 KP / ~162 AU = 56%）
 - ~~继续关键词发现（还有 400+ New 关键词未使用）~~ → Run 19 已验证 keyword_discovery.py，B 区待优化
 - ~~12 条仍缺全部联系路由的线索需人工确认或标记低优先级~~ ✅ 大部分已填补（Run 13/14/17）
 - **12 条仍无任何联系信息**（9 条非 AU + 3 条 AU）：
   - AU 问题站点：The Mulberry Group（SSL）、The Big Easy Group（404）、Vanillablue（404）
   - 非 AU（低优先级）：BMS London / Maguro Group / JOEY Restaurants / Miku Toronto / Ray-Ban / Book Club Bar / 4 家 NY 新开餐厅
-- **Run 20 后边际收益已触底** — 22 家 AU 公司级联系信息几乎全覆盖，KP 直联邮箱 Google 搜索无果，建议转向：(1) 对 53 条 KP 无直联线索做手动 LinkedIn 验证；(2) 用新关键词发现更多公司
+- ~~**Run 20 后边际收益已触底**~~ Run 21-24 验证回升（20%），Run 25 再次下降（5%）：剩余线索质量参差不齐
+- 继续跑 Stage 2（当前 75 直联，目标 100，差 25，剩余 49 条候选）
 
 **A 区待用户处理：**
-- 审核 Run 5 的 4 个人工审核候选（Jasimma / Kiera / Alex / Mark）
+- **审核 Run 21 的 7 个人工审核候选：**
+  - Ian Macklin（TM Design Group）：imacklin@tmdg.com.au / +61 417 147 110，score 75
+  - Jasimma（Blank Creatives）：hello@blankcreatives.com.au / 0438 745 304，score 75
+  - Nyree Mackenzie（Mackenzie Design）：create@nyreemackenzie.com / 0499554947，score 75
+  - Miko Aspiras（Illoura Hospitality）：enquiry@illourahospitality.com.au，score 65
+  - Kiera Hamilton（JLW Fitout）：info@jlwinteriors.com.au / 1300 559 477，score 45
+  - Alex Jarrold（Jarrold & Bailie）：info@jarroldandbailie.au，score 45
+  - Mark Brook（MYMYMY）：hello@mymymy.com.au / 02 6176 3438，score 45
 - 手动验证 8 个 LinkedIn 搜索 URL
 - **手动验证 Run 20 新增的 9 个 KP LinkedIn URL**（确认人名/公司匹配）：
   - Chris Lucas → https://au.linkedin.com/in/christopher-lucas-1aa8a3133
@@ -225,6 +238,7 @@ python -m scripts.kp_pipeline.run_pipeline --stage all --limit 10 --keyword-driv
 **B 区运行记录：**
 - **Run 19 (2026-05-28): 关键词发现。** 用 keyword_discovery.py 跑 38 个关键词（pub group / catering company / hotel group / event venue 等），发现 57 家新 AU 公司入库（277→334）。有效公司：酒店集团（Grand Hotel / Oaks / Trilogy / Hunter / Marlow / Song / Laundy / Yarra）、餐饮集团（The Pub Group / PubCo / Laundy / Welcome Hospitality）、餐饮承办（Darwin Catering / Australian Catering / EatFirst / Bespoke Catering / The Catering Dept 等）。清理了大量误入库的非目标公司（招聘中介、设备供应商、招标平台、Ghost Kitchen 文章等）。更新了 keyword_discovery.py 的域名排除列表。
 - **Run 20 (2026-05-28): 关键词发现 + 过滤器优化。** 跑 15 个面向实际场地的关键词，发现 49 家公司，但有效率仅 12%（6/49）。根因分析：53% 新闻/文章、14% 学生公寓、12% 行业协会、7% 招聘、14% 教育/政府。清理 43 条非目标，保留 6 家 AU 公司（Mimosa Wines / The Winery Surry Hills / Southern Cross Motel / Australian Motel / Salter Brothers / Regional Motel Partners）。对关键词发现脚本做了 5 项过滤器优化：(1) 域名排除列表扩展 +120、(2) 文章/目录 URL 模式过滤、(3) AU 查询自动增强（`site:.com.au`）、(4) 联系信号检测（页面必须有邮箱/电话/联系页链接）、(5) 文章标题检测 + 媒体/专业服务域名过滤。谷歌 429 限流，优化效果待下次验证。
+- **B-Run 21 (2026-05-30): 关键词发现过滤器验证。** 跑 20 个短场地关键词（restaurant group / hotel group / pub group / catering / event venue），发现 8 家新 AU 公司（340→348）。**有效率 88%（7/8）**，验证了 Run 20 过滤器优化效果。有效公司：Umberto Group / Aurora Hotel Group / Lillywhite Hotel Group / MALONEY HOTELS / The Grace Hotel / Commune Group / RG Restaurants。修复 2 个过滤器漏洞：(1) 添加 boothby.com.au 等 5 个媒体域名到排除列表，(2) 增强文章标题检测（问题式标题 "how does/what/why" 等模式）。关键词生产力 20%（4/20 关键词有结果），Melbourne 搜索效果最好。
 
 **B 区下一步：**
 - ~~用 generator 批量生成新关键词候选~~ ✅ 已完成（+370 新关键词导入）
@@ -234,10 +248,11 @@ python -m scripts.kp_pipeline.run_pipeline --stage all --limit 10 --keyword-driv
 - ~~人工审核 suggested_keywords 并导入~~ ✅ 已完成（593 条审核：503 approved / 32 rejected / 58 review，+138 新关键词入库，486→624）
 - ~~新关键词发现流程~~ ✅ Run 19 验证（keyword_discovery.py + CloakBrowser Google 搜索）
 - ~~**优化关键词质量：**~~ ✅ Run 20 完成过滤器优化（5 项改进），有效率从 12% 预期提升到 50%+，待谷歌 429 恢复后验证
-- 对新发现的 57 家公司跑 A 区表单收集（补充联系信息）
+- ~~**验证过滤器效果：**~~ ✅ B-Run 21 验证有效率 88%（Run 20 的 12%→88%），过滤器优化成功
+- 对新发现的 8 家公司跑 A 区表单收集（补充联系信息）
 - 用 market_intel 分析历史数据，优化关键词库
 - 对 58 条 review 状态的关键词做二次人工筛选（可选）
-- **等 Google 429 恢复后，用优化后的过滤器重跑关键词发现，验证有效率提升**
+- **优化关键词生产力：** 当前仅 20% 关键词有结果，需测试更多关键词变体
 - **优化关键词模式：** 当前长关键词（>5 词）加 site:.com.au 后 Google 返回 0 结果，需生成更短的发现型关键词
 <!-- TASK_B_END: keyword_scheduler -->
 
