@@ -12,12 +12,21 @@
 - Google 搜索始终用 CloakBrowser（Scrapling 会被 429）
 - CloakBrowser 使用同步 launch() API，避免 asyncio.run() 事件循环生命周期问题
 - Scrapling 传 headers（不是 extra_headers）参数
+- CloakBrowser 走独立代理端口 7898，不影响主 Clash Verge Rev（7897）
 """
 import json
+import random
 import re
+import threading
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
+
+try:
+    from scripts.kp_pipeline.proxy_manager import get_manager
+except ImportError:
+    from kp_pipeline.proxy_manager import get_manager
 
 _DATA_DIR = Path(__file__).parent.parent.parent / "data"
 _ROUTES_FILE = _DATA_DIR / "fetch_routes.json"
@@ -29,6 +38,19 @@ ROUTE_BLOCKED = "blocked"            # 两个都不行
 
 _browser = None
 _routes = {}  # {domain: {"status": str, "cookies": [...], "ua": str, "updated": str}}
+
+# Thread-local storage for per-worker state (parallel search)
+_tls = threading.local()
+
+
+def _get_tls(key, default=None):
+    """获取 thread-local 值，未设置时返回 default。"""
+    return getattr(_tls, key, default)
+
+
+def _set_tls(key, value):
+    """设置 thread-local 值。"""
+    setattr(_tls, key, value)
 
 
 def _load_routes():
@@ -61,61 +83,183 @@ def _domain_of(url):
 
 # --- CloakBrowser 管理（同步 API）---
 
-_PROXY_URL = "http://127.0.0.1:7897"
-_current_proxy_ip = None  # 当前代理出口 IP，用于检测节点切换
+_PROXY_URL = "http://127.0.0.1:7898"  # 独立 mihomo 实例，非主 Clash (7897)
+
+# --- Humanize 配置 ---
+
+_UA_POOL = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0",
+]
+
+_RESOLUTIONS = [
+    {"width": 1920, "height": 1080},
+    {"width": 2560, "height": 1440},
+    {"width": 1366, "height": 768},
+    {"width": 1440, "height": 900},
+]
+
+_LOCALE_PROFILES = [
+    {"locale": "en-AU", "timezone": "Australia/Sydney"},
+    {"locale": "en-US", "timezone": "America/New_York"},
+    {"locale": "zh-CN", "timezone": "Asia/Shanghai"},
+]
 
 
 def _detect_proxy_ip():
-    """检测当前代理出口 IP（通过 httpbin.org，走本地代理）。"""
+    """检测当前代理出口 IP（走本地代理）。"""
     import urllib.request
-    try:
-        proxy_handler = urllib.request.ProxyHandler({"http": _PROXY_URL, "https": _PROXY_URL})
-        opener = urllib.request.build_opener(proxy_handler)
-        req = urllib.request.Request("https://httpbin.org/ip", method="GET")
-        with opener.open(req, timeout=10) as resp:
-            data = json.loads(resp.read())
-            return data.get("origin", "")
-    except Exception:
-        return ""
+    for url in ["http://icanhazip.com", "http://api.ipify.org", "https://httpbin.org/ip"]:
+        try:
+            proxy_handler = urllib.request.ProxyHandler({"http": _PROXY_URL, "https": _PROXY_URL})
+            opener = urllib.request.build_opener(proxy_handler)
+            req = urllib.request.Request(url)
+            with opener.open(req, timeout=10) as resp:
+                body = resp.read().decode().strip()
+                if body.startswith("{"):
+                    return json.loads(body).get("origin", "")
+                return body
+        except Exception:
+            continue
+    return ""
 
 
-def _get_browser():
-    """复用全局 CloakBrowser 同步实例，自动检测代理 IP 变化并重建。"""
-    global _browser, _current_proxy_ip
-    # 检测当前代理 IP
+def _pick_humanize_settings():
+    """随机选择一组 humanize 设置（UA/分辨率/语言）。"""
+    ua = random.choice(_UA_POOL)
+    resolution = random.choice(_RESOLUTIONS)
+    profile = random.choice(_LOCALE_PROFILES)
+    return {
+        "user_agent": ua,
+        "viewport": resolution,
+        "locale": profile["locale"],
+        "timezone": profile["timezone"],
+    }
+
+
+# --- 自适应配置 ---
+
+# Config B (fast): 间隔 2-4s, 无点击模拟
+# Config A (safe): 间隔 3-5s, 有点击模拟
+_CONFIGS = {
+    "B": {"interval": (2.0, 4.0), "click_sim": False},
+    "A": {"interval": (3.0, 5.0), "click_sim": True},
+}
+_current_config = "B"
+_consecutive_fail = 0
+_consecutive_ok = 0
+_FAIL_THRESHOLD = 3     # 连续 3 次失败 → 切到 A
+_RECOVER_THRESHOLD = 20  # 连续 20 次成功 → 切回 B
+
+
+def _get_config():
+    """获取当前自适应配置（per-thread）。"""
+    cfg_name = _get_tls("config", "B")
+    return _CONFIGS[cfg_name]
+
+
+def _record_result(ok: bool):
+    """记录搜索结果，自动切换配置（per-thread）。"""
+    cfg_name = _get_tls("config", "B")
+    fail = _get_tls("consecutive_fail", 0)
+    ok_count = _get_tls("consecutive_ok", 0)
+
+    if ok:
+        fail = 0
+        ok_count += 1
+        if cfg_name == "A" and ok_count >= _RECOVER_THRESHOLD:
+            cfg_name = "B"
+            ok_count = 0
+            print(f"[adaptive] Recovered → Config B (fast)")
+    else:
+        ok_count = 0
+        fail += 1
+        if cfg_name == "B" and fail >= _FAIL_THRESHOLD:
+            cfg_name = "A"
+            fail = 0
+            print(f"[adaptive] {_FAIL_THRESHOLD} consecutive issues → Config A (safe)")
+
+    _set_tls("config", cfg_name)
+    _set_tls("consecutive_fail", fail)
+    _set_tls("consecutive_ok", ok_count)
+
+
+def _enforce_search_interval(min_seconds=None, max_seconds=None):
+    """确保两次搜索之间有合理间隔（per-thread）。"""
+    cfg = _get_config()
+    if min_seconds is None:
+        min_seconds = cfg["interval"][0]
+    if max_seconds is None:
+        max_seconds = cfg["interval"][1]
+
+    last_time = _get_tls("last_search_time", 0.0)
+    if last_time > 0:
+        elapsed = time.time() - last_time
+        target = random.gauss((min_seconds + max_seconds) / 2, 1.0)
+        target = max(min_seconds, min(max_seconds, target))
+        if elapsed < target:
+            time.sleep(target - elapsed)
+    _set_tls("last_search_time", time.time())
+
+
+def _get_browser(humanize=False):
+    """获取 CloakBrowser 实例（per-thread），自动检测代理 IP 变化并重建。"""
+    browser = _get_tls("browser")
+    current_ip = _get_tls("current_proxy_ip")
+
     new_ip = _detect_proxy_ip()
-    if new_ip and new_ip != _current_proxy_ip:
-        if _browser is not None:
-            # 代理节点已切换，关闭旧浏览器
+    if new_ip and new_ip != current_ip:
+        if browser is not None:
             try:
-                _browser.close()
+                browser.close()
             except Exception:
                 pass
-            _browser = None
-        _current_proxy_ip = new_ip
-    if _browser is None:
+            browser = None
+        _set_tls("current_proxy_ip", new_ip)
+
+    if browser is None:
         from cloakbrowser import launch
-        _browser = launch(headless=True, proxy={"server": _PROXY_URL})
-    return _browser
+        kwargs = {
+            "headless": True,
+            "proxy": {"server": _PROXY_URL},
+        }
+        if humanize:
+            settings = _pick_humanize_settings()
+            kwargs["humanize"] = True
+            kwargs["human_preset"] = "careful"
+            kwargs["locale"] = settings["locale"]
+            kwargs["timezone"] = settings["timezone"]
+        browser = launch(**kwargs)
+        _set_tls("browser", browser)
+
+    return browser
 
 
 def close_browser():
-    """关闭全局浏览器。"""
-    global _browser
-    if _browser:
+    """关闭当前线程的浏览器。"""
+    browser = _get_tls("browser")
+    if browser:
         try:
-            _browser.close()
+            browser.close()
         except Exception:
             pass
-        _browser = None
+        _set_tls("browser", None)
 
 
 # --- CloakBrowser 抓取（同步）---
 
-def cloak_fetch(url, timeout=30):
+def cloak_fetch(url, timeout=30, humanize=False):
     """用 CloakBrowser 抓取页面。返回 (text, html, cookies, ua, status, error)。"""
     try:
-        browser = _get_browser()
+        browser = _get_browser(humanize=humanize)
         page = browser.new_page()
         try:
             resp = page.goto(url, wait_until="domcontentloaded", timeout=timeout * 1000)
@@ -267,26 +411,85 @@ def _now_iso():
     return datetime.now().isoformat(timespec="seconds")
 
 
-# --- Google 搜索（始终用 CloakBrowser）---
+# --- Google 搜索（始终用 CloakBrowser，走独立代理 7898）---
 
-def search_google(query, max_results=5):
-    """用 CloakBrowser 执行 Google 搜索。
+def search_google(query, max_results=5, max_retries=3):
+    """用 CloakBrowser 执行 Google 搜索，带 429 自动轮换 + 自适应配置。
 
-    始终用 CloakBrowser，不走 smart_fetch 的 Scrapling 路径。
-    Google 会 429 封 Scrapling，CloakBrowser 可绕过。
+    自适应策略：
+    - 默认 Config B（间隔 2-4s，无点击模拟）
+    - 连续 3 次失败 → 自动切 Config A（间隔 3-5s，有点击模拟）
+    - 连续 20 次成功 → 自动切回 Config B
 
-    Google 结果 URL 格式有两种：
-    1. 旧格式: /url?q=https://example.com&sa=...
-    2. 新格式: https://example.com/?srsltid=... (直接 href)
+    遇到 429 时自动通过 proxy_manager 切换节点并重建浏览器。
     """
     from urllib.parse import quote_plus
 
-    url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}&hl=en"
-    text, html, cookies, ua, status, error = cloak_fetch(url, timeout=30)
+    pm = get_manager()
+    cfg = _get_config()
 
-    if error or not html:
-        return []
+    for attempt in range(max_retries):
+        # 仿人搜索间隔（自适应）
+        _enforce_search_interval()
 
+        url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}&hl=en"
+        text, html, cookies, ua, status, error = cloak_fetch(url, timeout=30, humanize=True)
+
+        # 检测 429
+        if status == 429 or (error and "429" in str(error)):
+            print(f"[search_google] 429 detected for: {query}")
+            _record_result(False)
+            if pm.handle_429(browser_close_fn=close_browser):
+                continue  # 轮换成功，重试
+            else:
+                break  # 无可用节点
+
+        # 检测 403（也可能被限流）
+        if status == 403:
+            print(f"[search_google] 403 detected for: {query}")
+            _record_result(False)
+            if pm.handle_429(browser_close_fn=close_browser):
+                continue
+            else:
+                break
+
+        if error or not html:
+            _record_result(False)
+            return []
+
+        # 成功，重置 429 计数
+        pm.reset_429_counter()
+
+        # 点击模拟（仅 Config A 时启用）
+        if cfg["click_sim"] and random.random() < 0.3:
+            _simulate_click_first_result(html)
+
+        result_urls = _extract_google_urls(html, max_results)
+        _record_result(bool(result_urls))
+        return result_urls
+
+    _record_result(False)
+    return []
+
+
+def _simulate_click_first_result(html):
+    """30% 概率访问第一个搜索结果，模拟用户点击行为。"""
+    # 提取第一个外部链接
+    for match in re.finditer(r'href="(/url\?q=https?://[^"]+)"', html):
+        real_url = match.group(1).split("/url?q=")[1].split("&")[0]
+        parsed = urlparse(real_url)
+        d = parsed.netloc.lower()
+        if "google.com" not in d and "googleapis.com" not in d:
+            try:
+                cloak_fetch(real_url, timeout=15, humanize=True)
+                time.sleep(random.uniform(3, 5))  # 模拟阅读
+            except Exception:
+                pass
+            break
+
+
+def _extract_google_urls(html, max_results):
+    """从 Google 搜索结果 HTML 中提取外部 URL。"""
     result_urls = []
     seen_domains = set()
 
@@ -309,11 +512,13 @@ def search_google(query, max_results=5):
         raw = match.group(1).replace("&amp;", "&")
         parsed = urlparse(raw)
         d = parsed.netloc.lower()
-        if d in ("google.com", "www.google.com", "googleapis.com", "gstatic.com",
-                 "accounts.google.com", "support.google.com", "maps.google.com"):
+        # Skip all Google domains
+        if any(d == g or d.endswith("." + g) for g in (
+            "google.com", "google.co.jp", "google.com.au", "googleapis.com",
+            "gstatic.com", "google.co.uk", "google.de", "google.fr",
+        )):
             continue
-        if d.endswith(".google.com") or d.endswith(".googleapis.com"):
-            continue
+        if "google" in d and (d.endswith(".google.com") or "google." in d):
             continue
         # 去掉 fragment 和 srsltid
         clean = f"{parsed.scheme}://{parsed.netloc}{parsed.path}".rstrip("/")
