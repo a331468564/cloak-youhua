@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-05-29T17:27:55"
+    "updated": "2026-05-30T11:17:34"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -458,5 +458,33 @@
   "nyreemackenzie.com": {
     "status": "scrapling_ok",
     "updated": "2026-05-29T15:58:35"
+  },
+  "houzz.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T11:13:16"
+  },
+  "architizer.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T11:16:47"
+  },
+  "traveltalkasia.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T11:18:09"
+  },
+  "newsforthefoodlover.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T11:18:25"
+  },
+  "sydneysocial101.wordpress.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T11:21:14"
+  },
+  "allaraglobal.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T11:24:36"
+  },
+  "maybesammycocktails.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T11:24:39"
   }
 }

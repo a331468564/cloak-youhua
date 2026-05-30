@@ -37,8 +37,8 @@ KW-0035,Hospitality Venue Group,Australia,Australia,Australia hospitality group 
 KW-0036,Hotel Group,Australia,Australia,Australia hotel group dining restaurants official contact,Australia hotel group dining restaurants official contact,Tavily discovery experiment for hotel dining/F&B targets,Discovery,High,Testing,Yes,2026-05-13 14:45,2026-05-27,14,,No,,,0,0,0,0,0,0,0,,Experiment keyword for comparing Tavily-only and Tavily-plus-Scrapling workflows.,2026-05-13 14:45,Tavily discovery experiment keyword added; no source lead rows written yet.
 KW-0037,Restaurant Group,Australia,Australia,Sydney Melbourne restaurant group expansion official contact,Sydney Melbourne restaurant group expansion official contact,Tavily discovery experiment for restaurant expansion signals,Discovery,High,Testing,Yes,2026-05-13 14:45,2026-05-27,14,,No,,,0,0,0,0,0,0,0,,Experiment keyword for comparing Tavily-only and Tavily-plus-Scrapling workflows.,2026-05-13 14:45,Tavily discovery experiment keyword added; no source lead rows written yet.
 KW-0038,Hotel F&B Operator,Australia,Australia,Australia boutique hotel group food beverage contact,Australia boutique hotel group food beverage contact,Tavily discovery experiment for boutique hotel F&B targets,Discovery,High,Testing,Yes,2026-05-13 14:45,2026-05-27,14,,No,,,0,0,0,0,0,0,0,,Experiment keyword for comparing Tavily-only and Tavily-plus-Scrapling workflows.,2026-05-13 14:45,Tavily discovery experiment keyword added; no source lead rows written yet.
-KW-0039,restaurant group,Sydney,,restaurant group owner Sydney,,"Generator: template=T2, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:38,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
-KW-0040,restaurant group,Melbourne,,restaurant group owner Melbourne,,"Generator: template=T2, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:38,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
+KW-0039,restaurant group,Sydney,,restaurant group owner Sydney,,"Generator: template=T2, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:20,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
+KW-0040,restaurant group,Melbourne,,restaurant group owner Melbourne,,"Generator: template=T2, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:20,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
 KW-0041,restaurant group,Brisbane,,restaurant group owner Brisbane,,"Generator: template=T2, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:38,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
 KW-0042,restaurant group,Perth,,restaurant group owner Perth,,"Generator: template=T2, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:38,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
 KW-0043,restaurant group,Adelaide,,restaurant group owner Adelaide,,"Generator: template=T2, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:38,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
@@ -52,8 +52,8 @@ KW-0050,restaurant group,Melbourne,,site:.com.au restaurant group contact Melbou
 KW-0051,restaurant group,Brisbane,,site:.com.au restaurant group contact Brisbane,,"Generator: template=T5, risk=medium",Discovery,medium,New,,,,14,,,,,0,0,0,0,,,,,,,
 KW-0052,restaurant group,Perth,,site:.com.au restaurant group contact Perth,,"Generator: template=T5, risk=medium",Discovery,medium,New,,,,14,,,,,0,0,0,0,,,,,,,
 KW-0053,restaurant group,Adelaide,,site:.com.au restaurant group contact Adelaide,,"Generator: template=T5, risk=medium",Discovery,medium,New,,,,14,,,,,0,0,0,0,,,,,,,
-KW-0054,restaurant group,Sydney,,owner restaurant group Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:01,,14,,,,,0,0,0,0,,,,,,,
-KW-0055,restaurant group,Melbourne,,owner restaurant group Melbourne email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:01,,14,,,,,0,0,0,0,,,,,,,
+KW-0054,restaurant group,Sydney,,owner restaurant group Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0055,restaurant group,Melbourne,,owner restaurant group Melbourne email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
 KW-0056,restaurant group,Brisbane,,owner restaurant group Brisbane email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:01,,14,,,,,0,0,0,0,,,,,,,
 KW-0057,restaurant group,Perth,,owner restaurant group Perth email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:19,,14,,,,,0,0,0,0,,,,,,,
 KW-0058,restaurant group,Adelaide,,owner restaurant group Adelaide email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:19,,14,,,,,0,0,0,0,,,,,,,
@@ -67,26 +67,26 @@ KW-0065,restaurant group,Melbourne,,restaurant group Melbourne procurement team,
 KW-0066,restaurant group,Brisbane,,restaurant group Brisbane procurement team,,"Generator: template=T12, risk=low",Discovery,high,Testing,Yes,2026-05-28 14:40,,14,,,,,0,0,0,0,,,,,,,
 KW-0067,restaurant group,Perth,,restaurant group Perth procurement team,,"Generator: template=T12, risk=low",Discovery,high,Testing,Yes,2026-05-28 14:40,,14,,,,,0,0,0,0,,,,,,,
 KW-0068,restaurant group,Adelaide,,restaurant group Adelaide procurement team,,"Generator: template=T12, risk=low",Discovery,high,Testing,Yes,2026-05-28 14:40,,14,,,,,0,0,0,0,,,,,,,
-KW-0069,hotel group,Australia,,hotel group Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:52,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
-KW-0070,hotel group,Sydney,,hotel group Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-25 18:52,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
+KW-0069,hotel group,Australia,,hotel group Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:20,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
+KW-0070,hotel group,Sydney,,hotel group Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:22,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
 KW-0071,hotel group,Melbourne,,hotel group Melbourne contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:43,,14,,,,,0,0,0,0,,,,,,,Approved for Run 10 keyword discovery batch
-KW-0072,hotel group,Australia,,owner hotel group Australia email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:43,,14,,,,,0,0,0,0,,,,,,,
-KW-0073,hotel group,Sydney,,owner hotel group Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:43,,14,,,,,0,0,0,0,,,,,,,
-KW-0074,hotel group,Melbourne,,owner hotel group Melbourne email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:40,,14,,,,,0,0,0,0,,,,,,,
-KW-0075,pub group,Australia,,pub group Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
-KW-0076,pub group,Sydney,,pub group Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
+KW-0072,hotel group,Australia,,owner hotel group Australia email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0073,hotel group,Sydney,,owner hotel group Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0074,hotel group,Melbourne,,owner hotel group Melbourne email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0075,pub group,Australia,,pub group Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:22,,14,,,,,0,0,0,0,,,,,,,
+KW-0076,pub group,Sydney,,pub group Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:22,,14,,,,,0,0,0,0,,,,,,,
 KW-0077,pub group,Melbourne,,pub group Melbourne contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
-KW-0078,pub group,Australia,,owner pub group Australia email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:43,,14,,,,,0,0,0,0,,,,,,,
-KW-0079,pub group,Sydney,,owner pub group Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:43,,14,,,,,0,0,0,0,,,,,,,
-KW-0080,pub group,Melbourne,,owner pub group Melbourne email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:57,,14,,,,,0,0,0,0,,,,,,,
-KW-0081,catering company,Australia,,catering company Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
-KW-0082,catering company,Sydney,,catering company Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
+KW-0078,pub group,Australia,,owner pub group Australia email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0079,pub group,Sydney,,owner pub group Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0080,pub group,Melbourne,,owner pub group Melbourne email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0081,catering company,Australia,,catering company Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:22,,14,,,,,0,0,0,0,,,,,,,
+KW-0082,catering company,Sydney,,catering company Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:22,,14,,,,,0,0,0,0,,,,,,,
 KW-0083,catering company,Melbourne,,catering company Melbourne contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
-KW-0084,catering company,Australia,,owner catering company Australia email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:57,,14,,,,,0,0,0,0,,,,,,,
-KW-0085,catering company,Sydney,,owner catering company Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:57,,14,,,,,0,0,0,0,,,,,,,
+KW-0084,catering company,Australia,,owner catering company Australia email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
+KW-0085,catering company,Sydney,,owner catering company Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:25,,14,,,,,0,0,0,0,,,,,,,
 KW-0086,catering company,Melbourne,,owner catering company Melbourne email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:57,,14,,,,,0,0,0,0,,,,,,,
-KW-0087,event venue,Australia,,event venue Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
-KW-0088,event venue,Sydney,,event venue Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
+KW-0087,event venue,Australia,,event venue Australia contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:22,,14,,,,,0,0,0,0,,,,,,,
+KW-0088,event venue,Sydney,,event venue Sydney contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-30 11:22,,14,,,,,0,0,0,0,,,,,,,
 KW-0089,event venue,Melbourne,,event venue Melbourne contact,,"Generator: template=T1, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
 KW-0090,event venue,Australia,,owner event venue Australia email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:51,,14,,,,,0,0,0,0,,,,,,,
 KW-0091,event venue,Sydney,,owner event venue Sydney email OR phone OR contact,,"Generator: template=T9, risk=medium",Discovery,high,Testing,Yes,2026-05-28 14:57,,14,,,,,0,0,0,0,,,,,,,
