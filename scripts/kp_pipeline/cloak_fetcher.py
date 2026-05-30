@@ -470,6 +470,61 @@ def search_google(query, max_results=5, max_retries=3):
     return search_google_single(query, max_results, max_retries)
 
 
+def search_google_batch(queries: list[str], max_results=5, workers=3) -> dict[str, list[str]]:
+    """并行 Google 搜索。
+
+    每个 worker 使用独立 CloakBrowser 实例 + 独立代理节点。
+    无 humanize 模式（极速），自适应降速 per-worker。
+
+    Args:
+        queries: 搜索查询列表
+        max_results: 每次搜索最大结果数
+        workers: 并行 worker 数（默认 3）
+
+    Returns:
+        {query: [urls]} 字典
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    pm = get_manager()
+
+    # 预分配节点给 workers
+    assigned = pm.assign_nodes_to_workers(workers)
+    print(f"[batch] Assigned {len(assigned)} nodes: {assigned}")
+
+    # 轮询分配查询给 workers
+    worker_queries = [[] for _ in range(workers)]
+    for i, query in enumerate(queries):
+        worker_queries[i % workers].append(query)
+
+    results = {}
+    start = time.time()
+
+    def _worker_search(worker_id, query_list):
+        """单个 worker 的搜索任务。"""
+        worker_results = {}
+        for query in query_list:
+            urls = search_google_single(query, max_results)
+            worker_results[query] = urls
+        return worker_results
+
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = []
+        for wid in range(workers):
+            if worker_queries[wid]:
+                futures.append(executor.submit(_worker_search, wid, worker_queries[wid]))
+
+        for future in as_completed(futures):
+            worker_results = future.result()
+            results.update(worker_results)
+
+    elapsed = time.time() - start
+    ok = sum(1 for v in results.values() if v)
+    print(f"[batch] {ok}/{len(queries)} OK in {elapsed:.1f}s ({elapsed/60:.1f}min)")
+
+    return results
+
+
 def _simulate_click_first_result(html):
     """30% 概率访问第一个搜索结果，模拟用户点击行为。"""
     # 提取第一个外部链接
