@@ -413,15 +413,10 @@ def _now_iso():
 
 # --- Google 搜索（始终用 CloakBrowser，走独立代理 7898）---
 
-def search_google(query, max_results=5, max_retries=3):
-    """用 CloakBrowser 执行 Google 搜索，带 429 自动轮换 + 自适应配置。
+def search_google_single(query, max_results=5, max_retries=3):
+    """单次 Google 搜索（无 humanize），自适应配置。
 
-    自适应策略：
-    - 默认 Config B（间隔 2-4s，无点击模拟）
-    - 连续 3 次失败 → 自动切 Config A（间隔 3-5s，有点击模拟）
-    - 连续 20 次成功 → 自动切回 Config B
-
-    遇到 429 时自动通过 proxy_manager 切换节点并重建浏览器。
+    并行模式下每个 worker 调用此函数。
     """
     from urllib.parse import quote_plus
 
@@ -429,24 +424,21 @@ def search_google(query, max_results=5, max_retries=3):
     cfg = _get_config()
 
     for attempt in range(max_retries):
-        # 仿人搜索间隔（自适应）
         _enforce_search_interval()
 
         url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}&hl=en"
-        text, html, cookies, ua, status, error = cloak_fetch(url, timeout=30, humanize=True)
+        text, html, cookies, ua, status, error = cloak_fetch(url, timeout=30, humanize=False)
 
-        # 检测 429
         if status == 429 or (error and "429" in str(error)):
-            print(f"[search_google] 429 detected for: {query}")
+            print(f"[search_google_single] 429: {query}")
             _record_result(False)
             if pm.handle_429(browser_close_fn=close_browser):
-                continue  # 轮换成功，重试
+                continue
             else:
-                break  # 无可用节点
+                break
 
-        # 检测 403（也可能被限流）
         if status == 403:
-            print(f"[search_google] 403 detected for: {query}")
+            print(f"[search_google_single] 403: {query}")
             _record_result(False)
             if pm.handle_429(browser_close_fn=close_browser):
                 continue
@@ -457,10 +449,8 @@ def search_google(query, max_results=5, max_retries=3):
             _record_result(False)
             return []
 
-        # 成功，重置 429 计数
         pm.reset_429_counter()
 
-        # 点击模拟（仅 Config A 时启用）
         if cfg["click_sim"] and random.random() < 0.3:
             _simulate_click_first_result(html)
 
@@ -470,6 +460,14 @@ def search_google(query, max_results=5, max_retries=3):
 
     _record_result(False)
     return []
+
+
+def search_google(query, max_results=5, max_retries=3):
+    """单次 Google 搜索（向后兼容）。
+
+    内部调用 search_google_single。
+    """
+    return search_google_single(query, max_results, max_retries)
 
 
 def _simulate_click_first_result(html):
