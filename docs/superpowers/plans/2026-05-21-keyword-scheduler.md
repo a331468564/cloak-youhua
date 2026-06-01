@@ -660,9 +660,11 @@ git commit -m "feat: implement keyword run result tracking"
 
 ### Task 4: Implement Search Executor
 
+> **STATUS: NOT NEEDED** — executor.py was designed as a bridge between scheduler.py and extract_public_contact_candidates.py, but keyword_discovery.py now handles the entire flow independently (search + extract + write to leads.csv). executor.py was never created and is no longer required. scheduler.py was cleaned up to remove executor imports.
+
 **Files:**
-- Create: `scripts/keyword_scheduler/executor.py`
-- Create: `tests/test_executor.py`
+- Create: `scripts/keyword_scheduler/executor.py` (NOT NEEDED)
+- Create: `tests/test_executor.py` (NOT NEEDED)
 
 - [ ] **Step 1: Write failing test for executor**
 

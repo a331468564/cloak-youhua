@@ -124,45 +124,21 @@ def build_query_queue(keywords_csv: Path, config: dict) -> list[dict]:
     return queue
 
 
-def _parse_extraction_results(output_csv: Path) -> dict[str, dict[str, int]]:
-    """Parse extraction output CSV and count results per keyword_id.
-
-    Returns dict: keyword_id -> {"leads": N, "contacts": N}
-    """
-    _CONTACT_TYPES = {"email", "phone", "mobile", "person_email", "person_phone"}
-    counts: dict[str, dict[str, int]] = {}
-    if not output_csv or not output_csv.exists():
-        return counts
-
-    with open(output_csv, "r", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f):
-            kid = (row.get("lead_id") or "").strip()
-            if not kid:
-                continue
-            if kid not in counts:
-                counts[kid] = {"leads": 0, "contacts": 0}
-            counts[kid]["leads"] += 1
-            ctype = (row.get("candidate_type") or "").strip().lower()
-            if ctype in _CONTACT_TYPES:
-                counts[kid]["contacts"] += 1
-
-    return counts
-
-
 # --- CLI entry point ---
 
 def main():
-    import argparse
-    from scripts.keyword_scheduler.config import load_config, get_extraction_defaults
-    from scripts.keyword_scheduler.executor import build_extraction_queue, run_extraction
-    from scripts.keyword_scheduler.tracker import update_keyword_stats, append_run_log
+    """CLI entry point for keyword selection and queue building.
 
-    parser = argparse.ArgumentParser(description="Keyword scheduler — bridges search_keywords.csv to extraction pipeline")
+    Note: executor.py was removed — use keyword_discovery.py for end-to-end discovery.
+    This module only provides: select_eligible_keywords(), expand_templates(), build_query_queue().
+    """
+    import argparse
+    from scripts.keyword_scheduler.config import load_config
+
+    parser = argparse.ArgumentParser(description="Keyword scheduler — selects and expands keywords")
     parser.add_argument("--keywords", default=str(Path(__file__).resolve().parents[2] / "data" / "search_keywords.csv"))
-    parser.add_argument("--runs-log", default=str(Path(__file__).resolve().parents[2] / "data" / "keyword_runs.csv"))
     parser.add_argument("--limit", type=int, default=None, help="Override max keywords per run")
     parser.add_argument("--dry-run", action="store_true", help="Show selected keywords without executing")
-    parser.add_argument("--batch-id", default=None, help="Batch ID for run log")
     args = parser.parse_args()
 
     config = load_config()
@@ -170,7 +146,6 @@ def main():
         config["max_keywords_per_run"] = args.limit
 
     keywords_csv = Path(args.keywords)
-    runs_csv = Path(args.runs_log)
 
     print(f"[Scheduler] Loading keywords from {keywords_csv}")
     queue = build_query_queue(keywords_csv, config)
@@ -187,50 +162,8 @@ def main():
         print("[Scheduler] Dry run — not executing.")
         return
 
-    # Build extraction queue
-    queue_path = Path(__file__).resolve().parents[2] / "reports" / "kw-scheduler-queue.csv"
-    build_extraction_queue(queue, queue_path)
-    print(f"[Scheduler] Wrote queue to {queue_path}")
-
-    # Run extraction
-    ext_defaults = get_extraction_defaults(config)
-    exit_code, output_csv = run_extraction(
-        queue_path,
-        output_prefix="kw-scheduler-",
-        limit=ext_defaults.get("limit", 10),
-        follow_links=ext_defaults.get("follow_links", 2),
-        fetcher=ext_defaults.get("fetcher", "static"),
-        skip_existing=ext_defaults.get("skip_existing", True),
-    )
-
-    if exit_code != 0:
-        print(f"[Scheduler] Extraction exited with code {exit_code}")
-    else:
-        print(f"[Scheduler] Extraction complete. Results: {output_csv}")
-
-    # Parse extraction results for feedback
-    result_counts = _parse_extraction_results(output_csv) if output_csv and output_csv.exists() else {}
-
-    # Update tracking with actual results
-    batch_id = args.batch_id or f"BATCH-KW-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-    for item in queue:
-        kid = item["keyword_id"]
-        counts = result_counts.get(kid, {"leads": 0, "contacts": 0})
-        update_keyword_stats(
-            keywords_csv, kid,
-            leads_collected=counts["leads"],
-            contacts_found=counts["contacts"],
-        )
-        append_run_log(
-            runs_csv,
-            batch_id=batch_id,
-            keyword_id=kid,
-            keyword_source_query=item["source_query"],
-            leads_collected=counts["leads"],
-            contacts_found=counts["contacts"],
-        )
-
-    print(f"[Scheduler] Updated tracking for {len(queue)} keywords.")
+    # Use keyword_discovery.py for end-to-end discovery
+    print("[Scheduler] To run discovery, use: python scripts/extraction/keyword_discovery.py --limit <N>")
 
 
 if __name__ == "__main__":
