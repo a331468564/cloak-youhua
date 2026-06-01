@@ -105,11 +105,11 @@
   },
   "speakeasygroup.com.au": {
     "status": "blocked",
-    "updated": "2026-05-22T11:25:42"
+    "updated": "2026-05-30T15:26:29"
   },
   "swillhouse.com": {
     "status": "blocked",
-    "updated": "2026-05-22T11:26:02"
+    "updated": "2026-05-30T15:27:05"
   },
   "kickongroup.com": {
     "status": "scrapling_ok",
@@ -145,11 +145,11 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-05-29T15:48:30"
+    "updated": "2026-05-30T15:08:54"
   },
   "ibisworld.com": {
-    "status": "blocked",
-    "updated": "2026-05-29T15:48:43"
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:09:11"
   },
   "zoominfo.com": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-05-30T11:17:34"
+    "updated": "2026-05-30T15:28:29"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -486,5 +486,104 @@
   "maybesammycocktails.com": {
     "status": "scrapling_ok",
     "updated": "2026-05-30T11:24:39"
+  },
+  "hospitalitydirectory.com.au": {
+    "status": "cloak_ok",
+    "cookies": [
+      {
+        "name": "9d3e9d0e2a09a936fab7722ad5821e76",
+        "value": "ca3475feac9a2916db86e45c5c63a2d5",
+        "domain": "www.hospitalitydirectory.com.au",
+        "path": "/",
+        "expires": -1,
+        "httpOnly": false,
+        "secure": false,
+        "sameSite": "Lax"
+      },
+      {
+        "name": "_ga",
+        "value": "GA1.3.1995996713.1780124998",
+        "domain": ".hospitalitydirectory.com.au",
+        "path": "/",
+        "expires": 1814684998.46064,
+        "httpOnly": false,
+        "secure": false,
+        "sameSite": "Lax"
+      },
+      {
+        "name": "_gid",
+        "value": "GA1.3.1729635266.1780124998",
+        "domain": ".hospitalitydirectory.com.au",
+        "path": "/",
+        "expires": 1780211398,
+        "httpOnly": false,
+        "secure": false,
+        "sameSite": "Lax"
+      },
+      {
+        "name": "_gat",
+        "value": "1",
+        "domain": ".hospitalitydirectory.com.au",
+        "path": "/",
+        "expires": 1780125058,
+        "httpOnly": false,
+        "secure": false,
+        "sameSite": "Lax"
+      }
+    ],
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+    "updated": "2026-05-30T15:09:58"
+  },
+  "afr.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:10:35"
+  },
+  "pleysierperkinsminihomes.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:12:56"
+  },
+  "gastrology.co": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:13:35"
+  },
+  "australianbartender.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:18:37"
+  },
+  "thespiritsbusiness.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:19:36"
+  },
+  "broadsheet.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:19:40"
+  },
+  "culinarywonderland.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:20:39"
+  },
+  "secretmelbourne.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:20:49"
+  },
+  "ttgasia.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:21:38"
+  },
+  "theorg.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:23:21"
+  },
+  "datanyze.com": {
+    "status": "blocked",
+    "updated": "2026-05-30T15:27:46"
+  },
+  "lmxb.martinaklink.de": {
+    "status": "blocked",
+    "updated": "2026-05-30T15:26:48"
+  },
+  "publeaders.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-05-30T15:28:50"
   }
 }
