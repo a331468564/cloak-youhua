@@ -18,8 +18,9 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from kp_pipeline.cloak_fetcher import search_google, cloak_fetch, close_browser
-from utils.domain_cache import is_visited, mark_visited, get_cookies
+from kp_pipeline.cloak_fetcher import search_google, cloak_fetch, close_browser, scrapling_fetch
+from utils.domain_cache import is_visited, mark_visited, get_cookies, is_cloudflare, should_recheck_cloudflare
+from scripts.reports.timer import RunTimer
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA = PROJECT_ROOT / "data"
@@ -226,6 +227,24 @@ def _is_excluded_domain(domain):
     return False
 
 
+_TITLE_PREFIXES = (
+    r'(?:'
+    r'About(?:\s+Us)?|Contact(?:\s+Us)?|Get\s+in\s+Touch|Our\s+(?:Company|Story|Team)|'
+    r'Meet\s+(?:the\s+team\s+behind|Us)?|Home|Welcome|Services\s+and\s+Products|'
+    r'Shop(?:\s+Now)?|Call\s+Us|Visit\s+Us|Find\s+Us|Enquir(?:ies|e)|'
+    r'Learn\s+More(?:\s+About)?|Discover|Explore'
+    r')'
+)
+
+_TITLE_SUFFIXES = (
+    r'(?:'
+    r'Home|Welcome|Official|About(?:\s+Us)?|Contact(?:\s+Us)?|Menu|'
+    r'Our\s+Company|Meet|Team|Get\s+in\s+Touch|Our\s+Story|'
+    r'Australia|Sydney|Melbourne|Brisbane|Perth|Adelaide'
+    r')'
+)
+
+
 def _extract_company_name_from_title(title, domain):
     """从页面标题和域名推断公司名。"""
     if not title:
@@ -233,9 +252,9 @@ def _extract_company_name_from_title(title, domain):
         parts = domain.replace(".com.au", "").replace(".com", "").replace(".au", "").split(".")
         return parts[0].replace("-", " ").title() if parts else ""
     # 清理标题：去掉网站通用后缀
-    title = re.sub(r'\s*[-–|]\s*(Home|Welcome|Official|About|Contact|Menu|Our Company|Meet|Team|Get in Touch|Our Story).*$', '', title, flags=re.I)
-    # 去掉前缀
-    title = re.sub(r'^(Contact|About|Our Company|Meet the team behind|Get in Touch|Our Story)\s*[-–|]\s*', '', title, flags=re.I)
+    title = re.sub(rf'\s*[-–|]\s*{_TITLE_SUFFIXES}\s*$', '', title, flags=re.I)
+    # 去掉前缀（如 "About Us | Phoeniks" → "Phoeniks"）
+    title = re.sub(rf'^{_TITLE_PREFIXES}\s*[-–|:]\s*', '', title, flags=re.I)
     # 去掉 HTML entities
     title = title.replace('&amp;', '&').replace('&#x27;', "'").replace('&gt;', '>').replace('&lt;', '<')
     title = re.sub(r'\s*[-–|]\s*$', '', title)
@@ -371,16 +390,36 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
 
         # 域名缓存：跳过已访问的域名
         if is_visited(domain):
-            continue
+            # Cloudflare 域名复查：超过 30 天后重新检查
+            if is_cloudflare(domain) and should_recheck_cloudflare(domain):
+                pass  # 继续抓取，复查
+            else:
+                continue
+
+        # Cloudflare 域名：先用 Scrapling 重试（有时能过）
+        if is_cloudflare(domain):
+            text, status, error = scrapling_fetch(url, timeout=15)
+            if not error and text:
+                html = None  # Scrapling 不返回完整 HTML
+            else:
+                # Scrapling 也失败，跳过
+                continue
 
         # 抓取页面获取更多信息
-        try:
-            text, html, cookies, ua, status, error = cloak_fetch(url, timeout=15)
-        except Exception:
-            text, html, cookies, ua, status, error = None, None, [], "", 0, "fetch error"
+        if not is_cloudflare(domain):
+            try:
+                text, html, cookies, ua, status, error = cloak_fetch(url, timeout=15)
+            except Exception:
+                text, html, cookies, ua, status, error = None, None, [], "", 0, "fetch error"
 
         if error or not text:
             mark_visited(domain, valid=False)
+            continue
+
+        # 检测 Cloudflare 防护
+        if html and any(x in html.lower() for x in ['challenge-platform', 'turnstile', 'just a moment', 'verify you are human']):
+            mark_visited(domain, valid=False, cloudflare=True)
+            print(f"  [CF] {domain} — Cloudflare detected, skipping")
             continue
 
         # 提取标题（用于文章检测和公司名提取）
@@ -536,61 +575,62 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Don't save to leads.csv")
     args = parser.parse_args()
 
-    # Load existing data for dedup
-    existing_names, existing_domains, _ = load_existing_leads()
-    print(f"Existing leads: {len(existing_names)} companies, {len(existing_domains)} domains")
+    with RunTimer():
+        # Load existing data for dedup
+        existing_names, existing_domains, _ = load_existing_leads()
+        print(f"Existing leads: {len(existing_names)} companies, {len(existing_domains)} domains")
 
-    # Load keywords
-    kw_path = DATA / "search_keywords.csv"
-    with open(kw_path, "r", encoding="utf-8-sig") as f:
-        all_keywords = list(csv.DictReader(f))
+        # Load keywords
+        kw_path = DATA / "search_keywords.csv"
+        with open(kw_path, "r", encoding="utf-8-sig") as f:
+            all_keywords = list(csv.DictReader(f))
 
-    # Filter eligible keywords
-    if args.keywords:
-        target_ids = set(args.keywords.split(","))
-        keywords = [kw for kw in all_keywords if kw.get("keyword_id") in target_ids]
-    else:
-        keywords = [kw for kw in all_keywords
-                    if kw.get("keyword_status") == "New"
-                    and kw.get("keyword_intent_type") == "Discovery"]
+        # Filter eligible keywords
+        if args.keywords:
+            target_ids = set(args.keywords.split(","))
+            keywords = [kw for kw in all_keywords if kw.get("keyword_id") in target_ids]
+        else:
+            keywords = [kw for kw in all_keywords
+                        if kw.get("keyword_status") == "New"
+                        and kw.get("keyword_intent_type") == "Discovery"]
 
-    # Sort by priority
-    prio_order = {"high": 0, "High": 0, "medium": 1, "Medium": 1, "low": 2, "Low": 2}
-    keywords.sort(key=lambda k: (prio_order.get(k.get("priority_level", ""), 3), k.get("keyword_id", "")))
+        # Sort by priority
+        prio_order = {"high": 0, "High": 0, "medium": 1, "Medium": 1, "low": 2, "Low": 2}
+        keywords.sort(key=lambda k: (prio_order.get(k.get("priority_level", ""), 3), k.get("keyword_id", "")))
 
-    keywords = keywords[:args.limit]
-    print(f"Selected {len(keywords)} keywords:")
-    for kw in keywords:
-        print(f"  {kw['keyword_id']}: {kw['keyword_pattern']}")
+        keywords = keywords[:args.limit]
+        print(f"Selected {len(keywords)} keywords:")
+        for kw in keywords:
+            print(f"  {kw['keyword_id']}: {kw['keyword_pattern']}")
 
-    # Discover
-    all_new = []
-    used_kw_ids = []
-    for kw in keywords:
-        query = kw.get("example_search_query") or kw.get("keyword_pattern", "")
-        if not query:
-            continue
-        print(f"\nSearching: {query}")
-        new = discover_from_keyword(query, args.max_results, existing_names, existing_domains)
-        print(f"  Found {len(new)} new companies")
-        all_new.extend(new)
-        used_kw_ids.append(kw["keyword_id"])
-        time.sleep(2)
+        # Discover
+        all_new = []
+        used_kw_ids = []
+        for kw in keywords:
+            query = kw.get("example_search_query") or kw.get("keyword_pattern", "")
+            if not query:
+                continue
+            print(f"\nSearching: {query}")
+            new = discover_from_keyword(query, args.max_results, existing_names, existing_domains)
+            print(f"  Found {len(new)} new companies")
+            all_new.extend(new)
+            used_kw_ids.append(kw["keyword_id"])
+            time.sleep(2)
 
-    print(f"\nTotal new companies discovered: {len(all_new)}")
+        print(f"\nTotal new companies discovered: {len(all_new)}")
 
-    if all_new and not args.dry_run:
-        added = save_to_leads(all_new)
-        print(f"Added {added} new leads to data/leads.csv")
+        if all_new and not args.dry_run:
+            added = save_to_leads(all_new)
+            print(f"Added {added} new leads to data/leads.csv")
 
-        # Update keyword status
-        _update_keyword_status(used_kw_ids)
-    elif args.dry_run:
-        print("\n[Dry run] Would add:")
-        for c in all_new:
-            print(f"  {c['company_name']} | {c['website']} | {c.get('email', '')}")
+            # Update keyword status
+            _update_keyword_status(used_kw_ids)
+        elif args.dry_run:
+            print("\n[Dry run] Would add:")
+            for c in all_new:
+                print(f"  {c['company_name']} | {c['website']} | {c.get('email', '')}")
 
-    close_browser()
+        close_browser()
     print("\nDone.")
 
 

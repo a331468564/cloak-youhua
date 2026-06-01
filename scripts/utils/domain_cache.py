@@ -3,7 +3,9 @@
 功能：
 1. 记录访问过的域名，B区跳过已访问的
 2. 保存 cookies/UA，A区复用
-3. 定期清理（阈值 5000 + 30 天过期）
+3. 标记 Cloudflare 域名，后续自动跳过或用 Scrapling 重试
+4. 定期清理（阈值 5000 + 30 天过期）
+5. Cloudflare 域名 30 天后自动复查
 
 缓存位置：E:/cache/domain_cache.json
 """
@@ -18,8 +20,9 @@ _CACHE_DIR = Path("E:/cache")
 _CACHE_FILE = _CACHE_DIR / "domain_cache.json"
 _MAX_ENTRIES = 5000       # 最大缓存条目
 _MAX_AGE_DAYS = 30        # 超过 30 天自动过期
+_CF_RECHECK_DAYS = 30     # Cloudflare 域名 30 天后复查
 
-_cache = {}  # {domain: {"visited": str, "valid": bool, "cookies": [...], "ua": str, "ts": float}}
+_cache = {}  # {domain: {"visited": str, "valid": bool, "cloudflare": bool, "cookies": [...], "ua": str, "ts": float}}
 _loaded = False
 
 
@@ -55,12 +58,13 @@ def is_valid(domain: str) -> bool:
     return entry.get("valid", False) if entry else False
 
 
-def mark_visited(domain: str, valid: bool = False, cookies: list = None, ua: str = ""):
+def mark_visited(domain: str, valid: bool = False, cloudflare: bool = False, cookies: list = None, ua: str = ""):
     """标记域名已访问。
 
     Args:
         domain: 域名
         valid: 是否是有效公司
+        cloudflare: 是否有 Cloudflare 防护
         cookies: 浏览器 cookies（A区复用）
         ua: User-Agent（A区复用）
     """
@@ -68,12 +72,30 @@ def mark_visited(domain: str, valid: bool = False, cookies: list = None, ua: str
     _cache[domain] = {
         "visited": datetime.now().isoformat(timespec="seconds"),
         "valid": valid,
+        "cloudflare": cloudflare,
         "cookies": cookies[:20] if cookies else [],  # 最多保存 20 个
         "ua": ua,
         "ts": time.time(),
     }
     _save()
     _maybe_cleanup()
+
+
+def is_cloudflare(domain: str) -> bool:
+    """检查域名是否有 Cloudflare 防护。"""
+    _load()
+    entry = _cache.get(domain)
+    return entry.get("cloudflare", False) if entry else False
+
+
+def should_recheck_cloudflare(domain: str) -> bool:
+    """检查 Cloudflare 域名是否需要复查（超过 CF_RECHECK_DAYS 天）。"""
+    _load()
+    entry = _cache.get(domain)
+    if not entry or not entry.get("cloudflare"):
+        return False
+    visited = entry.get("ts", 0)
+    return (time.time() - visited) > (_CF_RECHECK_DAYS * 86400)
 
 
 def get_cookies(domain: str) -> tuple[list, str]:
@@ -90,10 +112,12 @@ def get_stats() -> dict:
     _load()
     total = len(_cache)
     valid = sum(1 for v in _cache.values() if v.get("valid"))
+    cf = sum(1 for v in _cache.values() if v.get("cloudflare"))
     return {
         "total": total,
         "valid": valid,
         "invalid": total - valid,
+        "cloudflare": cf,
         "file": str(_CACHE_FILE),
     }
 
