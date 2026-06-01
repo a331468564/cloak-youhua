@@ -35,15 +35,6 @@ allowed-tools:
 2. 读取 `docs/current-progress.md` B 区
 3. 读取 `docs/guides/keyword-scheduler-guide.md`
 
-## 域名缓存
-
-B区使用域名缓存（`E:/cache/domain_cache.json`）跳过已访问域名，A区复用缓存的 cookies/UA。
-
-- 搜索前自动检查缓存，已访问域名直接跳过
-- 搜索后自动标记域名有效/无效
-- 缓存清理：5000 条上限 + 30 天过期
-- 清理命令：`from scripts.utils.domain_cache import force_cleanup; force_cleanup()`
-
 ## 两种模式
 
 ### 模式 A：调度器采集（从关键词库选词）
