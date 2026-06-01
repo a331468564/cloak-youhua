@@ -105,11 +105,11 @@
   },
   "speakeasygroup.com.au": {
     "status": "blocked",
-    "updated": "2026-06-01T09:10:25"
+    "updated": "2026-06-01T15:31:31"
   },
   "swillhouse.com": {
     "status": "blocked",
-    "updated": "2026-06-01T09:10:56"
+    "updated": "2026-06-01T15:32:12"
   },
   "kickongroup.com": {
     "status": "scrapling_ok",
@@ -160,8 +160,8 @@
     "updated": "2026-05-20T18:13:21"
   },
   "rocketreach.co": {
-    "status": "scrapling_ok",
-    "updated": "2026-06-01T15:18:17"
+    "status": "blocked",
+    "updated": "2026-06-01T15:33:57"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -575,8 +575,8 @@
     "updated": "2026-05-30T15:23:21"
   },
   "datanyze.com": {
-    "status": "scrapling_ok",
-    "updated": "2026-06-01T09:09:55"
+    "status": "blocked",
+    "updated": "2026-06-01T15:32:59"
   },
   "lmxb.martinaklink.de": {
     "status": "blocked",
@@ -609,5 +609,30 @@
   "travelweekly.com": {
     "status": "scrapling_ok",
     "updated": "2026-06-01T09:13:59"
+  },
+  "evt.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T15:34:41"
+  },
+  "cdn.evt.com": {
+    "status": "cloak_ok",
+    "cookies": [
+      {
+        "name": "__cf_bm",
+        "value": "JtEA7EXkSk4w2BnmB4a1JvxdW3jhNTXcS53eSsuAiO4-1780299334-1.0.1.1-zy2iwcLevDPdqqB_r9e5G.qLzXKdC7UKMrk_mtKyYl3K7flwoNpM.9PJLKGBA.j_mO.7Tau.hok0Yvk_YQ.hJgu5qu9KiB_igs71t0k.Gjc",
+        "domain": ".evt.com",
+        "path": "/",
+        "expires": 1780301134.880185,
+        "httpOnly": true,
+        "secure": true,
+        "sameSite": "None"
+      }
+    ],
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+    "updated": "2026-06-01T15:35:34"
+  },
+  "travmedia.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T15:36:04"
   }
 }

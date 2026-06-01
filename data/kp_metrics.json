@@ -419,5 +419,16 @@
     "timestamp": "2026-06-01T10:30:50.242584",
     "candidates_found": 356,
     "leads_processed": 20
+  },
+  {
+    "run_id": "S2-20260601-150354",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-01T15:36:17.707100",
+    "candidates_processed": 20,
+    "enriched": 3,
+    "direct_contacts_found": 0,
+    "additional_contacts": 0,
+    "skipped": 0,
+    "direct_contact_rate": 0.0
   }
 ]
