@@ -1,7 +1,7 @@
 {
   "huntersthospitality.com.au": {
-    "status": "blocked",
-    "updated": "2026-06-01T08:48:33"
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T15:04:08"
   },
   "bentleyrestaurantgroup.com.au": {
     "status": "scrapling_ok",
@@ -145,7 +145,7 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-01T08:48:57"
+    "updated": "2026-06-01T15:04:44"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-01T09:12:23"
+    "updated": "2026-06-01T15:04:49"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -460,8 +460,8 @@
     "updated": "2026-05-29T15:58:35"
   },
   "houzz.com.au": {
-    "status": "blocked",
-    "updated": "2026-06-01T08:52:37"
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T15:07:29"
   },
   "architizer.com": {
     "status": "scrapling_ok",
