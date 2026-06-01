@@ -25,8 +25,10 @@ from urllib.parse import urlparse
 
 try:
     from scripts.kp_pipeline.proxy_manager import get_manager
+    from scripts.utils.domain_cache import get_cookies as _cache_get_cookies
 except ImportError:
     from kp_pipeline.proxy_manager import get_manager
+    from utils.domain_cache import get_cookies as _cache_get_cookies
 
 _DATA_DIR = Path(__file__).parent.parent.parent / "data"
 _ROUTES_FILE = _DATA_DIR / "fetch_routes.json"
@@ -360,7 +362,16 @@ def smart_fetch(url, timeout=15):
         # 重新试探
         return _try_scrapling_first(url, domain, timeout)
 
-    # 未知域名：先试 Scrapling
+    # 未知域名：先查域名缓存（A区复用 B区 缓存的 cookies）
+    cached_cookies, cached_ua = _cache_get_cookies(domain)
+    if cached_cookies:
+        text, status, error = scrapling_fetch(url, cookies=cached_cookies, ua=cached_ua, timeout=timeout)
+        if not error:
+            _routes[domain] = {"status": ROUTE_CLOAKOK, "cookies": cached_cookies, "ua": cached_ua, "updated": _now_iso()}
+            _save_routes()
+            return text, None, status, None, "scrapling+cache"
+
+    # 先试 Scrapling
     return _try_scrapling_first(url, domain, timeout)
 
 

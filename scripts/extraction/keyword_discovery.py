@@ -19,6 +19,7 @@ from urllib.parse import urlparse
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from kp_pipeline.cloak_fetcher import search_google, cloak_fetch, close_browser
+from utils.domain_cache import is_visited, mark_visited, get_cookies
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA = PROJECT_ROOT / "data"
@@ -53,6 +54,8 @@ EXCLUDE_DOMAINS = {
     "dailytelegraph.com.au", "canberratimes.com.au",
     "hotelmanagement.com.au", "theurbandeveloper.com",
     "propertyobserver.com.au", "commercialrealestate.com.au",
+    "boothby.com.au", "urbanlist.com", "concreteplayground.com",
+    "timeout.com.au", "messynessy.com", "theurbanlist.com",
     # Data/enrichment tools (not actual restaurants)
     "rocketreach.co", "prospeo.io", "hunter.io", "apollo.io",
     "lusha.com", "zoominfo.com", "clearbit.com", "snov.io",
@@ -143,6 +146,14 @@ EXCLUDE_DOMAINS = {
     # International hotel chains (AU franchise sites)
     "joinchoicehotels.com.au", "wvrap.com.au",
     "wyndhamap.com",
+    # Equipment suppliers / wholesalers / trade (not actual venues)
+    "mipos.com.au", "accesspos.com.au",
+    "winetitles.com.au", "yarravalleytrading.com.au",
+    "hiller.com.au", "cabroto.com.au", "totalfitouts.com.au",
+    "cateringequipment.com.au", "restaurantdesign.com.au",
+    # Tourism / travel / articles (discovered B-Run 22)
+    "australianbartender.com.au", "qantas.com.au",
+    "fringeworld.com.au", "visitwangaratta.com.au", "experth.com.au",
 }
 
 # URL patterns indicating non-company pages (articles, directories, etc.)
@@ -251,6 +262,18 @@ def _is_article_or_directory(url, title=""):
             " to bring ", "latest news", "headlines", "insight",
             "commentary", "analysis", "reports", "announced",
             "acquires", "acquisition", "merger", "expands into",
+            # Question-format titles (media articles)
+            "how does", "how do", "how did", "how can",
+            "what does", "what do", "what did", "what makes",
+            "why does", "why do", "why did",
+            "where to", "where do", "where does",
+            "who is", "who are", "who was",
+            # List/ranking articles
+            "the best", "the top", "the most", "the biggest",
+            "our favourite", "our favorite", "we tried",
+            # Food/drink media patterns
+            "review:", "reviewed:", "tasting notes",
+            "wine of the week", "drink of the week",
         ]
         for sig in article_signals:
             if sig in title_lower:
@@ -306,7 +329,10 @@ def _enhance_query_for_au(query):
     words = query.split()
     if len(words) > 5:
         return query
-    # 检查是否是 AU 目标查询
+    # 短查询（<=3 词）始终加 site:.com.au（项目只目标 AU）
+    if len(words) <= 3:
+        return f"site:.com.au {query}"
+    # 中等长度查询需要 AU 信号
     au_signals = ["australia", "sydney", "melbourne", "brisbane", "perth",
                   "adelaide", "nsw", "vic", "qld", "wa", "sa", "tas",
                   "darwin", "canberra", "gold coast", "newcastle", "wollongong"]
@@ -343,13 +369,18 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
         if domain in existing_domains:
             continue
 
+        # 域名缓存：跳过已访问的域名
+        if is_visited(domain):
+            continue
+
         # 抓取页面获取更多信息
         try:
             text, html, cookies, ua, status, error = cloak_fetch(url, timeout=15)
         except Exception:
-            text, html, status, error = None, None, 0, "fetch error"
+            text, html, cookies, ua, status, error = None, None, [], "", 0, "fetch error"
 
         if error or not text:
+            mark_visited(domain, valid=False)
             continue
 
         # 提取标题（用于文章检测和公司名提取）
@@ -358,23 +389,28 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
 
         # 二次文章检测（基于标题和域名）
         if _is_article_or_directory(url, title):
+            mark_visited(domain, valid=False)
             continue
         # 媒体/新闻域名检测
         if any(x in domain for x in ["media", "news", "magazine", "review",
                                        "advertiser", "herald", "times", "post",
                                        "tribune", "gazette", "journal", "mag",
                                        "crawl", "lodges", "escapes"]):
+            mark_visited(domain, valid=False)
             continue
         # 专业服务（律所、会计等）检测
         if any(x in domain for x in ["law", "legal", "solicitor", "barrister",
                                        "accountant", "accounting", "consulting"]):
+            mark_visited(domain, valid=False)
             continue
 
         # AU 地理过滤
         if not _is_australia_page(url, text, domain):
+            mark_visited(domain, valid=False)
             continue
 
         if not _is_restaurant_hotel_page(text, url):
+            mark_visited(domain, valid=False)
             continue
 
         # 联系信号检测：页面必须有至少一种联系方式才算公司网站
@@ -390,11 +426,13 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
                 has_contact_signal = bool(re.search(
                     r'href="[^"]*(?:contact|get-in-touch|enquir)[^"]*"', html, re.I))
         if not has_contact_signal:
+            mark_visited(domain, valid=False)
             continue
 
         company_name = _extract_company_name_from_title(title, domain)
 
         if not company_name or company_name.lower() in existing_names:
+            mark_visited(domain, valid=False)
             continue
 
         # 提取联系方式
@@ -426,7 +464,8 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
         existing_names.add(company_name.lower())
         existing_domains.add(domain)
 
-        time.sleep(1)  # 避免过快
+        # 缓存：标记为有效公司，保存 cookies/UA 供 A区复用
+        mark_visited(domain, valid=True, cookies=cookies, ua=ua)
 
     return new_companies
 
