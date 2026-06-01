@@ -430,5 +430,12 @@
     "additional_contacts": 0,
     "skipped": 0,
     "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S1-20260601-162409",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-01T16:29:45.023648",
+    "candidates_found": 592,
+    "leads_processed": 30
   }
 ]
