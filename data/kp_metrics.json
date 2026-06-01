@@ -380,5 +380,16 @@
     "additional_contacts": 0,
     "skipped": 0,
     "direct_contact_rate": 0.05
+  },
+  {
+    "run_id": "S2-20260601-084758",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-01T09:14:28.129948",
+    "candidates_processed": 20,
+    "enriched": 3,
+    "direct_contacts_found": 0,
+    "additional_contacts": 0,
+    "skipped": 0,
+    "direct_contact_rate": 0.0
   }
 ]

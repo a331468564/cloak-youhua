@@ -1,7 +1,7 @@
 {
   "huntersthospitality.com.au": {
-    "status": "scrapling_ok",
-    "updated": "2026-05-20T17:03:22"
+    "status": "blocked",
+    "updated": "2026-06-01T08:48:33"
   },
   "bentleyrestaurantgroup.com.au": {
     "status": "scrapling_ok",
@@ -105,11 +105,11 @@
   },
   "speakeasygroup.com.au": {
     "status": "blocked",
-    "updated": "2026-05-30T15:26:29"
+    "updated": "2026-06-01T09:10:25"
   },
   "swillhouse.com": {
     "status": "blocked",
-    "updated": "2026-05-30T15:27:05"
+    "updated": "2026-06-01T09:10:56"
   },
   "kickongroup.com": {
     "status": "scrapling_ok",
@@ -145,7 +145,7 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-05-30T15:08:54"
+    "updated": "2026-06-01T08:48:57"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
@@ -153,7 +153,7 @@
   },
   "zoominfo.com": {
     "status": "scrapling_ok",
-    "updated": "2026-05-29T17:28:00"
+    "updated": "2026-06-01T09:11:23"
   },
   "prospeo.io": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-05-30T15:28:29"
+    "updated": "2026-06-01T09:12:23"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -460,8 +460,8 @@
     "updated": "2026-05-29T15:58:35"
   },
   "houzz.com.au": {
-    "status": "scrapling_ok",
-    "updated": "2026-05-30T11:13:16"
+    "status": "blocked",
+    "updated": "2026-06-01T08:52:37"
   },
   "architizer.com": {
     "status": "scrapling_ok",
@@ -575,8 +575,8 @@
     "updated": "2026-05-30T15:23:21"
   },
   "datanyze.com": {
-    "status": "blocked",
-    "updated": "2026-05-30T15:27:46"
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T09:09:55"
   },
   "lmxb.martinaklink.de": {
     "status": "blocked",
@@ -585,5 +585,29 @@
   "publeaders.com.au": {
     "status": "scrapling_ok",
     "updated": "2026-05-30T15:28:50"
+  },
+  "top25restaurants.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T08:50:42"
+  },
+  "victorianchamber.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T08:51:25"
+  },
+  "realcommercial.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T08:51:43"
+  },
+  "dailymail.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T09:11:39"
+  },
+  "lancemore.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T09:12:58"
+  },
+  "travelweekly.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-01T09:13:59"
   }
 }
