@@ -19,6 +19,7 @@ from urllib.parse import urlparse
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from kp_pipeline.cloak_fetcher import search_google, cloak_fetch, close_browser, scrapling_fetch
+from kp_pipeline.proxy_manager import get_manager
 from utils.domain_cache import is_visited, mark_visited, get_cookies, is_cloudflare, should_recheck_cloudflare
 from scripts.reports.timer import RunTimer
 
@@ -68,6 +69,7 @@ EXCLUDE_DOMAINS = {
     "whereorg.com", "theorg.com", "crunchbase.com",
     # Data enrichment / profile sites (not actual restaurants)
     "dnb.com", "leadiq.com", "wiza.co", "rocketreach.co", "prospeo.io",
+    "pitchbook.com",
     "hunter.io", "apollo.io", "lusha.com", "zoominfo.com",
     "clearbit.com", "snov.io", "lead411.io", "adapt.io",
     "aeroleads.com", "kaspr.io", "uplead.com", "leadfeeder.com",
@@ -390,9 +392,14 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
 
         # 域名缓存：跳过已访问的域名
         if is_visited(domain):
-            # Cloudflare 域名复查：超过 30 天后重新检查
-            if is_cloudflare(domain) and should_recheck_cloudflare(domain):
-                pass  # 继续抓取，复查
+            # Cloudflare 域名复查：超过 1 小时 + 换了 IP 后重新检查
+            if is_cloudflare(domain):
+                pm = get_manager()
+                current_ip = pm.verify_proxy_ip() or ""
+                if should_recheck_cloudflare(domain, current_ip):
+                    pass  # 继续抓取，复查
+                else:
+                    continue
             else:
                 continue
 
@@ -418,7 +425,9 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
 
         # 检测 Cloudflare 防护
         if html and any(x in html.lower() for x in ['challenge-platform', 'turnstile', 'just a moment', 'verify you are human']):
-            mark_visited(domain, valid=False, cloudflare=True)
+            pm = get_manager()
+            current_ip = pm.verify_proxy_ip() or ""
+            mark_visited(domain, valid=False, cloudflare=True, ip=current_ip)
             print(f"  [CF] {domain} — Cloudflare detected, skipping")
             continue
 
