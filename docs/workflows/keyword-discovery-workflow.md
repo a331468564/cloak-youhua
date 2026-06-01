@@ -216,3 +216,29 @@ generate_market_report(
 Note: `keyword_health_metrics` is B区独立指标，与 A区的 `data/kp_metrics.json`（KP 管线指标）不冲突。两者存储在不同文件，追踪不同维度。
 
 <!-- CODEx_END: keyword_health_metrics -->
+
+<!-- CODEx_START: domain_cache -->
+*Updated: 2026-06-01*
+
+## Domain Cache
+
+Domain cache skips already-visited URLs during B区 discovery, and provides cached cookies/UA for A区 enrichment.
+
+**How it works:**
+
+1. B区 `keyword_discovery.py` checks `E:/cache/domain_cache.json` before fetching each URL
+2. If domain is already cached → skip (saves 2-3s per URL)
+3. After fetching, domain is marked as valid (has contact signal) or invalid
+4. Valid domains also store cookies and UA for A区 reuse
+5. A区 `smart_fetch()` checks cache for cookies before making a new request
+
+**Cache file:** `E:/cache/domain_cache.json`
+
+**Cleanup:** Automatic — 5000 max entries, 30-day expiry. Manual: `from scripts.utils.domain_cache import force_cleanup; force_cleanup()`
+
+**Code locations:**
+- `scripts/utils/domain_cache.py` — cache module
+- `scripts/extraction/keyword_discovery.py:22` — B区 import
+- `scripts/kp_pipeline/cloak_fetcher.py:28` — A区 import
+
+<!-- CODEx_END: domain_cache -->
