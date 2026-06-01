@@ -111,14 +111,35 @@ python -m scripts.kp_pipeline.run_pipeline --stage 3 --limit 50
 
 **阶段结束必做：** 检查是否有未登记的阻塞，补充到 changelog.md。
 
+## 运行清单（每批必须严格执行）
+
+**每次管线运行必须用 TodoWrite 创建清单，按顺序执行，全部完成才能开始下一批。**
+
+**模板：**
+```
+1. [in_progress] 读取上下文（AGENTS.md / current-progress.md / workflow）
+2. [pending] 运行管线（Stage N, limit M）
+3. [pending] 分析结果（提取 KP / 邮箱 / 电话）
+4. [pending] 保存数据（contacts.csv + leads.csv，备份→写入→验证行数）
+5. [pending] 更新 current-progress.md（数据快照 + 运行记录 + 下一步）
+6. [pending] 生成 Run 报告（generate_run_report.py --auto-stats --auto-timing）
+```
+
+**强制规则：**
+- **步骤 5-6 未完成，不能开始下一批管线运行**
+- 每批运行 = 一次 TodoWrite 清单循环（步骤 1→6 全部打勾）
+- 多批连续运行时，每批都要创建新的清单，不能跳过步骤 5-6
+- 钩子 `post_run_progress_check.py` 会在管线运行后检查进度文件，收到警告必须立即更新
+
+**背景：** Run 27 连续跑了 5+ 批管线，忽略了钩子警告，最后才更新进度。导致中间状态丢失、无法判断何时停止、用户无法看到实时进展。
+
 ## Run 报告
 
 每轮跑完后生成报告：
 ```bash
-python scripts/reports/generate_run_report.py --auto-stats --auto-timing --task "KP Pipeline Run N"
+python scripts/reports/generate_run_report.py --auto-stats --auto-timing --title "KP Pipeline Run N"
 ```
-输出到 `E:\自动跑表单的成果和情况\run-log.md`（A-Run 格式）
-自动计时：用 `RunTimer` 包装管线脚本，`--auto-timing` 自动读取时间
+输出到 `E:\自动跑表单的成果和情况\`
 
 ## 关键文件
 

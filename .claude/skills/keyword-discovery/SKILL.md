@@ -126,6 +126,25 @@ python -m scripts.keyword_scheduler.import_suggestions
 
 **阶段结束必做：** 检查是否有未登记的阻塞，补充到 changelog.md。
 
+## 运行清单（每批必须严格执行）
+
+**每次管线运行必须用 TodoWrite 创建清单，按顺序执行，全部完成才能开始下一批。**
+
+**模板：**
+```
+1. [in_progress] 读取上下文（AGENTS.md / current-progress.md / guide）
+2. [pending] 运行管线（scheduler/discovery/generator）
+3. [pending] 分析结果（有效率 / 新公司 / 去重）
+4. [pending] 保存数据（leads.csv，备份→写入→验证行数只增不减）
+5. [pending] 更新 current-progress.md（数据快照 + 运行记录 + 下一步）
+6. [pending] 生成 Run 报告（generate_keyword_report.py --auto-timing）
+```
+
+**强制规则：**
+- **步骤 5-6 未完成，不能开始下一批管线运行**
+- 每批运行 = 一次 TodoWrite 清单循环
+- 有效率 < 50% 时，步骤 3 后暂停，不进入步骤 4
+
 ## 关键文件
 
 | 文件 | 用途 |

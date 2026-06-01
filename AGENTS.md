@@ -111,6 +111,26 @@ Run 报告生成（每轮任务跑完后执行）：
 .\.venv\Scripts\python scripts\reports\generate_run_report.py --input run_data.json --auto-stats
 ```
 
+## Run Checklist (mandatory for every batch)
+
+**Every pipeline run must create a TodoWrite checklist and complete all steps before starting the next batch.**
+
+**Template:**
+```
+1. [in_progress] Read context (AGENTS.md / current-progress.md / workflow)
+2. [pending] Run pipeline (Stage N, limit M)
+3. [pending] Analyze results (KP / email / phone extraction)
+4. [pending] Save data (backup → write → verify row count)
+5. [pending] Update current-progress.md (snapshot + run log + next steps)
+6. [pending] Generate run report (generate_run_report.py --auto-stats --auto-timing)
+```
+
+**Mandatory rules:**
+- **Steps 5-6 must complete before starting the next batch**
+- Each batch = one TodoWrite checklist cycle (steps 1→6 all checked)
+- When running multiple batches, create a new checklist for each batch
+- Hook `post_run_progress_check.py` checks progress file after pipeline runs; respond to warnings immediately
+
 ## Documentation Rules
 
 - **MD style consistency:** When adding or modifying `.md` files, match the target file's existing language (CN/EN), style (heading format, list indentation, punctuation, bold usage), and format (table/list/code block). Do not introduce conflicting styles.
