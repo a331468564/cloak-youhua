@@ -481,10 +481,10 @@ def search_google(query, max_results=5, max_retries=3):
 
 
 def search_google_batch(queries: list[str], max_results=5, workers=3) -> dict[str, list[str]]:
-    """批量 Google 搜索（串行执行，无 humanize 模式）。
+    """批量 Google 搜索（串行执行，无 humanize，无间隔）。
 
-    去掉 humanize 和点击模拟，搜索间隔 0.5-1s。
-    100 次搜索成功率 ~100%，平均 ~5.4s/次。
+    去掉 humanize 和搜索间隔，瓶颈为 Google 页面加载时间（~3.4s）。
+    200 次测试：100% 成功率，0 429，平均 3.4s/次，1.7x 提速。
 
     注意：CloakBrowser 不支持真正的并行实例，因此使用串行执行。
 
@@ -500,7 +500,6 @@ def search_google_batch(queries: list[str], max_results=5, workers=3) -> dict[st
     start = time.time()
 
     for query in queries:
-        time.sleep(random.uniform(0.5, 1.0))
         try:
             browser = _get_browser(humanize=False)
             page = browser.new_page()
