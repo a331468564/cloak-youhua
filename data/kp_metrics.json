@@ -391,5 +391,33 @@
     "additional_contacts": 0,
     "skipped": 0,
     "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S1-20260601-092611",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-01T09:30:21.690947",
+    "candidates_found": 353,
+    "leads_processed": 20
+  },
+  {
+    "run_id": "S1-20260601-093319",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-01T09:40:30.140902",
+    "candidates_found": 726,
+    "leads_processed": 40
+  },
+  {
+    "run_id": "S1-20260601-100831",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-01T10:15:22.822181",
+    "candidates_found": 730,
+    "leads_processed": 40
+  },
+  {
+    "run_id": "S1-20260601-102725",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-01T10:30:50.242584",
+    "candidates_found": 356,
+    "leads_processed": 20
   }
 ]
