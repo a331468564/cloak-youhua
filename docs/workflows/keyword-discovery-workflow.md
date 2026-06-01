@@ -35,11 +35,13 @@ Discovery flow:
 1. **Select keywords** — From `data/search_keywords.csv`, pick keywords with status Active/New/Testing, not in cooldown.
 2. **Expand templates** — Replace `[city]`, `[country]` placeholders per `config/keyword_scheduler.json`.
 3. **Execute search** — Run `keyword_discovery.py` or `scheduler.py` with expanded queries.
-4. **Filter results** — Apply 5-layer filters (domain exclusion, URL pattern, AU enhancement, contact signal, industry match).
-5. **Dedup** — Check against existing leads by domain normalization, name normalization, email domain.
-6. **Validate** — Confirm company has website + contact signal + industry match.
-7. **Write to leads.csv** — Append qualified companies with source, confidence, and notes.
-8. **Log run** — Record in `data/keyword_runs.csv`.
+4. **Domain cache check** — Skip domains already in `E:/cache/domain_cache.json` (B区 efficiency).
+5. **Filter results** — Apply 5-layer filters (domain exclusion, URL pattern, AU enhancement, contact signal, industry match).
+6. **Dedup** — Check against existing leads by domain normalization, name normalization, email domain.
+7. **Validate** — Confirm company has website + contact signal + industry match.
+8. **Write to leads.csv** — Append qualified companies with source, confidence, and notes.
+9. **Update cache** — Mark domain as valid/invalid in `E:/cache/domain_cache.json` (A区 reuse).
+10. **Log run** — Record in `data/keyword_runs.csv`.
 
 Read `docs/guides/keyword-scheduler-guide.md` for commands and configuration details.
 

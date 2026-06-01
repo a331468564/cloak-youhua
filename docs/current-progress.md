@@ -164,6 +164,7 @@ delete_when: 新会话读取后可覆盖
 - ✅ 自动审核：auto_review.py（score >= 0.6 自动通过，< 0.4 自动拒绝，中间需人工）
 - ✅ 反馈循环修复：scheduler 解析提取结果 → tracker 自动回写 discovery_quality_score / contactability_score
 - ✅ 自动状态调整：3 次运行 0 线索 → 自动 Paused，效果好 → 自动 Active
+- ✅ 域名缓存：B区跳过已访问域名（2.1x 提速），A区复用 cookies/UA，缓存存 E:/cache/domain_cache.json（5000 条上限 + 30 天过期）
 
 **关键命令：**
 ```bash

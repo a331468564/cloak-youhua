@@ -121,6 +121,18 @@ python scripts/extraction/extract_public_contact_candidates.py \
 
 **Always use `--skip-existing` to avoid duplicate work**
 
+## Rule 7b: Domain Cache
+
+**B区 keyword_discovery.py uses domain cache to skip already-visited domains.**
+
+- Cache file: `E:/cache/domain_cache.json`
+- Before fetching a URL, check if domain is already in cache → skip if yes
+- After fetching, mark domain as valid/invalid + save cookies/UA
+- Cache cleanup: 5000 max entries, 30-day expiry
+- A区 smart_fetch reuses cached cookies/UA for faster Scrapling access
+
+**DO NOT manually edit the cache file.** Use `force_cleanup()` from `scripts/utils/domain_cache.py` to clean.
+
 ## Rule 8: Report Review Priority
 
 **Review candidates in this order:**
