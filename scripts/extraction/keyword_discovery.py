@@ -10,6 +10,7 @@
 
 import argparse
 import csv
+import json
 import re
 import sys
 import time
@@ -343,28 +344,58 @@ def _is_restaurant_hotel_page(text, url):
 
 
 def _enhance_query_for_au(query):
-    """对 AU 目标查询自动添加 site:.com.au（如果还没有 site: 限定且查询足够短）。"""
-    if "site:" in query:
-        return query
-    # 只对短查询（<=5 个词）添加 site: 限定，避免过窄
-    words = query.split()
-    if len(words) > 5:
-        return query
-    # 短查询（<=3 词）始终加 site:.com.au（项目只目标 AU）
-    if len(words) <= 3:
-        return f"site:.com.au {query}"
-    # 中等长度查询需要 AU 信号
-    au_signals = ["australia", "sydney", "melbourne", "brisbane", "perth",
-                  "adelaide", "nsw", "vic", "qld", "wa", "sa", "tas",
-                  "darwin", "canberra", "gold coast", "newcastle", "wollongong"]
-    query_lower = query.lower()
-    if any(sig in query_lower for sig in au_signals):
-        return f"site:.com.au {query}"
+    """不再自动添加 site:.com.au（太窄，会漏掉 .com/.net 等 AU 域名）。
+
+    AU 过滤改为后置：搜索结果通过 _is_australia_page() 判断。
+    只在查询本身已含 site: 时保留原样。
+    """
     return query
 
 
-def discover_from_keyword(keyword_query, max_results=5, existing_names=None, existing_domains=None):
-    """用一个关键词搜索 Google，发现新公司。"""
+def _expand_templates(query):
+    """展开查询中的模板占位符（[city], [country] 等）。
+
+    返回展开后的查询列表。如果没有占位符，返回原查询。
+    """
+    config_path = PROJECT_ROOT / "config" / "keyword_scheduler.json"
+    if not config_path.exists():
+        return [query]
+
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        expansions = config.get("template_expansions", {})
+    except Exception:
+        return [query]
+
+    if not expansions:
+        return [query]
+
+    # 检查是否有占位符
+    has_placeholder = any(placeholder in query for placeholder in expansions)
+    if not has_placeholder:
+        return [query]
+
+    # 展开所有占位符
+    results = [query]
+    for placeholder, values in expansions.items():
+        new_results = []
+        for q in results:
+            if placeholder in q:
+                for val in values:
+                    new_results.append(q.replace(placeholder, val))
+            else:
+                new_results.append(q)
+        results = new_results
+
+    return results
+
+
+def discover_from_keyword(keyword_query, max_results=5, existing_names=None, existing_domains=None, use_cache=True):
+    """用一个关键词搜索 Google，发现新公司。
+
+    Args:
+        use_cache: True 时使用域名缓存（跳过已访问域名）。dry-run 时设为 False。
+    """
     if existing_names is None:
         existing_names = set()
     if existing_domains is None:
@@ -390,8 +421,8 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
         if domain in existing_domains:
             continue
 
-        # 域名缓存：跳过已访问的域名
-        if is_visited(domain):
+        # 域名缓存：跳过已访问的域名（dry-run 时禁用缓存）
+        if use_cache and is_visited(domain):
             # Cloudflare 域名复查：超过 1 小时 + 换了 IP 后重新检查
             if is_cloudflare(domain):
                 pm = get_manager()
@@ -584,7 +615,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Don't save to leads.csv")
     args = parser.parse_args()
 
-    with RunTimer():
+    with RunTimer("b"):
         # Load existing data for dedup
         existing_names, existing_domains, _ = load_existing_leads()
         print(f"Existing leads: {len(existing_names)} companies, {len(existing_domains)} domains")
@@ -615,16 +646,23 @@ def main():
         # Discover
         all_new = []
         used_kw_ids = []
+        use_cache = not args.dry_run  # dry-run 时禁用缓存
         for kw in keywords:
-            query = kw.get("example_search_query") or kw.get("keyword_pattern", "")
-            if not query:
+            raw_query = kw.get("example_search_query") or kw.get("keyword_pattern", "")
+            if not raw_query:
                 continue
-            print(f"\nSearching: {query}")
-            new = discover_from_keyword(query, args.max_results, existing_names, existing_domains)
-            print(f"  Found {len(new)} new companies")
-            all_new.extend(new)
+
+            # 展开模板占位符
+            queries = _expand_templates(raw_query)
+
+            for query in queries:
+                print(f"\nSearching: {query}")
+                new = discover_from_keyword(query, args.max_results, existing_names, existing_domains, use_cache=use_cache)
+                print(f"  Found {len(new)} new companies")
+                all_new.extend(new)
+                time.sleep(2)
+
             used_kw_ids.append(kw["keyword_id"])
-            time.sleep(2)
 
         print(f"\nTotal new companies discovered: {len(all_new)}")
 
