@@ -149,68 +149,55 @@ def _pick_humanize_settings():
 
 # --- 自适应配置 ---
 
-# Config B (fast): 间隔 2-4s, 无点击模拟
-# Config A (safe): 间隔 3-5s, 有点击模拟
+# FAST (default): 无间隔，无 humanize，瓶颈为 Google 响应时间（~3.4s）
+# SAFE (fallback): 间隔 2-4s，有 humanize，429 恢复时使用
 _CONFIGS = {
-    "B": {"interval": (2.0, 4.0), "click_sim": False},
-    "A": {"interval": (3.0, 5.0), "click_sim": True},
+    "FAST": {"interval": (0, 0), "humanize": False},
+    "SAFE": {"interval": (2.0, 4.0), "humanize": True},
 }
-_current_config = "B"
-_consecutive_fail = 0
-_consecutive_ok = 0
-_FAIL_THRESHOLD = 3     # 连续 3 次失败 → 切到 A
-_RECOVER_THRESHOLD = 20  # 连续 20 次成功 → 切回 B
+_FAIL_THRESHOLD = 3     # 连续 3 次失败 → 切到 SAFE
+_RECOVER_THRESHOLD = 20  # 连续 20 次成功 → 切回 FAST
 
 
 def _get_config():
     """获取当前自适应配置（per-thread）。"""
-    cfg_name = _get_tls("config", "B")
+    cfg_name = _get_tls("config", "FAST")
     return _CONFIGS[cfg_name]
 
 
 def _record_result(ok: bool):
     """记录搜索结果，自动切换配置（per-thread）。"""
-    cfg_name = _get_tls("config", "B")
+    cfg_name = _get_tls("config", "FAST")
     fail = _get_tls("consecutive_fail", 0)
     ok_count = _get_tls("consecutive_ok", 0)
 
     if ok:
         fail = 0
         ok_count += 1
-        if cfg_name == "A" and ok_count >= _RECOVER_THRESHOLD:
-            cfg_name = "B"
+        if cfg_name == "SAFE" and ok_count >= _RECOVER_THRESHOLD:
+            cfg_name = "FAST"
             ok_count = 0
-            print(f"[adaptive] Recovered → Config B (fast)")
+            print(f"[adaptive] Recovered → FAST (no interval)")
     else:
         ok_count = 0
         fail += 1
-        if cfg_name == "B" and fail >= _FAIL_THRESHOLD:
-            cfg_name = "A"
+        if cfg_name == "FAST" and fail >= _FAIL_THRESHOLD:
+            cfg_name = "SAFE"
             fail = 0
-            print(f"[adaptive] {_FAIL_THRESHOLD} consecutive issues → Config A (safe)")
+            print(f"[adaptive] {_FAIL_THRESHOLD} consecutive issues → SAFE (2-4s interval)")
 
     _set_tls("config", cfg_name)
     _set_tls("consecutive_fail", fail)
     _set_tls("consecutive_ok", ok_count)
 
 
-def _enforce_search_interval(min_seconds=None, max_seconds=None):
-    """确保两次搜索之间有合理间隔（全局锁，协调并行 worker）。"""
-    global _last_search_time
+def _enforce_search_interval():
+    """根据自适应配置执行搜索间隔。FAST 模式无间隔。"""
     cfg = _get_config()
-    if min_seconds is None:
-        min_seconds = cfg["interval"][0]
-    if max_seconds is None:
-        max_seconds = cfg["interval"][1]
-
-    with _browser_lock:
-        if _last_search_time > 0:
-            elapsed = time.time() - _last_search_time
-            target = random.gauss((min_seconds + max_seconds) / 2, 1.0)
-            target = max(min_seconds, min(max_seconds, target))
-            if elapsed < target:
-                time.sleep(target - elapsed)
-        _last_search_time = time.time()
+    min_s, max_s = cfg["interval"]
+    if min_s <= 0:
+        return  # FAST 模式，无间隔
+    time.sleep(random.uniform(min_s, max_s))
 
 
 def _get_browser(humanize=False):
@@ -417,27 +404,22 @@ def _now_iso():
 # --- Google 搜索（始终用 CloakBrowser，走独立代理 7898）---
 
 def search_google_single(query, max_results=5, max_retries=3):
-    """单次 Google 搜索（无 humanize），自适应配置。
+    """单次 Google 搜索，自适应配置。
 
-    每 3 次搜索重建浏览器（防止上下文污染导致结果丢失）。
+    默认 FAST 模式（无间隔，无 humanize）。
+    连续 3 次失败自动切 SAFE 模式（2-4s 间隔，有 humanize）。
+    连续 20 次成功自动切回 FAST 模式。
     """
     from urllib.parse import quote_plus
 
     pm = get_manager()
     cfg = _get_config()
 
-    # 每 3 次搜索重建浏览器
-    search_count = _get_tls("search_count", 0)
-    if search_count >= 3:
-        close_browser()
-        search_count = 0
-    _set_tls("search_count", search_count + 1)
-
     for attempt in range(max_retries):
         _enforce_search_interval()
 
         url = f"https://www.google.com/search?q={quote_plus(query)}&num={max_results}&hl=en"
-        text, html, cookies, ua, status, error = cloak_fetch(url, timeout=30, humanize=False)
+        text, html, cookies, ua, status, error = cloak_fetch(url, timeout=30, humanize=cfg["humanize"])
 
         if status == 429 or (error and "429" in str(error)):
             print(f"[search_google_single] 429: {query}")
@@ -461,9 +443,6 @@ def search_google_single(query, max_results=5, max_retries=3):
 
         pm.reset_429_counter()
 
-        if cfg["click_sim"] and random.random() < 0.3:
-            _simulate_click_first_result(html)
-
         result_urls = _extract_google_urls(html, max_results)
         _record_result(bool(result_urls))
         return result_urls
@@ -481,17 +460,15 @@ def search_google(query, max_results=5, max_retries=3):
 
 
 def search_google_batch(queries: list[str], max_results=5, workers=3) -> dict[str, list[str]]:
-    """批量 Google 搜索（串行执行，无 humanize，无间隔）。
+    """批量 Google 搜索（串行执行）。
 
-    去掉 humanize 和搜索间隔，瓶颈为 Google 页面加载时间（~3.4s）。
+    默认 FAST 模式（无间隔，无 humanize），瓶颈为 Google 响应时间（~3.4s）。
     200 次测试：100% 成功率，0 429，平均 3.4s/次，1.7x 提速。
-
-    注意：CloakBrowser 不支持真正的并行实例，因此使用串行执行。
 
     Args:
         queries: 搜索查询列表
         max_results: 每次搜索最大结果数
-        workers: 保留参数（当前串行执行，未来可能支持并行）
+        workers: 保留参数（当前串行执行）
 
     Returns:
         {query: [urls]} 字典
@@ -500,20 +477,8 @@ def search_google_batch(queries: list[str], max_results=5, workers=3) -> dict[st
     start = time.time()
 
     for query in queries:
-        try:
-            browser = _get_browser(humanize=False)
-            page = browser.new_page()
-            url = f"https://www.google.com/search?q={query.replace(' ', '+')}&num={max_results}&hl=en"
-            resp = page.goto(url, wait_until="domcontentloaded", timeout=30000)
-            html = page.content()
-            page.close()
-            urls = _extract_google_urls(html, max_results) if html else []
-        except Exception:
-            urls = []
-            close_browser()
+        urls = search_google_single(query, max_results)
         results[query] = urls
-
-    close_browser()
 
     elapsed = time.time() - start
     ok = sum(1 for v in results.values() if v)
