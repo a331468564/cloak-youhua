@@ -437,5 +437,19 @@
     "timestamp": "2026-06-01T16:29:45.023648",
     "candidates_found": 592,
     "leads_processed": 30
+  },
+  {
+    "run_id": "S1-20260601-165200",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-01T16:57:04.575042",
+    "candidates_found": 571,
+    "leads_processed": 30
+  },
+  {
+    "run_id": "S1-20260601-173056",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-01T17:31:45.481694",
+    "candidates_found": 102,
+    "leads_processed": 5
   }
 ]
