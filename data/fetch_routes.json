@@ -105,11 +105,11 @@
   },
   "speakeasygroup.com.au": {
     "status": "blocked",
-    "updated": "2026-06-02T12:39:43"
+    "updated": "2026-06-02T15:53:51"
   },
   "swillhouse.com": {
     "status": "blocked",
-    "updated": "2026-06-02T12:40:15"
+    "updated": "2026-06-02T15:54:11"
   },
   "kickongroup.com": {
     "status": "scrapling_ok",
@@ -145,7 +145,7 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-02T14:38:41"
+    "updated": "2026-06-02T15:40:00"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-02T14:35:38"
+    "updated": "2026-06-02T15:47:24"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -682,5 +682,49 @@
   "elementsbrasserie.com.au": {
     "status": "scrapling_ok",
     "updated": "2026-06-02T14:43:18"
+  },
+  "partner.booking.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:40:20"
+  },
+  "fine-dining-guide.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:40:29"
+  },
+  "foodandbeveragemedia.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:43:46"
+  },
+  "shla.org.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:46:54"
+  },
+  "au.seek.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:48:16"
+  },
+  "trader-house.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:48:24"
+  },
+  "group.accor.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:48:45"
+  },
+  "aeroleads.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:48:56"
+  },
+  "hospitalitynet.org": {
+    "status": "blocked",
+    "updated": "2026-06-02T15:50:45"
+  },
+  "travelweekly.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:53:20"
+  },
+  "waitoc.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T15:53:34"
   }
 }
