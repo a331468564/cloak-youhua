@@ -573,5 +573,12 @@
     "auto_rejected": 363,
     "human_review": 1,
     "auto_approve_rate": 0.003
+  },
+  {
+    "run_id": "S1-20260602-162130",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T16:29:01.797660",
+    "candidates_found": 724,
+    "leads_processed": 40
   }
 ]
