@@ -645,7 +645,7 @@
   },
   "linkedin.com": {
     "status": "blocked",
-    "updated": "2026-06-02T14:33:57"
+    "updated": "2026-06-02T14:44:55"
   },
   "alandcohausofdesign.wordpress.com": {
     "status": "scrapling_ok",
@@ -674,5 +674,13 @@
   "archipro.com.au": {
     "status": "scrapling_ok",
     "updated": "2026-06-02T14:42:00"
+  },
+  "elementsbarandgrill.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T14:43:08"
+  },
+  "elementsbrasserie.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T14:43:18"
   }
 }
