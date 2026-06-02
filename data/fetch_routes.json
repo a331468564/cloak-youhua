@@ -145,15 +145,15 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-02T16:45:31"
+    "updated": "2026-06-02T17:45:29"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
     "updated": "2026-05-30T15:09:11"
   },
   "zoominfo.com": {
-    "status": "blocked",
-    "updated": "2026-06-02T16:52:21"
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T17:46:06"
   },
   "prospeo.io": {
     "status": "scrapling_ok",

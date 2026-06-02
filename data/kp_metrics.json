@@ -638,5 +638,12 @@
     "timestamp": "2026-06-02T17:16:44.721852",
     "candidates_found": 141,
     "leads_processed": 10
+  },
+  {
+    "run_id": "S1-20260602-174327",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T17:45:06.496673",
+    "candidates_found": 141,
+    "leads_processed": 10
   }
 ]
