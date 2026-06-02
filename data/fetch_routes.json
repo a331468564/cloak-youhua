@@ -105,11 +105,11 @@
   },
   "speakeasygroup.com.au": {
     "status": "blocked",
-    "updated": "2026-06-01T15:31:31"
+    "updated": "2026-06-02T12:03:22"
   },
   "swillhouse.com": {
     "status": "blocked",
-    "updated": "2026-06-01T15:32:12"
+    "updated": "2026-06-02T12:03:55"
   },
   "kickongroup.com": {
     "status": "scrapling_ok",
@@ -145,7 +145,7 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-01T15:04:44"
+    "updated": "2026-06-02T11:45:41"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-01T15:33:57"
+    "updated": "2026-06-02T12:05:28"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -575,8 +575,8 @@
     "updated": "2026-05-30T15:23:21"
   },
   "datanyze.com": {
-    "status": "blocked",
-    "updated": "2026-06-01T15:32:59"
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T12:02:59"
   },
   "lmxb.martinaklink.de": {
     "status": "blocked",
@@ -619,20 +619,28 @@
     "cookies": [
       {
         "name": "__cf_bm",
-        "value": "JtEA7EXkSk4w2BnmB4a1JvxdW3jhNTXcS53eSsuAiO4-1780299334-1.0.1.1-zy2iwcLevDPdqqB_r9e5G.qLzXKdC7UKMrk_mtKyYl3K7flwoNpM.9PJLKGBA.j_mO.7Tau.hok0Yvk_YQ.hJgu5qu9KiB_igs71t0k.Gjc",
+        "value": "iNl7xsO0fNhVSjg2I2JP6Ut26u2CmS8Jo5f0ep1SbhM-1780373219-1.0.1.1-uQIs6_HXqr1Gi1kCYJXXs3_x4YSrwPEsd0ikKp45AJjDha0uxknse7NN6vi_6725RQenG7SwPrSPc.3ZCcl1PWCcr_U4wv24U0gFscu9jvg",
         "domain": ".evt.com",
         "path": "/",
-        "expires": 1780301134.880185,
+        "expires": 1780375018.923375,
         "httpOnly": true,
         "secure": true,
         "sameSite": "None"
       }
     ],
     "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-    "updated": "2026-06-01T15:35:34"
+    "updated": "2026-06-02T12:06:59"
   },
   "travmedia.com": {
     "status": "scrapling_ok",
     "updated": "2026-06-01T15:36:04"
+  },
+  "concreteplayground.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T11:47:22"
+  },
+  "betterfutureawards.com": {
+    "status": "blocked",
+    "updated": "2026-06-02T11:49:06"
   }
 }

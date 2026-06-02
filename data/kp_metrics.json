@@ -458,5 +458,37 @@
     "timestamp": "2026-06-02T11:28:37.911109",
     "candidates_found": 367,
     "leads_processed": 20
+  },
+  {
+    "run_id": "S1-20260602-113902",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T11:42:20.218926",
+    "candidates_found": 363,
+    "leads_processed": 20
+  },
+  {
+    "run_id": "S1-20260602-114323",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T11:46:41.445714",
+    "candidates_found": 363,
+    "leads_processed": 20
+  },
+  {
+    "run_id": "S1-20260602-114857",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T11:49:45.316707",
+    "candidates_found": 100,
+    "leads_processed": 5
+  },
+  {
+    "run_id": "S2-20260602-114502",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T12:07:26.617311",
+    "candidates_processed": 20,
+    "enriched": 3,
+    "direct_contacts_found": 0,
+    "additional_contacts": 0,
+    "skipped": 0,
+    "direct_contact_rate": 0.0
   }
 ]
