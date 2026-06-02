@@ -105,11 +105,11 @@
   },
   "speakeasygroup.com.au": {
     "status": "blocked",
-    "updated": "2026-06-02T15:53:51"
+    "updated": "2026-06-02T16:57:13"
   },
   "swillhouse.com": {
     "status": "blocked",
-    "updated": "2026-06-02T15:54:11"
+    "updated": "2026-06-02T16:57:31"
   },
   "kickongroup.com": {
     "status": "scrapling_ok",
@@ -145,7 +145,7 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-02T16:29:29"
+    "updated": "2026-06-02T16:45:31"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
@@ -153,7 +153,7 @@
   },
   "zoominfo.com": {
     "status": "blocked",
-    "updated": "2026-06-02T16:35:56"
+    "updated": "2026-06-02T16:52:21"
   },
   "prospeo.io": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-02T16:36:36"
+    "updated": "2026-06-02T16:52:54"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -726,5 +726,105 @@
   "waitoc.com": {
     "status": "scrapling_ok",
     "updated": "2026-06-02T15:53:34"
+  },
+  "collectionbytfehotels.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:40:55"
+  },
+  "smh.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:41:34"
+  },
+  "evtvusa.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:42:31"
+  },
+  "support.evtstays.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:42:43"
+  },
+  "meritonsuites.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:43:32"
+  },
+  "ovolohotels.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:44:17"
+  },
+  "thegreatergroup.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:47:37"
+  },
+  "taogroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:47:48"
+  },
+  "tenfoldhospitality.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:48:13"
+  },
+  "blancohorner.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:48:27"
+  },
+  "ahshospitality.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:48:54"
+  },
+  "rewardhospitality.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:50:36"
+  },
+  "hurleyhotelgroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:50:56"
+  },
+  "dhg.net.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:51:40"
+  },
+  "riverstonewine.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:52:11"
+  },
+  "thelane.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:52:38"
+  },
+  "bay13brewery.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:52:56"
+  },
+  "littlecaterersydney.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:53:11"
+  },
+  "cateredbymatt.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:53:23"
+  },
+  "radishevents.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:53:33"
+  },
+  "frasersrestaurant.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:54:11"
+  },
+  "frasersevents.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:54:26"
+  },
+  "the-point.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:54:50"
+  },
+  "briskcatering.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:55:22"
+  },
+  "thebiggroup.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T16:56:00"
   }
 }

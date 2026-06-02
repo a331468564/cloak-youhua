@@ -580,5 +580,63 @@
     "timestamp": "2026-06-02T16:29:01.797660",
     "candidates_found": 724,
     "leads_processed": 40
+  },
+  {
+    "run_id": "S1-20260602-164140",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T16:45:02.768353",
+    "candidates_found": 350,
+    "leads_processed": 20
+  },
+  {
+    "run_id": "S2-20260602-162901",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T16:56:15.259741",
+    "candidates_processed": 40,
+    "companies_processed": 40,
+    "enriched": 16,
+    "direct_contacts_found": 3,
+    "skipped": 0,
+    "google_searches_used": 50,
+    "direct_contact_rate": 0.075
+  },
+  {
+    "run_id": "S3-20260602-165615",
+    "stage": "stage3_validate",
+    "timestamp": "2026-06-02T16:56:15.297482",
+    "total_candidates": 731,
+    "auto_approved": 0,
+    "auto_rejected": 719,
+    "human_review": 12,
+    "auto_approve_rate": 0.0
+  },
+  {
+    "run_id": "S2-20260602-164502",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T17:01:41.562737",
+    "candidates_processed": 20,
+    "companies_processed": 20,
+    "enriched": 2,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 50,
+    "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S3-20260602-170141",
+    "stage": "stage3_validate",
+    "timestamp": "2026-06-02T17:01:41.596692",
+    "total_candidates": 352,
+    "auto_approved": 0,
+    "auto_rejected": 351,
+    "human_review": 1,
+    "auto_approve_rate": 0.0
+  },
+  {
+    "run_id": "S1-20260602-171507",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T17:16:44.721852",
+    "candidates_found": 141,
+    "leads_processed": 10
   }
 ]
