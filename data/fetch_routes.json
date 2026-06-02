@@ -145,7 +145,7 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-02T12:16:03"
+    "updated": "2026-06-02T14:38:41"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-02T12:41:44"
+    "updated": "2026-06-02T14:35:38"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -642,5 +642,33 @@
   "betterfutureawards.com": {
     "status": "blocked",
     "updated": "2026-06-02T11:49:06"
+  },
+  "linkedin.com": {
+    "status": "blocked",
+    "updated": "2026-06-02T14:33:57"
+  },
+  "alandcohausofdesign.wordpress.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T14:25:32"
+  },
+  "rockett.studio": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T14:27:33"
+  },
+  "biid.org.uk": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T14:27:55"
+  },
+  "lusha.com": {
+    "status": "blocked",
+    "updated": "2026-06-02T14:37:14"
+  },
+  "dsod.com.sg": {
+    "status": "blocked",
+    "updated": "2026-06-02T14:28:12"
+  },
+  "gusto54.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T14:28:30"
   }
 }
