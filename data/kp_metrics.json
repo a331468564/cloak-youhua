@@ -645,5 +645,94 @@
     "timestamp": "2026-06-02T17:45:06.496673",
     "candidates_found": 141,
     "leads_processed": 10
+  },
+  {
+    "run_id": "S1-20260602-174907",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T17:50:37.792245",
+    "candidates_found": 141,
+    "leads_processed": 10
+  },
+  {
+    "run_id": "S1-20260602-174913",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T17:50:40.922138",
+    "candidates_found": 141,
+    "leads_processed": 10
+  },
+  {
+    "run_id": "S2-20260602-174506",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T17:51:45.134405",
+    "candidates_processed": 10,
+    "companies_processed": 10,
+    "enriched": 0,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 30,
+    "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S3-20260602-175145",
+    "stage": "stage3_validate",
+    "timestamp": "2026-06-02T17:51:45.136245",
+    "total_candidates": 141,
+    "auto_approved": 0,
+    "auto_rejected": 141,
+    "human_review": 0,
+    "auto_approve_rate": 0.0
+  },
+  {
+    "run_id": "S2-20260602-175051",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T17:56:41.889548",
+    "candidates_processed": 10,
+    "companies_processed": 10,
+    "enriched": 0,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 30,
+    "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S1-20260602-180214",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T18:03:43.425184",
+    "candidates_found": 141,
+    "leads_processed": 10
+  },
+  {
+    "run_id": "S2-20260602-180343",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T18:09:44.919802",
+    "candidates_processed": 10,
+    "companies_processed": 10,
+    "enriched": 0,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 30,
+    "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S3-20260602-180944",
+    "stage": "stage3_validate",
+    "timestamp": "2026-06-02T18:09:44.921491",
+    "total_candidates": 141,
+    "auto_approved": 0,
+    "auto_rejected": 141,
+    "human_review": 0,
+    "auto_approve_rate": 0.0
+  },
+  {
+    "run_id": "S2-20260602-184001",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T18:45:52.757965",
+    "candidates_processed": 10,
+    "companies_processed": 10,
+    "enriched": 0,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 30,
+    "direct_contact_rate": 0.0
   }
 ]

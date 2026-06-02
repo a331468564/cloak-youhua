@@ -104,12 +104,12 @@
     "updated": "2026-05-20T17:17:40"
   },
   "speakeasygroup.com.au": {
-    "status": "blocked",
-    "updated": "2026-06-02T16:57:13"
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T18:35:27"
   },
   "swillhouse.com": {
-    "status": "blocked",
-    "updated": "2026-06-02T16:57:31"
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T18:39:42"
   },
   "kickongroup.com": {
     "status": "scrapling_ok",
@@ -145,15 +145,15 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-02T17:45:29"
+    "updated": "2026-06-02T18:34:34"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
     "updated": "2026-05-30T15:09:11"
   },
   "zoominfo.com": {
-    "status": "scrapling_ok",
-    "updated": "2026-06-02T17:46:06"
+    "status": "blocked",
+    "updated": "2026-06-02T18:37:45"
   },
   "prospeo.io": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-02T16:52:54"
+    "updated": "2026-06-02T18:45:51"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -672,8 +672,8 @@
     "updated": "2026-06-02T14:28:30"
   },
   "archipro.com.au": {
-    "status": "scrapling_ok",
-    "updated": "2026-06-02T14:42:00"
+    "status": "blocked",
+    "updated": "2026-06-02T18:42:56"
   },
   "elementsbarandgrill.com.au": {
     "status": "scrapling_ok",
@@ -826,5 +826,17 @@
   "thebiggroup.com.au": {
     "status": "scrapling_ok",
     "updated": "2026-06-02T16:56:00"
+  },
+  "au.linkedin.com": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T18:34:49"
+  },
+  "cbre.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-02T18:35:18"
+  },
+  "instagram.com": {
+    "status": "blocked",
+    "updated": "2026-06-02T18:37:28"
   }
 }
