@@ -490,5 +490,23 @@
     "additional_contacts": 0,
     "skipped": 0,
     "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S1-20260602-121038",
+    "stage": "stage1_discover",
+    "timestamp": "2026-06-02T12:14:04.385067",
+    "candidates_found": 363,
+    "leads_processed": 20
+  },
+  {
+    "run_id": "S2-20260602-121524",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-02T12:43:25.896584",
+    "candidates_processed": 20,
+    "enriched": 3,
+    "direct_contacts_found": 0,
+    "additional_contacts": 0,
+    "skipped": 0,
+    "direct_contact_rate": 0.0
   }
 ]
