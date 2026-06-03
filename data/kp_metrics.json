@@ -830,5 +830,17 @@
     "skipped": 0,
     "google_searches_used": 30,
     "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S2-20260603-115746",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-03T12:04:06.904756",
+    "candidates_processed": 10,
+    "companies_processed": 10,
+    "enriched": 0,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 30,
+    "direct_contact_rate": 0.0
   }
 ]
