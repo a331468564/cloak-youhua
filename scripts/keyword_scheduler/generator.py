@@ -110,9 +110,10 @@ def generate_candidates(config_path: Path, existing_patterns: set[str] | None = 
     if not template_info:
         return []
 
-    # Phase 2: distribute quota across templates
-    n_templates = len(template_info)
-    base_quota = max(max_candidates // n_templates, min_per_template)
+    # Phase 2: distribute quota across templates with priority weighting
+    # High-priority templates (proven strategies like regional_town) get 2x quota
+    _PRIORITY_MULTIPLIER = {"high": 2.0, "medium": 1.0, "low": 0.5}
+    total_weight = sum(_PRIORITY_MULTIPLIER.get(t["priority_hint"], 1.0) for t in template_info)
     remaining = max_candidates
 
     candidates = []
@@ -124,6 +125,9 @@ def generate_candidates(config_path: Path, existing_patterns: set[str] | None = 
         priority_hint = info["priority_hint"]
         dim_values = info["dim_values"]
 
+        # Weighted quota: high-priority templates get proportionally more
+        weight = _PRIORITY_MULTIPLIER.get(priority_hint, 1.0)
+        base_quota = max(int(max_candidates * weight / total_weight), min_per_template)
         # This template's quota: min of base_quota, remaining budget, and total combos
         quota = min(base_quota, remaining, info["total_combos"])
 

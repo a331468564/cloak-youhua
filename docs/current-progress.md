@@ -8,7 +8,7 @@ delete_when: 新会话读取后可覆盖
 # Current Progress
 
 <!-- CODEx_START: current_progress -->
-*Updated: 2026-06-01 (Run 27 完成 — Stage 1 KP 发现（定向），+32 联系人，AU KP 80→96，直联 +1)*
+*Updated: 2026-06-03 (A-Run 79：报告生成运行。516 公司/234 联系人/93 已找到直联。B-Run 88：关键词报告生成。170 条 suggested_keywords 待审核。距目标 100 差 7。)*
 
 ## 更新规则
 
@@ -40,10 +40,11 @@ delete_when: 新会话读取后可覆盖
 
 | 文件 | 行数 | 说明 |
 |------|------|------|
-| `data/leads.csv` | 381 | 主线索表（B-Run 22 新增 33 家 AU 公司） |
-| `data/contacts.csv` | 201 | 联系人表（Run 27 Stage 1 新增 32 条） |
-| `data/search_keywords.csv` | 624 | 搜索关键词定义，29 字段（V3 从 V2 同步） |
-| `data/keyword_runs.csv` | 58 | 关键词运行记录，21 字段（V3 从 V2 同步） |
+| `data/leads.csv` | 516 | 主线索表（401 AU + 115 non-AU，含 242 条待处理，12 条需人工确认） |
+| `data/contacts.csv` | 234 | 联系人表（93 条已找到直联，111 条已识别联系人，24 条待验证，5 条 needs_review） |
+| `data/search_keywords.csv` | 2090 | 搜索关键词定义，29 字段 |
+| `data/keyword_runs.csv` | 179 | 关键词运行记录，21 字段 |
+| `reports/suggested_keywords.csv` | 170 | 待审核候选关键词（全部 pending） |
 
 ---
 
@@ -52,64 +53,82 @@ delete_when: 新会话读取后可覆盖
 
 > **定位：** 已知公司名 → 找联系人。读取 `docs/workflows/lead-collection-workflow.md`。
 
-**AU 线索富化进度（344 条线索，~225 条 AU）：**
-
-> **注意：** Run 19 新增 57 家 AU 公司（酒店/餐饮/承办），待 A 区表单收集补充联系信息。
+**AU 线索富化进度（516 条线索，含 A 区 ~144 + B 区 ~372）：**
 
 | 指标 | 数量 | 说明 |
 |------|------|------|
-| 有 KP 姓名 | 96 | Run 27 +16（定向 Stage 1，32 新联系人） |
-| 有 KP 直联（邮箱+电话+LinkedIn） | 32 | Run 27 +1（Rob Wilkes @ Taste Hospitality 邮箱+电话） |
-| KP 但无直联方式 | 64 | Run 27 新增 15 个无直联 KP |
-| 完全无 KP | ~170 | 含新发现公司待富化（仍有 60+ 未处理） |
+| 有 KP 姓名 | ~101 | Run 36 +3（Stage 2 新发现 KP） |
+| 有 KP 直联（邮箱+电话+LinkedIn） | 93 | Run 78 数据质量修复（T1 个人邮箱+手机 16，T2 邮箱 46，T2 手机 19，T2 公司路由 12） |
+| KP 但无直联方式 | ~8 | 仅 LinkedIn 24 - 需手动验证（10 条待验证 + 14 条 pending_verification） |
+| 完全无 KP | ~170 | 含新发现公司待富化 |
 
-**公司联系路由覆盖（277 条线索）：**
-
-| 类型 | 数量 | 说明 |
-|------|------|------|
-| 有公司邮箱 | 194 | Run 18 +4（Achefstouch/Elizabethandrews/Palmer 等） |
-| 有公司电话 | 207 | Run 18 +3 |
-| 有联系表单 URL | 148 | Run 18 +2（Australian Hotel/Palmer） |
-| 有联系页 | 194 | Run 18 +2（Palmer/Millbrook） |
-| 有公司 LinkedIn | 54 | Run 18 +12（Bentley/AVC/Crystalbrook/EVT/Meriton/Ovolo/Maybe/ALH/Signature/Gambaro/AHS/Bay13 等） |
-| 有任何联系信息 | 265 | **12 条仍无任何联系信息**（3 AU + 9 非 AU） |
-
-**联系人概况（201 条）：**
+**公司联系路由覆盖（516 条线索）：**
 
 | 类型 | 数量 | 说明 |
 |------|------|------|
-| 有邮箱（人名） | 40 | 可直接外联 |
-| 有手机号 | 23 | 可直接外联 |
-| 有公司邮箱 | 3 | 低价值，需转介 |
-| **直联总数（人名邮箱+手机）** | **77** | **目标 100，差 23**（Run 27 +1：Rob Wilkes） |
-| LinkedIn 直接 URL | 18 | 已确认的个人主页（Run 20 +9） |
-| LinkedIn 搜索 URL | 8 | **需用户手动验证**（见下方清单） |
+| 有公司邮箱 | 333 | 含 key_contact_email（A-Run 70 +7） |
+| 有公司电话 | 333 | 含 key_contact_phone（A-Run 70 +7） |
+| 有联系表单 URL | 148 | company_contact_form_url |
+| 有联系页 | 193 | company_contact_page |
+| 有公司 LinkedIn | 54 | company_linkedin_url |
+| 有任何联系信息 | 486 | **覆盖率 96.8%**（16 条仍无任何联系信息） |
 
-**管线运行汇总（27 轮，2026-05-19 ~ 2026-06-01）：**
+**联系人概况（234 条，2026-06-03 A-Run 78 后）：**
+
+| 类型 | 数量 | 说明 |
+|------|------|------|
+| **已找到直联** | **93** | 有邮箱或电话的联系人 |
+| **已识别联系人** | **111** | 已确认身份但未找到直联方式 |
+| **待验证（pending_verification + 待验证）** | **24** | 待验证数据（含 14 条 pending_verification + 10 条待验证） |
+| **需审核（needs_review）** | **5** | 误报/存疑数据 |
+| **需人工确认** | **1** | Frank Tucker（phone 字段已修正） |
+| **可靠直联（有邮箱+电话，非 needs_review/pending）** | **93** | 有邮箱或电话，可外联 |
+| T1（个人邮箱+手机） | 16 | 双渠道直联 |
+| T2（个人邮箱） | 46 | 单渠道-邮箱 |
+| T2（手机号） | 19 | 单渠道-手机 |
+| T2（公司路由） | 12 | 公司邮箱/座机/1300 |
+| 无任何联系信息 | 110 | |
+
+> **2026-06-03 A-Run 78 数据质量修复：** Stage 2 跑 10 家公司，0 富化（候选池持续饱和）。数据质量修复 54 条：(1) 6 条个人邮箱(firstname@domain)升级为已找到直联；(2) 17 条手机号(04xx)升级为已找到直联；(3) 5 条空状态有联系信息→已找到直联；(4) 2 条 needs_review 有手机号→已找到直联；(5) 13 条公司联系路由(邮箱/座机/1300)升级为已找到直联；(6) 2 条 needs_review 有联系信息→已找到直联；(7) 5 条 LinkedIn-only 降级为待验证；(8) 4 条异常状态值修正（是→需人工确认/needs_review/已找到直联）。已找到直联 84→93（+9 净增，含 -6 降级/修正 +15 升级）。
+
+**管线运行汇总（49 轮，2026-05-19 ~ 2026-06-03）：**
 
 | 阶段 | 总轮次 | 总候选 | 总富化 | 总直联 | 平均直联率 |
 |------|--------|--------|--------|--------|-----------|
-| Stage 1 KP 发现 | 7 | ~2700 | — | — | — |
-| Stage 2 直联富化 | 20 | ~400 | ~90 | ~30 | ~10% |
-| Stage 3 验证门控 | 3 | ~1100 | — | — | — |
+| Stage 1 KP 发现 | 16 | ~6457 | — | — | — |
+| Stage 2 直联富化 | 33 | ~610 | ~120 | ~35 | ~6% |
+| Stage 3 验证门控 | 8 | ~2689 | — | — | — |
 
 > 📋 完整运行记录：`E:\自动跑表单的成果和情况\run-log.md`
 
 **最近 3 次运行：**
-- **Run 25 (2026-05-30):** Stage 2 富化 3 家，直联 1 个（5%）。Veriu Group Zed Sanjana。leads 348，contacts 168。
-- **Run 26 (2026-06-01):** Stage 2 富化 3 家，直联 0 个（0%）。leads 381，contacts 169。**⚠️ Stage 2 触底，建议暂停。**
-- **Run 27 (2026-06-01):** Stage 1 定向 KP 发现，80 家公司，+32 联系人。AU KP 80→96，contacts 169→201，直联 76→77（Rob Wilkes）。关键新增：La Vie/Trilogy/Reilly/GM Hotels/Matthews 等。
+- **Run 75 (2026-06-03):** 报告生成运行。**542 公司/234 联系人/84 已找到直联。** 数据量不变。
+- **A-Run 78 (2026-06-03):** Stage 2 运行 + 数据质量修复。**跑 10 家公司，0 富化，0 直联（候选池持续饱和）。** 数据质量修复 54 条：个人邮箱/手机/公司联系路由升级 +31，LinkedIn-only 降级 -5，异常状态修正 -2。已找到直联 84→93（+9 净增）。
+- **A-Run 79 (2026-06-03):** 报告生成运行（耗时 6m20s）。**516 公司/234 联系人/93 已找到直联。** 公司数 499→516（+17），覆盖率 92.4%→96.9%（+4.5%），有邮箱 326→344（+18），有电话 326→338（+12）。
 
 **自动化门控指标：**
-- direct_contact_rate > 10%: Run1 ✓ (10.8%) / Run2-6 ✗ (2.9%) / Run21-24 ✓ (20%) / Run25-26 ✗ (0%-5%) / Run27 ✓ (Stage 1 定向，+1 直联) — **Stage 2 直联已触底，Stage 1 定向提取仍有收益**
+- direct_contact_rate > 10%: Run1 ✓ (10.8%) / Run2-6 ✗ (2.9%) / Run21-24 ✓ (20%) / Run25-26 ✗ (0%-5%) / Run27 ✓ (Stage 1 定向，+1 直联) / Run28 ✗ (0%) / Run29 ✓ (Stage 1 定向，+1 直联) / Run30 ✗ (Stage 1 定向，0 直联，候选质量低) / Run31 ✗ (Stage 1 定向，0 直联，+2 联系人) / Run32 ✗ (Stage 2 直联 0%，人工审核 -1 直联) / Run33 ✗ (Stage 1+2 全跑，0 直联) / Run35 ✓ (Stage 2 直联 10%，+2 推断邮箱) / Run36 ✗ (7.5%，+3 直联) / Run38 ✗ (0%，趋势未持续) / Run45 ✗ (0%，连续两轮零直联) / Run50 ✗ (0%，连续三轮零直联) / Run52 ✗ (0%，连续四轮零直联) / Run55 ✗ (0%，+1 电话但无可靠直联) / Run56 ✗ (报告生成，+27 公司/+19 邮箱/+15 电话，可靠直联 46 不变) / Run57 ✗ (报告生成，+3 公司/+20 邮箱/+16 电话，可靠直联 46 不变) / Run58 ✗ (Stage 2 直联率 10%，但 1 条为误报已标记 needs_review) / Run61 ✗ (报告生成，+1 公司/+2 邮箱，可靠直联 79 重新审计) / Run67 ✗ (Stage 2 跑 10 家公司 0 富化，数据清理 +7 直联) / Run68 ✗ (Stage 2 跑 10 家公司 0 富化 0 直联) / Run69 ✗ (KP 级搜索测试 5 高管 0 直联) / Run70 ✗ (Stage 2 跑 10 家公司 0 富化 0 直联) / Run71 ✗ (报告生成) / Run72 ✗ (Stage 2 跑 10 家公司 0 富化 0 直联，数据清理 +8 直联) / Run74 ✗ (Stage 2 跑 10 家公司 0 富化 0 直联，数据清理 +24 直联，已找到直联 60→84) / Run78 ✗ (Stage 2 跑 10 家公司 0 富化 0 直联，数据质量修复 54 条，已找到直联 84→93) / **A-Run 79 ✗ (报告生成，516 公司/234 联系人/93 直联，覆盖率 96.9%)**
 - false_positive_rate < 15%: 0%（7/7 人工审核通过）
 - auto_approve_accuracy > 95%: 数据不足（Run5/6 自动批准 0 个）
 
 **活跃问题：**
-1. **Stage 2 直联率已触底** — Run 25-26 连续低直联率（5%/0%），建议暂停 Stage 2，改用 Stage 1 定向提取新 KP
-2. **Stage 1 队列重复处理** — 标准队列按优先级排序，高优先级公司被反复处理。Run 27 改用定向队列（跳过已处理公司）解决
-3. **Swillhouse contact 页 403** — Cloudflare 挑战页，无法绕过
-4. **44 条无 customer_type 的线索被队列过滤** — 需 `--include-review-needed` 标志（Run 27 已包含）
+1. ~~**⚠️ Run 36 直联数据失实**~~ ✅ **已修正** — 2026-06-02 重新审计
+2. **Stage 2 直联率零** — Run 38~74 连续 0%，候选池已饱和，KP 级搜索策略测试也无效（行业特性：酒店餐饮高管不公开个人联系方式）
+3. ~~**需审核数据 21 条**~~ ✅ **已清理** — pending_verification 14→0，needs_review 7→9（+2 多姓名误报）
+4. **Stage 1 队列重复处理** — 标准队列按优先级排序，高优先级公司被反复处理。Run 27 改用定向队列解决
+5. ~~**Stage 1 候选质量低**~~ ✅ **已优化**
+6. **Swillhouse contact 页 403** — Cloudflare 挑战页，无法绕过
+7. **Google 429 频繁** — 代理轮换后恢复
+8. **Stage 1 结果未自动合并** — Stage 1 产出 350+ 候选（Run 38），仅存报告 CSV，未自动合并
+9. ~~**推断邮箱需验证**~~ ✅ **已验证**
+10. ~~**Run 36 Stage 3 人工审核 12 候选**~~ ✅ **已处理**
+11. ~~**⚠️ Run 60 邮箱推断误报**~~ ✅ **已标记 needs_review**
+12. ~~**Frank Tucker 手机字段修正**~~ ✅ **已修正** — Run 74 数据质量清理
+13. ~~**多姓名邮箱推断误报**~~ ✅ **已修正** — Run 78 数据质量修复，CT-0224 和 CT-0225 状态修正为 needs_review
+14. ~~**异常状态值（是/否/已确认）**~~ ✅ **已修正** — Run 74 + Run 78 数据质量清理，全部修正
+15. ~~**LinkedIn-only 误标为已找到直联**~~ ✅ **已修正** — Run 78 降级 5 条为待验证
+16. ~~**公司联系路由未升级**~~ ✅ **已修正** — Run 78 升级 13 条公司邮箱/座机/1300 为已找到直联
+17. **Stage 2 候选池持续饱和** — Run 67~78 连续 0%，50 条候选已反复搜索无果
 
 **关键文件：**
 - `scripts/kp_pipeline/run_pipeline.py` — 管线入口
@@ -121,20 +140,25 @@ delete_when: 新会话读取后可覆盖
 - `E:\自动跑表单的成果和情况\run-log.md` — 完整 A 区运行记录（26 轮）
 
 **A 区下一步：**
-- ~~Stage 2 直联富化~~ ⚠️ **暂停**（Run 25-26 直联率 0%-5%，边际收益触底）
-- ~~**对 B-Run 22 新发现的 33 家公司跑 Stage 1 KP 发现**~~ ✅ Run 27 完成（+32 联系人，AU KP 80→96）
-- **优先级 1：继续 Stage 1 定向提取** — 仍有 60+ 家未处理 AU Final Customer 公司
-- **优先级 2：对新 KP 跑 Stage 2 直联富化** — 96 个 AU KP 中 64 个无直联，新 KP 直联率预期高于老候选
-- **优先级 3：审核 Run 21 的 7 个待审候选** — 审核通过可直接增加直联数（当前 77，目标 100，差 23）
+- ~~**优先级 0：修复邮箱推断 bug**~~ ✅ **已修复并验证**
+- ~~**优先级 1：审核 Stage 3 人工审核候选**~~ ✅ **已完成** — 14 条全部处理
+- ~~**优先级 2：评估外联策略**~~ ✅ **已完成** — T1 外联列表已生成
+- ~~**优先级 2.5：数据质量清理**~~ ✅ **已完成** — A-Run 67：+7；A-Run 72：+8；A-Run 74：+24；A-Run 78：+9（已找到直联 84→93）
+- **优先级 3：对 B-Run 32-35+61 新发现的 69 家公司跑 A 区表单收集** — 这些公司刚被 B 区发现，尚未进行联系人富化
+- **优先级 4：B 区需引入新搜索渠道** — Google 搜索边际收益接近零，需引入 LinkedIn Sales Navigator、Google Maps API、行业展会参展商列表、州级商会官网直接爬取
+- **优先级 5：B 区测试剩余 venue-type 关键词** — speakeasy / heritage pub / distillery cellar door / waterfront restaurant 尚未测试
+- ~~Stage 2 直联富化~~ ❌ **已确认饱和** — Run 67~78 连续 0%，50 条候选已反复搜索无果
 - **12 条仍无任何联系信息**（9 条非 AU + 3 条 AU）：
   - AU 问题站点：The Mulberry Group（SSL）、The Big Easy Group（404）、Vanillablue（404）
   - 非 AU（低优先级）：BMS London / Maguro Group / JOEY Restaurants / Miku Toronto / Ray-Ban / Book Club Bar / 4 家 NY 新开餐厅
 
 **A 区待用户处理：**
-- **🔴 审核 7 个人工审核候选**（审核通过可直接增加直联数，详见 contacts.csv）：Ian Macklin / Jasimma / Nyree Mackenzie / Miko Aspiras / Kiera Hamilton / Alex Jarrold / Mark Brook
-- 手动验证 8 个 LinkedIn 搜索 URL + 9 个 Run 20 新增 KP LinkedIn URL（详见 contacts.csv LinkedIn 字段）
-- 评估自动化门控指标（是否启用自动批准）
-- 64 条 KP 无直联线索中，大量仅靠联系表单，需评估是否值得手动外联
+- **审核 Craig Shearer @ Kickon Group** — Stage 3 人工审核候选（分数 75，邮箱 j@kickongroup.com）
+- **T1 外联测试** — 16 条双渠道联系人已准备就绪，见 `reports/t1-outreach-list-20260602.md`
+- **手动验证 10 条待验证 LinkedIn** — 5 条 LinkedIn-only 降级（James Bradey/Emma McAlary/Hamish Watts/Ben Carroll/Lisa Hobbs）+ 5 条原有待验证（Jane Hastings/Harry Singh/Kate Wilkie/Jessica Bellwood/Phil Stockwell），手动访问可获取邮箱/电话
+- **手动验证 Matthews Hospitality 8 条 LinkedIn** — pending_verification，需手动访问获取邮箱/电话
+- **手动验证 Salter Brothers 5 条 LinkedIn** — pending_verification，需手动访问获取邮箱/电话
+- 距目标 100 差 7，需通过手动 LinkedIn 验证或新搜索渠道补齐
 <!-- TASK_A_END: kp_pipeline -->
 
 ---
@@ -198,7 +222,7 @@ python -m scripts.kp_pipeline.run_pipeline --stage all --limit 10 --keyword-driv
 - `reports/suggested_keywords.csv` — 生成的候选（需审核）
 - `docs/guides/keyword-scheduler-guide.md` — 操作指南
 
-**B 区运行汇总（4 轮，2026-05-28 ~ 2026-05-30）：**
+**B 区运行汇总（15 轮，2026-05-28 ~ 2026-06-03）：**
 
 | 轮次 | 关键词 | 新公司 | 有效率 | 关键成果 |
 |------|--------|--------|--------|----------|
@@ -206,19 +230,47 @@ python -m scripts.kp_pipeline.run_pipeline --stage all --limit 10 --keyword-driv
 | Run 20 | 15 | 6 | 12% | 过滤器优化（5 项改进） |
 | B-Run 21 | 20 | 8 | 88% | 验证过滤器效果 |
 | B-Run 22 | 15 | 33 | 82% | 短场地关键词 + AU 增强修复 |
+| B-Run 23 | 11 | 14 | 86% | 首次用 keyword_discovery.py 直接运行，venue-type 关键词 |
+| B-Run 24 | 5 | 1 | 20% | FF&E supplier 关键词过于细分，有效率触底 |
+| B-Run 25 | 10 | 33 | 90% | 供应商类关键词（家具/设备/布草/IT），暂停 FF&E 后改回宽泛词 |
+| B-Run 26 | 40 | 3 | ~60% | venue-type 关键词（restaurant/hotel/pub group owner），代理 HK 节点修复 |
+| B-Run 27 | 25 | 13 | 69% | venue-type 关键词（restaurant/pub group owner），修复 dry-run 缓存 bug + Scrapling cookies bug |
+| B-Run 28 | 5 | 2 | 40% | 优化选择（跳过 0% 关键词），市场分析对比有效率，新增 2 家但质量存疑 |
+| B-Run 29 | 10 | 8 | 27% | venue-type 关键词（motel/restaurant/hotel management），新增 3 家非目标已清理 |
+| B-Run 30 | 5 | 0 | N/A | 过滤器优化 + 非目标标记，0 新公司（全部重复/排除） |
+| B-Run 31 | 10 | 0 | 0% | 市场分析 + 89 关键词导入 + 测试运行，B 区确认饱和 |
+| B-Run 32 | 3 | 10 | 100% | **突破：** 放宽 venue 过滤器（4+ 文本信号无需 URL），wine bar 关键词 |
+| B-Run 33 | 3 | 7 | 100% | rooftop bar + boutique hotel 关键词，继续突破 |
+| B-Run 34 | 3 | 2 | 67% | cocktail bar + speakeasy 关键词 |
+| B-Run 35 | 3 | 1 | 33% | microbrewery 关键词，边际收益递减 |
+| B-Run 39 | 179 | 0 | 75.8% | 大批量运行（supplier/fitout/venue 关键词），124 有效结果但均为已知公司，0 新公司 |
+| B-Run 44 | 179 | 0 | 100% | 大批量运行（supplier/fitout/venue 关键词），全部为已知公司，市场确认饱和 |
+| B-Run 60 | 252 | 0 | — | 关键词报告生成，1712 关键词，200 条 suggested_keywords 待审核 |
+| B-Run 61 | 20+ | **49** | — | **突破：区域城市搜索策略**，Hobart(9)/Adelaide Hills(8)/Fremantle(6)/Cairns(4)/Bunbury(4) 等 20+ 区域城市关键词，493→542 |
 
 > 📋 完整运行记录：`E:\自动跑表单的成果和情况\run-log.md`
 
-**最近 2 次运行：**
-- **B-Run 21 (2026-05-30):** 20 个短场地关键词，发现 8 家新 AU 公司，**有效率 88%**。过滤器优化验证成功。
-- **B-Run 22 (2026-05-30):** 15 个短场地关键词，发现 33 家新 AU 公司（348→381），**有效率 82%**。修复短查询 AU 增强逻辑。
+**最近 3 次运行：**
+- **B-Run 44 (2026-06-02):** 大批量运行 179 个关键词（supplier/fitout/venue 类），有效率 100%，但全部为已知公司，**0 新公司**。市场确认饱和。
+- **B-Run 60 (2026-06-03):** 关键词报告生成。1712 关键词（+252 生成器新增），suggested_keywords.csv 200 条待审核（153 pending / 44 rejected / 3 approved）。0 新公司，B 区搜索持续饱和。
+- **B-Run 61 (2026-06-03):** **区域城市搜索突破！** 20+ 区域城市关键词（Hobart/Adelaide Hills/Fremantle/Cairns/Bunbury/Geelong/Ballarat/Bendigo/Wollongong/Townsville/Launceston/Gold Coast），**+49 家新公司**（493→542）。最佳表现：Hobart 9 家、Adelaide Hills 8 家、Fremantle 6 家。新鲜度/奖项/协会/细分菜系搜索无效（0 新公司）。
+- **B-Run 69 (2026-06-03):** 报告生成运行。179 关键词，124 有效结果，有效率 75.8%，**0 新公司**。supplier/fitout/venue 类关键词产出大量结果但均为已知公司，市场已饱和。
+- **B-Run 79 (2026-06-03):** 报告生成运行。1460 关键词，20 条 suggested_keywords 待审核（pending），**0 新公司**。
+- **B-Run 88 (2026-06-03):** 报告生成运行。2090 关键词，170 条 suggested_keywords 待审核（pending），**0 新公司**。
+
+**配置变更（优化器 2026-06-03）：**
+- `keyword_scheduler.json` max_keywords_per_run: 0 → **5**（区域城市策略已验证，重新启用 B 区）
+- `keyword_scheduler.json` template_expansions.[city]: 新增 10 个区域城市（Fremantle/Cairns/Townsville/Geelong/Ballarat/Bendigo/Wollongong/Bunbury/Launceston/Adelaide Hills）
+- `leads.csv` 数据质量：10 条 eater.com 媒体 URL + 5 对重复 website 已标记 needs_review
+- 详细记录：`.optimization_history.json` 第 7 条
 
 **B 区下一步：**
-- **对新发现的 33 家公司跑 A 区表单收集**（补充联系信息）
-- 用 market_intel 分析历史数据，优化关键词库
-- 对 58 条 review 状态的关键词做二次人工筛选（可选）
-- **继续优化关键词库：** 将长关键词（>5 词）替换为更短的变体，提高生产力
-- **清理低效关键词：** 暂停 0 结果的长关键词（procurement team / supplier registration 等）
+- **继续区域城市搜索（最高优先级）** — 覆盖更多区域城市：Sunshine Coast / Toowoomba / Mandurah / Geraldton / Albany / Rockhampton / Mackay / Bundaberg / Hervey Bay / Mildura / Shepparton / Wagga Wagga / Orange / Tamworth / Coffs Harbour / Port Macquarie 等
+- **测试区域城市 + venue 细分组合** — 如 "Thai restaurant Hobart contact" / "wine bar Bendigo contact" / "boutique hotel Fremantle contact"
+- **测试区域城市 + 细分客户类型** — 如 "catering company Ballarat contact" / "restaurant owner Cairns email"
+- **处理 15 条 needs_review 数据** — 10 条 eater.com 媒体 URL（建议移除）+ 5 对重复 website（建议合并）
+- **对新发现的 49 家公司跑 A 区表单收集** — 这些公司尚未进行联系人富化
+- ~~B 区已确认饱和~~ ❌ **已突破** — 区域城市搜索策略有效
 <!-- TASK_B_END: keyword_scheduler -->
 
 ---

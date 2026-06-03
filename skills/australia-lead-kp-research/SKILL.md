@@ -72,16 +72,16 @@ Do not treat a black-box enrichment result as high-confidence without a saved pu
 
 ## Query Generation
 
-Use `scripts/extraction/keyword_discovery.py` to generate repeatable query batches:
+Use `scripts/extraction/generate_kp_form_queries.py` to generate repeatable query batches:
 
 ```bash
-python scripts/extraction/keyword_discovery.py --limit 20
+python scripts/extraction/generate_kp_form_queries.py --limit 20
 ```
 
 For known company domains:
 
 ```bash
-python scripts/extraction/keyword_discovery.py --limit 20 --domains "example.com.au,example2.com.au"
+python scripts/extraction/generate_kp_form_queries.py --limit 20 --domains "example.com.au,example2.com.au"
 ```
 
 ## KP Confidence

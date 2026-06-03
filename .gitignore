@@ -20,3 +20,39 @@ reports/hook-pycompile/
 .DS_Store
 Thumbs.db
 .claude/hooks/.blocker_state.json
+*.bak
+data/*.bak
+reports/queue-*
+reports/run*-batch*
+reports/form-batch*
+reports/form-run*
+
+# Data files (contains real contact info - NEVER commit)
+data/*.csv
+data/*.json
+data/*.bak*
+data/.comtrade_api_key
+data/.last_run_timing*
+data/snapshots/
+
+# Session/temp files
+.session_state.json
+.optimization_history.json
+.run_lock
+
+# Proxy rotation (contains credentials and binary files)
+config/proxy-rotation/cloak-clash.yaml
+config/proxy-rotation/*.mmdb
+config/proxy-rotation/*.db
+config/proxy-rotation/*.dat
+config/proxy-rotation/*.metadb
+config/proxy-rotation/SKILL.md
+
+# Session/temp files
+.session_state.json
+.optimization_history.json
+.run_lock
+
+# Reports with real data
+reports/*.csv
+reports/queue-*

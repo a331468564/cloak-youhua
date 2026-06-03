@@ -1,0 +1,228 @@
+{
+  "search_strategies": {
+    "demand_signals": {
+      "description": "找正在/即将采购家具的人（新开店、翻新、扩张）",
+      "keywords": [
+        {
+          "id": "DS-001",
+          "template": "new restaurant opening {country} {year}",
+          "intent": "新开餐厅 = 需要全套家具",
+          "priority": "High"
+        },
+        {
+          "id": "DS-002",
+          "template": "new bar opening {country} {year}",
+          "intent": "新开酒吧 = 需要吧椅、吧台、桌椅",
+          "priority": "High"
+        },
+        {
+          "id": "DS-003",
+          "template": "new cafe opening {country} {year}",
+          "intent": "新开咖啡店 = 需要桌椅",
+          "priority": "High"
+        },
+        {
+          "id": "DS-004",
+          "template": "hotel renovation {country}",
+          "intent": "酒店翻新 = 更换家具",
+          "priority": "High"
+        },
+        {
+          "id": "DS-005",
+          "template": "restaurant renovation {country}",
+          "intent": "餐厅翻新 = 更换家具",
+          "priority": "High"
+        },
+        {
+          "id": "DS-006",
+          "template": "restaurant group expansion {country}",
+          "intent": "连锁扩张 = 批量采购",
+          "priority": "High"
+        },
+        {
+          "id": "DS-007",
+          "template": "hospitality group opening {country}",
+          "intent": "酒店集团开新店 = 大批量采购",
+          "priority": "High"
+        },
+        {
+          "id": "DS-008",
+          "template": "hotel FF&E procurement {country}",
+          "intent": "FF&E = Furniture Fixtures & Equipment，专业采购术语",
+          "priority": "Medium"
+        },
+        {
+          "id": "DS-009",
+          "template": "restaurant fit-out project {country}",
+          "intent": "装修项目 = 需要家具供应",
+          "priority": "Medium"
+        },
+        {
+          "id": "DS-010",
+          "template": "food court development {country}",
+          "intent": "美食广场开发 = 大量餐饮家具需求",
+          "priority": "Medium"
+        }
+      ]
+    },
+    "buyer_profiles": {
+      "description": "找帮客户采购家具的中间商/设计师/装修公司",
+      "keywords": [
+        {
+          "id": "BP-001",
+          "template": "restaurant design company {country}",
+          "intent": "餐厅设计师 = 帮客户选家具，有推荐权",
+          "priority": "High"
+        },
+        {
+          "id": "BP-002",
+          "template": "hospitality interior designer {country}",
+          "intent": "酒店室内设计师 = 帮客户选家具",
+          "priority": "High"
+        },
+        {
+          "id": "BP-003",
+          "template": "restaurant fit-out company {country}",
+          "intent": "餐厅装修公司 = 项目制采购家具",
+          "priority": "High"
+        },
+        {
+          "id": "BP-004",
+          "template": "hotel FF&E supplier {country}",
+          "intent": "FF&E供应商 = 专业采购中间商",
+          "priority": "Medium"
+        },
+        {
+          "id": "BP-005",
+          "template": "commercial furniture project {country}",
+          "intent": "商业家具项目公司 = 大项目采购",
+          "priority": "Medium"
+        },
+        {
+          "id": "BP-006",
+          "template": "hospitality procurement consultant {country}",
+          "intent": "采购顾问 = 帮客户做采购决策",
+          "priority": "Medium"
+        }
+      ]
+    },
+    "importer_partner": {
+      "description": "找现有的家具进口商/经销商（作为分销渠道合作）",
+      "keywords": [
+        {
+          "id": "IP-001",
+          "template": "commercial furniture distributor {country}",
+          "intent": "商业家具经销商 = 可能需要中国供应商",
+          "priority": "Medium"
+        },
+        {
+          "id": "IP-002",
+          "template": "hospitality furniture supplier {country}",
+          "intent": "酒店家具供应商 = 可能需要更好的中国供应",
+          "priority": "Medium"
+        },
+        {
+          "id": "IP-003",
+          "template": "restaurant furniture wholesale {country}",
+          "intent": "餐厅家具批发商 = 批量采购需求",
+          "priority": "Medium"
+        }
+      ]
+    },
+    "trade_shows": {
+      "description": "找参加行业展会的公司（活跃买家）",
+      "keywords": [
+        {
+          "id": "TS-001",
+          "template": "furniture fair {country} exhibitor list {year}",
+          "intent": "家具展参展商 = 活跃的行业玩家",
+          "priority": "Low"
+        },
+        {
+          "id": "TS-002",
+          "template": "hospitality expo {country} exhibitor {year}",
+          "intent": "酒店展参展商 = 有采购需求",
+          "priority": "Low"
+        },
+        {
+          "id": "TS-003",
+          "template": "restaurant trade show {country} {year}",
+          "intent": "餐饮展 = 有采购需求的餐厅业主",
+          "priority": "Low"
+        }
+      ]
+    },
+    "local_search": {
+      "description": "用本地语言搜索（非英语市场）",
+      "keywords": [
+        {
+          "id": "LS-001",
+          "template": "neues Restaurant Eröffnung {country}",
+          "intent": "德语：新餐厅开业",
+          "country": "DE",
+          "priority": "Medium"
+        },
+        {
+          "id": "LS-002",
+          "template": "Hotel Renovierung Möbel {country}",
+          "intent": "德语：酒店翻新家具",
+          "country": "DE",
+          "priority": "Medium"
+        },
+        {
+          "id": "LS-003",
+          "template": "nouveau restaurant ouverture {country}",
+          "intent": "法语：新餐厅开业",
+          "country": "FR",
+          "priority": "Low"
+        },
+        {
+          "id": "LS-004",
+          "template": " nuevo restaurante apertura {country}",
+          "intent": "西班牙语：新餐厅开业",
+          "country": "ES",
+          "priority": "Low"
+        }
+      ]
+    }
+  },
+  "product_categories": [
+    {
+      "category": "restaurant_furniture",
+      "hs_codes": ["940171", "940179", "940180", "940320", "940340", "940360"],
+      "description_cn": "餐厅家具（座椅+餐桌）",
+      "description_en": "Restaurant Furniture (Seating + Tables)"
+    },
+    {
+      "category": "kitchen_equipment",
+      "hs_codes": ["732399", "732111", "732119"],
+      "description_cn": "不锈钢厨房设备及餐具",
+      "description_en": "Stainless Steel Kitchen Equipment"
+    },
+    {
+      "category": "tableware",
+      "hs_codes": ["691110", "691200", "691310"],
+      "description_cn": "瓷制/陶制餐具",
+      "description_en": "Ceramic/Porcelain Tableware"
+    }
+  ],
+  "target_markets": [
+    {"country": "Australia", "code": "AU", "comtrade_code": "036", "priority": 1},
+    {"country": "Germany", "code": "DE", "comtrade_code": "276", "priority": 2},
+    {"country": "United Kingdom", "code": "UK", "comtrade_code": "826", "priority": 2},
+    {"country": "United States", "code": "US", "comtrade_code": "842", "priority": 3},
+    {"country": "Canada", "code": "CA", "comtrade_code": "124", "priority": 3},
+    {"country": "Japan", "code": "JP", "comtrade_code": "392", "priority": 3},
+    {"country": "Singapore", "code": "SG", "comtrade_code": "702", "priority": 4},
+    {"country": "South Korea", "code": "KR", "comtrade_code": "410", "priority": 4},
+    {"country": "New Zealand", "code": "NZ", "comtrade_code": "554", "priority": 4},
+    {"country": "UAE", "code": "AE", "comtrade_code": "784", "priority": 4},
+    {"country": "Saudi Arabia", "code": "SA", "comtrade_code": "682", "priority": 5},
+    {"country": "France", "code": "FR", "comtrade_code": "250", "priority": 5}
+  ],
+  "reporter_country": {
+    "name": "China",
+    "code": "CN",
+    "comtrade_code": "156"
+  }
+}

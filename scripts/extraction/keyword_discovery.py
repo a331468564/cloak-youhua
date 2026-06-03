@@ -102,6 +102,21 @@ EXCLUDE_DOMAINS = {
     "rubiconlaw.com.au",
     # Equipment suppliers
     "microbrewerysystem.com", "cateringequipment.com.au",
+    # B-Run 25-29 non-target: suppliers, media, directories, recruitment, tech, property
+    "seekbusiness.com.au", "glamadelaide.com.au", "melbournefoodandwine.com.au",
+    "hellopeople.com.au", "hospitalitydirectory.com.au",
+    "core4service.com.au", "chefhire.com.au",
+    "cafefurniturecompany.com.au", "adagefurniture.com.au", "chairimports.com.au",
+    "convenientinteriors.com.au", "phoeniks.com.au", "adgemisrefrigeration.com.au",
+    "hospitalityconnect.com.au", "thecigroup.com.au", "lkhevents.com.au",
+    "tbourke-solutions.com.au", "netway.com.au", "ihservices.com.au",
+    "technology4hotels.com.au", "setthebar.com.au", "almliquor.com.au",
+    "shop.buzzproducts.com.au", "swisstrade.com.au", "vanitygroup.com",
+    "dolphy.com.au", "hostsupplies.com.au", "lightingspaces.com.au",
+    "davolucelighting.com.au", "aaateatowels.com.au", "premiumlinen.com.au",
+    "restaurantlinenservice.com.au", "britawash.com.au", "snowflakelaundry.com.au",
+    "splservices.com.au", "xo2.com.au", "escalatehospitality.com.au",
+    "infinityhospitality.com.au",
     # Procurement software / SaaS
     "fourth.com", "entegraps.com", "chefmod.com", "fourpl.com.au",
     "spend-solutions.com.au", "practicegreenhealth.org",
@@ -131,6 +146,8 @@ EXCLUDE_DOMAINS = {
     "windowswear.com", "asiabrewersnetwork.com", "theurbanlist.com",
     "business-live.co.uk", "miragenews.com", "listnr.com",
     "eater.com", "ny.eater.com",
+    # B-Run 35 non-target: tourism boards, travel blogs, food media
+    "visitcanberra.com.au", "adventuresnsunsets.com", "thecitylane.com",
     # Recruitment (additional)
     "barcats.com.au", "executivesearchinternational.com.au",
     "careers.delawarenorth.com",
@@ -150,6 +167,14 @@ EXCLUDE_DOMAINS = {
     # International hotel chains (AU franchise sites)
     "joinchoicehotels.com.au", "wvrap.com.au",
     "wyndhamap.com",
+    # Venue management / hospitality tech platforms
+    "doshii.com", "siteminder.com", "opentable.com",
+    # Business list / directory sites
+    "businesslistsaustralia.com",
+    # Recruitment agencies (additional)
+    "mondaygroup.com.au",
+    # International (non-AU) domains
+    "masonrybali.com",
     # Equipment suppliers / wholesalers / trade (not actual venues)
     "mipos.com.au", "accesspos.com.au",
     "winetitles.com.au", "yarravalleytrading.com.au",
@@ -318,27 +343,141 @@ def _is_australia_page(url, text="", domain=""):
     return matches >= 2
 
 
-def _is_restaurant_hotel_page(text, url):
-    """判断页面是否是实际的餐饮/酒店公司网站（非文章/目录）。"""
+def _is_supplier_website(text, url, domain=""):
+    """判断是否是供应商/批发商/制造商网站（非 venue 运营方）。
+
+    供应商网站通常包含大量 venue 关键词（因为他们的客户是餐厅/酒店），
+    但实际是卖设备/家具/布草/IT 服务的，不是 venue 运营方。
+    """
     text_lower = text.lower() if text else ""
     url_lower = url.lower()
 
-    # 强信号：URL 路径包含 venue 相关词
-    venue_url_signals = ["restaurant", "hotel", "bar", "cafe", "pub",
-                         "brewery", "winery", "motel", "resort", "venue"]
-    url_match = sum(1 for kw in venue_url_signals if kw in url_lower)
-    if url_match >= 1:
-        # URL 有 venue 信号，但还需排除文章
+    # URL 直接排除
+    supplier_url_kws = [
+        "supplier", "wholesale", "manufacturer", "equipment",
+        "furniture", "linen", "lighting", "amenities",
+        "commercial-kitchen", "kitchen-equipment",
+        "hire-a-chef", "hire-a", "recruitment", "staffing",
+    ]
+    if any(kw in url_lower for kw in supplier_url_kws):
         return True
 
-    # 文本需要更强的信号（至少 3 个行业关键词，且包含 venue 类词）
+    # 内容中的供应商信号（需要多个同时出现才判定）
+    supplier_content_kws = [
+        "wholesale", "manufacturer", "supplier", "distributor",
+        "trade pricing", "trade price", "bulk order", "catalogue",
+        "product range", "our products", "shop now", "add to cart",
+        "free shipping", "delivery australia wide", "b2b",
+        "wholesale enquiry", "wholesale inquiry", "reseller",
+    ]
+    supplier_match = sum(1 for kw in supplier_content_kws if kw in text_lower)
+    if supplier_match >= 2:
+        return True
+
+    # 域名中的供应商信号
+    supplier_domain_kws = [
+        "furniture", "equipment", "supply", "supplies", "linen",
+        "lighting", "kitchen", "wholesale", "trade", "imports",
+        "laundry", "towels", "amenities", "products",
+    ]
+    if any(kw in domain.lower() for kw in supplier_domain_kws):
+        # 域名含供应商词 + 内容有 venue 关键词 = 大概率是供应商
+        venue_kws = ["restaurant", "hotel", "bar", "cafe", "pub", "hospitality"]
+        if sum(1 for kw in venue_kws if kw in text_lower) >= 1:
+            return True
+
+    return False
+
+
+def _is_media_or_directory(text, url, domain=""):
+    """判断是否是媒体/新闻/目录/列表网站（非实际公司）。"""
+    text_lower = text.lower() if text else ""
+    url_lower = url.lower()
+    domain_lower = domain.lower()
+
+    # 域名中的媒体/目录信号
+    media_domain_kws = [
+        "news", "media", "magazine", "review", "directory",
+        "listing", "list", "classifieds", "advertiser", "herald",
+        "times", "post", "tribune", "gazette", "journal",
+        "business-for-sale", "seekbusiness", "franchise",
+        "glam", "urban", "lifestyle",
+    ]
+    if any(kw in domain_lower for kw in media_domain_kws):
+        return True
+
+    # 内容中的媒体/目录信号
+    media_content_kws = [
+        "subscribe", "newsletter", "sign up for updates",
+        "latest news", "trending", "editorial", "sponsored",
+        "advertisement", "classifieds", "listing",
+        "for sale", "businesses for sale", "buy a business",
+        "read more", "more articles", "more stories",
+    ]
+    media_match = sum(1 for kw in media_content_kws if kw in text_lower)
+    if media_match >= 2:
+        return True
+
+    return False
+
+
+def _is_restaurant_hotel_page(text, url):
+    """判断页面是否是实际的餐饮/酒店公司网站（非文章/目录/供应商）。"""
+    text_lower = text.lower() if text else ""
+    url_lower = url.lower()
+
+    # 排除词：URL 含这些词直接排除（招聘/物业/供应商/培训等非目标）
+    EXCLUDE_URL_KEYWORDS = [
+        "staffing", "recruitment", "hire-a-", "hire-a",
+        "property", "facilities", "real-estate",
+        "supplier", "wholesale", "manufacturer",
+        "training", "course", "certificate", "academy",
+        "franchise", "business-for-sale",
+    ]
+    if any(kw in url_lower for kw in EXCLUDE_URL_KEYWORDS):
+        return False
+
+    # 媒体/列表页检测：标题含 listicle 模式则排除
+    LISTICLE_PATTERNS = [
+        r"\d+\s+(?:best|top|hidden|must[- ]?visit|favorite|great)",
+        r"(?:complete\s+list|ultimate\s+guide|full\s+guide|guide\s+to)",
+        r"\d+\s+(?:bars|restaurants|hotels|pubs|cafes|venues|breweries)\b",
+        r"(?:by\s+a\s+tour\s+guide|according\s+to|curated\s+list)",
+    ]
+    if any(re.search(p, text_lower) for p in LISTICLE_PATTERNS):
+        return False
+
+    # 强信号：URL 路径包含 venue 相关词（需 ≥2 个，减少单信号误判）
+    venue_url_signals = ["restaurant", "hotel", "bar", "cafe", "pub",
+                         "brewery", "winery", "motel", "resort", "venue",
+                         "wine", "cellar", "bistro", "eatery", "dining",
+                         "kitchen", "cocktail", "gastropub"]
+    url_match = sum(1 for kw in venue_url_signals if kw in url_lower)
+    if url_match >= 2:
+        return True
+
+    # 文本需要更强的信号（至少 3 个行业关键词）
     if text_lower:
         venue_text_signals = ["restaurant", "hotel", "bar", "cafe", "pub",
                               "brewery", "winery", "motel", "resort", "bistro",
-                              "tavern", "gastropub", "venue", "accommodation"]
+                              "tavern", "gastropub", "venue", "accommodation",
+                              "food", "wine", "dining", "eatery", "kitchen",
+                              "cellar door", "distillery", "cocktail", "tapas",
+                              "charcuterie", "sommelier", "cellar", "eat",
+                              "drink", "lunch", "dinner", "breakfast", "brunch"]
         venue_matches = sum(1 for kw in venue_text_signals if kw in text_lower)
+        if venue_matches >= 4:
+            # 4+ text signals: still require at least 1 URL signal to avoid media/listicle false positives
+            if url_match >= 1:
+                return True
         if venue_matches >= 3:
-            return True
+            # 3 text signals: URL 有至少 1 个 venue 信号时通过（文本+URL 双确认）
+            if url_match >= 1:
+                return True
+        if venue_matches >= 2:
+            # 2 text signals + 1 URL signal: moderate confidence for venue-type domains
+            if url_match >= 1:
+                return True
 
     return False
 
@@ -390,16 +529,22 @@ def _expand_templates(query):
     return results
 
 
-def discover_from_keyword(keyword_query, max_results=5, existing_names=None, existing_domains=None, use_cache=True):
+def discover_from_keyword(keyword_query, max_results=5, existing_names=None, existing_domains=None, use_cache=True, dry_run=False):
     """用一个关键词搜索 Google，发现新公司。
 
     Args:
         use_cache: True 时使用域名缓存（跳过已访问域名）。dry-run 时设为 False。
+        dry_run: True 时不更新域名缓存（仅预览）。
     """
     if existing_names is None:
         existing_names = set()
     if existing_domains is None:
         existing_domains = set()
+
+    # dry-run 时不更新域名缓存
+    def _mark(domain, **kwargs):
+        if not dry_run:
+            mark_visited(domain, **kwargs)
 
     # 自动增强 AU 查询
     enhanced_query = _enhance_query_for_au(keyword_query)
@@ -410,15 +555,24 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
     if not results:
         return []
 
+    # Filter layer statistics
+    _stats = {"google_results": len(results), "excluded_domain": 0, "article_url": 0,
+              "dup_domain": 0, "cached_domain": 0, "fetch_error": 0, "cloudflare": 0,
+              "article_title": 0, "media_domain": 0, "professional_svc": 0,
+              "not_au": 0, "not_venue": 0, "supplier": 0, "no_contact": 0, "dup_name": 0, "accepted": 0}
+
     new_companies = []
     for url in results:
         domain = _extract_domain(url)
         if not domain or _is_excluded_domain(domain):
+            _stats["excluded_domain"] += 1
             continue
         # Skip article/directory URLs
         if _is_article_or_directory(url):
+            _stats["article_url"] += 1
             continue
         if domain in existing_domains:
+            _stats["dup_domain"] += 1
             continue
 
         # 域名缓存：跳过已访问的域名（dry-run 时禁用缓存）
@@ -430,17 +584,21 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
                 if should_recheck_cloudflare(domain, current_ip):
                     pass  # 继续抓取，复查
                 else:
+                    _stats["cached_domain"] += 1
                     continue
             else:
+                _stats["cached_domain"] += 1
                 continue
 
         # Cloudflare 域名：先用 Scrapling 重试（有时能过）
+        cookies, ua = [], ""
         if is_cloudflare(domain):
             text, status, error = scrapling_fetch(url, timeout=15)
             if not error and text:
                 html = None  # Scrapling 不返回完整 HTML
             else:
                 # Scrapling 也失败，跳过
+                _stats["cloudflare"] += 1
                 continue
 
         # 抓取页面获取更多信息
@@ -451,14 +609,16 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
                 text, html, cookies, ua, status, error = None, None, [], "", 0, "fetch error"
 
         if error or not text:
-            mark_visited(domain, valid=False)
+            _stats["fetch_error"] += 1
+            _mark(domain, valid=False)
             continue
 
         # 检测 Cloudflare 防护
         if html and any(x in html.lower() for x in ['challenge-platform', 'turnstile', 'just a moment', 'verify you are human']):
             pm = get_manager()
             current_ip = pm.verify_proxy_ip() or ""
-            mark_visited(domain, valid=False, cloudflare=True, ip=current_ip)
+            _mark(domain, valid=False, cloudflare=True, ip=current_ip)
+            _stats["cloudflare"] += 1
             print(f"  [CF] {domain} — Cloudflare detected, skipping")
             continue
 
@@ -468,28 +628,45 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
 
         # 二次文章检测（基于标题和域名）
         if _is_article_or_directory(url, title):
-            mark_visited(domain, valid=False)
+            _stats["article_title"] += 1
+            _mark(domain, valid=False)
             continue
         # 媒体/新闻域名检测
         if any(x in domain for x in ["media", "news", "magazine", "review",
                                        "advertiser", "herald", "times", "post",
                                        "tribune", "gazette", "journal", "mag",
                                        "crawl", "lodges", "escapes"]):
-            mark_visited(domain, valid=False)
+            _stats["media_domain"] += 1
+            _mark(domain, valid=False)
             continue
         # 专业服务（律所、会计等）检测
         if any(x in domain for x in ["law", "legal", "solicitor", "barrister",
                                        "accountant", "accounting", "consulting"]):
-            mark_visited(domain, valid=False)
+            _stats["professional_svc"] += 1
+            _mark(domain, valid=False)
             continue
 
         # AU 地理过滤
         if not _is_australia_page(url, text, domain):
-            mark_visited(domain, valid=False)
+            _stats["not_au"] += 1
+            _mark(domain, valid=False)
+            continue
+
+        # 供应商检测（在 venue 检查之前，因为供应商也能通过 venue 检查）
+        if _is_supplier_website(text, url, domain):
+            _stats["supplier"] += 1
+            _mark(domain, valid=False)
+            continue
+
+        # 媒体/目录检测
+        if _is_media_or_directory(text, url, domain):
+            _stats["media_domain"] += 1
+            _mark(domain, valid=False)
             continue
 
         if not _is_restaurant_hotel_page(text, url):
-            mark_visited(domain, valid=False)
+            _stats["not_venue"] += 1
+            _mark(domain, valid=False)
             continue
 
         # 联系信号检测：页面必须有至少一种联系方式才算公司网站
@@ -505,13 +682,15 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
                 has_contact_signal = bool(re.search(
                     r'href="[^"]*(?:contact|get-in-touch|enquir)[^"]*"', html, re.I))
         if not has_contact_signal:
-            mark_visited(domain, valid=False)
+            _stats["no_contact"] += 1
+            _mark(domain, valid=False)
             continue
 
         company_name = _extract_company_name_from_title(title, domain)
 
         if not company_name or company_name.lower() in existing_names:
-            mark_visited(domain, valid=False)
+            _stats["dup_name"] += 1
+            _mark(domain, valid=False)
             continue
 
         # 提取联系方式
@@ -542,9 +721,22 @@ def discover_from_keyword(keyword_query, max_results=5, existing_names=None, exi
         new_companies.append(company)
         existing_names.add(company_name.lower())
         existing_domains.add(domain)
+        _stats["accepted"] += 1
 
         # 缓存：标记为有效公司，保存 cookies/UA 供 A区复用
-        mark_visited(domain, valid=True, cookies=cookies, ua=ua)
+        _mark(domain, valid=True, cookies=cookies, ua=ua)
+
+    # Print filter layer statistics
+    total_filtered = sum(v for k, v in _stats.items() if k not in ("google_results", "accepted"))
+    if _stats["google_results"] > 0:
+        print(f"  [Filter] {_stats['google_results']} results → "
+              f"excluded={_stats['excluded_domain']}, article={_stats['article_url'] + _stats['article_title']}, "
+              f"dup={_stats['dup_domain'] + _stats['dup_name']}, cached={_stats['cached_domain']}, "
+              f"media={_stats['media_domain']}, supplier={_stats['supplier']}, "
+              f"prof_svc={_stats['professional_svc']}, not_AU={_stats['not_au']}, "
+              f"not_venue={_stats['not_venue']}, no_contact={_stats['no_contact']}, "
+              f"fetch_err={_stats['fetch_error']}, cf={_stats['cloudflare']} → "
+              f"accepted={_stats['accepted']}")
 
     return new_companies
 
@@ -657,7 +849,7 @@ def main():
 
             for query in queries:
                 print(f"\nSearching: {query}")
-                new = discover_from_keyword(query, args.max_results, existing_names, existing_domains, use_cache=use_cache)
+                new = discover_from_keyword(query, args.max_results, existing_names, existing_domains, use_cache=use_cache, dry_run=args.dry_run)
                 print(f"  Found {len(new)} new companies")
                 all_new.extend(new)
                 time.sleep(2)
@@ -666,23 +858,43 @@ def main():
 
         print(f"\nTotal new companies discovered: {len(all_new)}")
 
-        if all_new and not args.dry_run:
-            added = save_to_leads(all_new)
-            print(f"Added {added} new leads to data/leads.csv")
-
-            # Update keyword status
-            _update_keyword_status(used_kw_ids)
+        if not args.dry_run:
+            added = 0
+            if all_new:
+                added = save_to_leads(all_new)
+                print(f"Added {added} new leads to data/leads.csv")
+            # Always update keyword status (runs +1)
+            _update_keyword_status(used_kw_ids, leads_count=added)
         elif args.dry_run:
             print("\n[Dry run] Would add:")
             for c in all_new:
-                print(f"  {c['company_name']} | {c['website']} | {c.get('email', '')}")
+                safe_name = c['company_name'].encode('ascii', 'replace').decode('ascii')
+                print(f"  {safe_name} | {c['website']} | {c.get('email', '')}")
 
         close_browser()
+
+        # 自动生成 B-Run 报告
+        if not args.dry_run and used_kw_ids:
+            print("\n--- 生成 B-Run 报告 ---")
+            from scripts.reports.generate_keyword_report import main as gen_kw_report
+            old_argv = sys.argv
+            sys.argv = [
+                "generate_keyword_report",
+                "--auto-timing",
+                "--task", f"关键词发现 limit {args.limit}",
+            ]
+            try:
+                gen_kw_report()
+            except Exception as e:
+                print(f"  报告生成失败: {e}")
+            finally:
+                sys.argv = old_argv
+
     print("\nDone.")
 
 
-def _update_keyword_status(kw_ids):
-    """更新已使用关键词的状态。"""
+def _update_keyword_status(kw_ids, leads_count=0):
+    """更新已使用关键词的状态和运行统计。"""
     kw_path = DATA / "search_keywords.csv"
     rows = []
     with open(kw_path, "r", encoding="utf-8-sig") as f:
@@ -693,13 +905,24 @@ def _update_keyword_status(kw_ids):
                 row["keyword_status"] = "Testing"
                 row["used_recently"] = "Yes"
                 row["last_used_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+                # Increment total_runs
+                try:
+                    row["total_runs"] = str(int(row.get("total_runs") or 0) + 1)
+                except ValueError:
+                    row["total_runs"] = "1"
+                # Increment total_leads_collected
+                if leads_count > 0:
+                    try:
+                        row["total_leads_collected"] = str(int(row.get("total_leads_collected") or 0) + leads_count)
+                    except ValueError:
+                        row["total_leads_collected"] = str(leads_count)
             rows.append(row)
 
     with open(kw_path, "w", encoding="utf-8-sig", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
-    print(f"Updated {len(kw_ids)} keyword status to Testing")
+    print(f"Updated {len(kw_ids)} keyword status to Testing (runs +1, leads +{leads_count})")
 
 
 if __name__ == "__main__":

@@ -22,6 +22,8 @@ For narrow tasks, read `docs/guides/cli-operating-rules.md` first, then follow i
 
 For keyword scheduler tasks（关键词拓展、关键词生成、关键词驱动搜索），read `docs/guides/keyword-scheduler-guide.md` in addition to the task-specific context list.
 
+For search-related blockers（Google 429、搜索模式失效、LinkedIn 获取失败、A 区 KP 管线搜索问题），read `docs/guides/search-strategy.md` first.
+
 Use `docs/current-progress.md` only for handoff/checkpoint context. Do not update it for routine or early small iterations.
 
 ## Operating Rules

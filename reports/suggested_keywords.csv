@@ -1,46 +1,171 @@
 ﻿keyword_pattern,template_id,generation_source,risk_level,priority_hint,score,customer_type,role,geo,intent,org_form,source_modifier,trigger_event,review_status
-hotel group Australia contact,T1,generator,low,high,0.5,hotel group,,Australia,contact,,,,approved
-hotel F&B manager Australia contact,T1,generator,low,high,0.5,hotel F&B manager,,Australia,contact,,,,approved
-pub group Australia contact,T1,generator,low,high,0.5,pub group,,Australia,contact,,,,approved
-hotel group owner Australia,T2,generator,medium,high,0.5,hotel group,owner,Australia,,,,,approved
-hotel F&B manager owner Australia,T2,generator,medium,high,0.5,hotel F&B manager,owner,Australia,,,,,approved
-pub group owner Australia,T2,generator,medium,high,0.5,pub group,owner,Australia,,,,,approved
-group restaurant owner head office Australia,T3,generator,low,medium,0.5,restaurant owner,,Australia,,group,,,approved
-group hotel group head office Australia,T3,generator,low,medium,0.5,hotel group,,Australia,,group,,,approved
-group hotel F&B manager head office Australia,T3,generator,low,medium,0.5,hotel F&B manager,,Australia,,group,,,approved
-"""owner"" ""restaurant group"" Australia",T4,generator,medium,high,0.5,restaurant group,owner,Australia,,,,,approved
-"""owner"" ""restaurant owner"" Australia",T4,generator,medium,high,0.5,restaurant owner,owner,Australia,,,,,approved
-"""owner"" ""hotel group"" Australia",T4,generator,medium,high,0.5,hotel group,owner,Australia,,,,,approved
-site:.com.au restaurant group contact Australia,T5,generator,medium,medium,0.45,restaurant group,,Australia,contact,,site:.com.au,,approved
-site:.com.au restaurant owner contact Australia,T5,generator,medium,medium,0.45,restaurant owner,,Australia,contact,,site:.com.au,,approved
-site:.com.au hotel group contact Australia,T5,generator,medium,medium,0.45,hotel group,,Australia,contact,,site:.com.au,,approved
-filetype:pdf restaurant group procurement Australia,T6,generator,low,low,0.45,restaurant group,,Australia,,,,,approved
-filetype:pdf restaurant owner procurement Australia,T6,generator,low,low,0.45,restaurant owner,,Australia,,,,,approved
-filetype:pdf hotel group procurement Australia,T6,generator,low,low,0.45,hotel group,,Australia,,,,,approved
-"""new opening"" restaurant group Australia",T7,generator,medium,high,0.45,restaurant group,,Australia,,,,new opening,approved
-"""new opening"" restaurant owner Australia",T7,generator,medium,high,0.45,restaurant owner,,Australia,,,,new opening,approved
-"""new opening"" hotel group Australia",T7,generator,medium,high,0.45,hotel group,,Australia,,,,new opening,approved
-restaurant group Australia new opening contact,T8,generator,medium,medium,0.45,restaurant group,,Australia,contact,,,new opening,approved
-restaurant owner Australia new opening contact,T8,generator,medium,medium,0.45,restaurant owner,,Australia,contact,,,new opening,approved
-hotel group Australia new opening contact,T8,generator,medium,medium,0.45,hotel group,,Australia,contact,,,new opening,approved
-owner restaurant group Australia email OR phone OR contact,T9,generator,medium,high,0.45,restaurant group,owner,Australia,,,,,approved
-owner restaurant owner Australia email OR phone OR contact,T9,generator,medium,high,0.45,restaurant owner,owner,Australia,,,,,approved
-owner hotel group Australia email OR phone OR contact,T9,generator,medium,high,0.45,hotel group,owner,Australia,,,,,approved
-"restaurant group Australia ""contact"" -jobs -careers",T10,generator,low,medium,0.35,restaurant group,,Australia,contact,,,,rejected
-"restaurant owner Australia ""contact"" -jobs -careers",T10,generator,low,medium,0.35,restaurant owner,,Australia,contact,,,,rejected
-"hotel group Australia ""contact"" -jobs -careers",T10,generator,low,medium,0.35,hotel group,,Australia,contact,,,,rejected
-restaurant group Australia supplier contact,T11,generator,low,high,0.35,restaurant group,,Australia,,,,,rejected
-restaurant owner Australia supplier contact,T11,generator,low,high,0.35,restaurant owner,,Australia,,,,,rejected
-hotel group Australia supplier contact,T11,generator,low,high,0.35,hotel group,,Australia,,,,,rejected
-restaurant group Australia procurement team,T12,generator,low,high,0.3,restaurant group,,Australia,,,,,rejected
-restaurant owner Australia procurement team,T12,generator,low,high,0.3,restaurant owner,,Australia,,,,,rejected
-hotel group Australia procurement team,T12,generator,low,high,0.3,hotel group,,Australia,,,,,rejected
-restaurant group Australia purchasing department email,T13,generator,low,high,0.3,restaurant group,,Australia,,,,,rejected
-restaurant owner Australia purchasing department email,T13,generator,low,high,0.3,restaurant owner,,Australia,,,,,rejected
-hotel group Australia purchasing department email,T13,generator,low,high,0.3,hotel group,,Australia,,,,,rejected
-restaurant group Australia new opening supplier needed,T14,generator,medium,high,0.25,restaurant group,,Australia,,,,new opening,rejected
-restaurant owner Australia new opening supplier needed,T14,generator,medium,high,0.25,restaurant owner,,Australia,,,,new opening,rejected
-hotel group Australia new opening supplier needed,T14,generator,medium,high,0.25,hotel group,,Australia,,,,new opening,rejected
-site:.com.au restaurant group Australia owner,T15,generator,high,medium,0.2,restaurant group,owner,Australia,,,site:.com.au,,rejected
-site:.com.au restaurant owner Australia owner,T15,generator,high,medium,0.2,restaurant owner,owner,Australia,,,site:.com.au,,rejected
-site:.com.au hotel group Australia owner,T15,generator,high,medium,0.2,hotel group,owner,Australia,,,site:.com.au,,rejected
+ghost kitchen operator Australia contact,T1,generator,low,high,,ghost kitchen operator,,Australia,contact,,,,pending
+hotel housekeeping supplier Australia contact,T1,generator,low,high,,hotel housekeeping supplier,,Australia,contact,,,,pending
+restaurant furniture supplier Australia contact,T1,generator,low,high,,restaurant furniture supplier,,Australia,contact,,,,pending
+commercial kitchen supplier Australia contact,T1,generator,low,high,,commercial kitchen supplier,,Australia,contact,,,,pending
+hospitality technology supplier Australia contact,T1,generator,low,high,,hospitality technology supplier,,Australia,contact,,,,pending
+new restaurant opening owner Australia,T2,generator,medium,high,,new restaurant opening,owner,Australia,,,,,pending
+restaurant supply chain owner Australia,T2,generator,medium,high,,restaurant supply chain,owner,Australia,,,,,pending
+ghost kitchen operator owner Australia,T2,generator,medium,high,,ghost kitchen operator,owner,Australia,,,,,pending
+hotel housekeeping supplier owner Australia,T2,generator,medium,high,,hotel housekeeping supplier,owner,Australia,,,,,pending
+restaurant equipment supplier owner Australia,T2,generator,medium,high,,restaurant equipment supplier,owner,Australia,,,,,pending
+group cafe chain head office Australia,T3,generator,low,medium,,cafe chain,,Australia,,group,,,pending
+group food court operator head office Australia,T3,generator,low,medium,,food court operator,,Australia,,group,,,pending
+"""owner"" ""restaurant fit-out company"" Australia",T4,generator,medium,high,,restaurant fit-out company,owner,Australia,,,,,pending
+"""owner"" ""restaurant design company"" Australia",T4,generator,medium,high,,restaurant design company,owner,Australia,,,,,pending
+"""owner"" ""multi-location restaurant"" Australia",T4,generator,medium,high,,multi-location restaurant,owner,Australia,,,,,pending
+"""owner"" ""hospitality venue group"" Australia",T4,generator,medium,high,,hospitality venue group,owner,Australia,,,,,pending
+"""owner"" ""hotel procurement manager"" Australia",T4,generator,medium,high,,hotel procurement manager,owner,Australia,,,,,pending
+site:.com.au hotel F&B manager contact Australia,T5,generator,medium,medium,,hotel F&B manager,,Australia,contact,,site:.com.au,,pending
+site:.com.au pub group contact Australia,T5,generator,medium,medium,,pub group,,Australia,contact,,site:.com.au,,pending
+filetype:pdf hotel F&B manager procurement Australia,T6,generator,low,low,,hotel F&B manager,,Australia,,,,,pending
+filetype:pdf pub group procurement Australia,T6,generator,low,low,,pub group,,Australia,,,,,pending
+"""new opening"" restaurant renovation Australia",T7,generator,medium,high,,restaurant renovation,,Australia,,,,new opening,pending
+"""new opening"" restaurant fit-out company Australia",T7,generator,medium,high,,restaurant fit-out company,,Australia,,,,new opening,pending
+"""new opening"" restaurant design company Australia",T7,generator,medium,high,,restaurant design company,,Australia,,,,new opening,pending
+"""new opening"" multi-location restaurant Australia",T7,generator,medium,high,,multi-location restaurant,,Australia,,,,new opening,pending
+"""new opening"" hospitality venue group Australia",T7,generator,medium,high,,hospitality venue group,,Australia,,,,new opening,pending
+hotel F&B manager Australia new opening contact,T8,generator,medium,medium,,hotel F&B manager,,Australia,contact,,,new opening,pending
+pub group Australia new opening contact,T8,generator,medium,medium,,pub group,,Australia,contact,,,new opening,pending
+owner restaurant renovation Australia email OR phone OR contact,T9,generator,medium,high,,restaurant renovation,owner,Australia,,,,,pending
+owner restaurant fit-out company Australia email OR phone OR contact,T9,generator,medium,high,,restaurant fit-out company,owner,Australia,,,,,pending
+owner restaurant design company Australia email OR phone OR contact,T9,generator,medium,high,,restaurant design company,owner,Australia,,,,,pending
+owner multi-location restaurant Australia email OR phone OR contact,T9,generator,medium,high,,multi-location restaurant,owner,Australia,,,,,pending
+owner new restaurant opening Australia email OR phone OR contact,T9,generator,medium,high,,new restaurant opening,owner,Australia,,,,,pending
+"brewery venue Australia ""contact"" -jobs -careers",T10,generator,low,medium,,brewery venue,,Australia,contact,,,,pending
+"catering company Australia ""contact"" -jobs -careers",T10,generator,low,medium,,catering company,,Australia,contact,,,,pending
+restaurant renovation Australia supplier contact,T11,generator,low,high,,restaurant renovation,,Australia,,,,,pending
+restaurant fit-out company Australia supplier contact,T11,generator,low,high,,restaurant fit-out company,,Australia,,,,,pending
+restaurant design company Australia supplier contact,T11,generator,low,high,,restaurant design company,,Australia,,,,,pending
+multi-location restaurant Australia supplier contact,T11,generator,low,high,,multi-location restaurant,,Australia,,,,,pending
+hospitality venue group Australia supplier contact,T11,generator,low,high,,hospitality venue group,,Australia,,,,,pending
+restaurant renovation Australia procurement team,T12,generator,low,high,,restaurant renovation,,Australia,,,,,pending
+restaurant fit-out company Australia procurement team,T12,generator,low,high,,restaurant fit-out company,,Australia,,,,,pending
+restaurant design company Australia procurement team,T12,generator,low,high,,restaurant design company,,Australia,,,,,pending
+multi-location restaurant Australia procurement team,T12,generator,low,high,,multi-location restaurant,,Australia,,,,,pending
+hospitality venue group Australia procurement team,T12,generator,low,high,,hospitality venue group,,Australia,,,,,pending
+restaurant renovation Australia purchasing department email,T13,generator,low,high,,restaurant renovation,,Australia,,,,,pending
+restaurant fit-out company Australia purchasing department email,T13,generator,low,high,,restaurant fit-out company,,Australia,,,,,pending
+restaurant design company Australia purchasing department email,T13,generator,low,high,,restaurant design company,,Australia,,,,,pending
+multi-location restaurant Australia purchasing department email,T13,generator,low,high,,multi-location restaurant,,Australia,,,,,pending
+hospitality venue group Australia purchasing department email,T13,generator,low,high,,hospitality venue group,,Australia,,,,,pending
+restaurant renovation Australia new opening supplier needed,T14,generator,medium,high,,restaurant renovation,,Australia,,,,new opening,pending
+restaurant fit-out company Australia new opening supplier needed,T14,generator,medium,high,,restaurant fit-out company,,Australia,,,,new opening,pending
+restaurant design company Australia new opening supplier needed,T14,generator,medium,high,,restaurant design company,,Australia,,,,new opening,pending
+multi-location restaurant Australia new opening supplier needed,T14,generator,medium,high,,multi-location restaurant,,Australia,,,,new opening,pending
+hospitality venue group Australia new opening supplier needed,T14,generator,medium,high,,hospitality venue group,,Australia,,,,new opening,pending
+site:.com.au restaurant owner Australia owner,T15,generator,high,medium,,restaurant owner,owner,Australia,,,site:.com.au,,pending
+site:.com.au hotel group Australia owner,T15,generator,high,medium,,hotel group,owner,Australia,,,site:.com.au,,pending
+Australian Hotels Association catering company Australia,T16,generator,low,high,,catering company,,Australia,,,,,pending
+Australian Hotels Association event venue Australia,T16,generator,low,high,,event venue,,Australia,,,,,pending
+Australian Hotels Association aged care food service Australia,T16,generator,low,high,,aged care food service,,Australia,,,,,pending
+Australian Hotels Association corporate catering Australia,T16,generator,low,high,,corporate catering,,Australia,,,,,pending
+Australian Hotels Association cafe chain Australia,T16,generator,low,high,,cafe chain,,Australia,,,,,pending
+Australian Hotels Association member Gold Coast contact,T17,generator,low,high,,,,Gold Coast,,,,,pending
+Australian Hotels Association member Canberra contact,T17,generator,low,high,,,,Canberra,,,,,pending
+Australian Hotels Association member Hobart contact,T17,generator,low,high,,,,Hobart,,,,,pending
+Australian Hotels Association member Darwin contact,T17,generator,low,high,,,,Darwin,,,,,pending
+Australian Hotels Association member Newcastle contact,T17,generator,low,high,,,,Newcastle,,,,,pending
+wine bar Gold Coast owner OR director OR manager,T18,generator,low,high,,,,Gold Coast,,,,,pending
+wine bar Canberra owner OR director OR manager,T18,generator,low,high,,,,Canberra,,,,,pending
+wine bar Hobart owner OR director OR manager,T18,generator,low,high,,,,Hobart,,,,,pending
+wine bar Darwin owner OR director OR manager,T18,generator,low,high,,,,Darwin,,,,,pending
+wine bar Newcastle owner OR director OR manager,T18,generator,low,high,,,,Newcastle,,,,,pending
+catering company Australia member directory,T19,generator,low,medium,,catering company,,Australia,,,,,pending
+event venue Australia member directory,T19,generator,low,medium,,event venue,,Australia,,,,,pending
+wine bar Gold Coast contact email phone,T20,generator,low,high,,,,Gold Coast,,,,,pending
+wine bar Canberra contact email phone,T20,generator,low,high,,,,Canberra,,,,,pending
+wine bar Hobart contact email phone,T20,generator,low,high,,,,Hobart,,,,,pending
+wine bar Darwin contact email phone,T20,generator,low,high,,,,Darwin,,,,,pending
+wine bar Newcastle contact email phone,T20,generator,low,high,,,,Newcastle,,,,,pending
+Australian Hotels Association accredited wine bar Gold Coast,T21,generator,low,high,,,,Gold Coast,,,,,pending
+Australian Hotels Association accredited wine bar Canberra,T21,generator,low,high,,,,Canberra,,,,,pending
+Australian Hotels Association accredited wine bar Hobart,T21,generator,low,high,,,,Hobart,,,,,pending
+Australian Hotels Association accredited wine bar Darwin,T21,generator,low,high,,,,Darwin,,,,,pending
+Australian Hotels Association accredited wine bar Newcastle,T21,generator,low,high,,,,Newcastle,,,,,pending
+"""wine bar"" ""Gold Coast"" -jobs -careers -seek",T22,generator,low,medium,,,,Gold Coast,,,,,pending
+"""wine bar"" ""Canberra"" -jobs -careers -seek",T22,generator,low,medium,,,,Canberra,,,,,pending
+catering company Australia member directory 2024 OR 2025 OR 2026,T23,generator,low,medium,,catering company,,Australia,,,,,pending
+event venue Australia member directory 2024 OR 2025 OR 2026,T23,generator,low,medium,,event venue,,Australia,,,,,pending
+Australian Hotels Association award winner wine bar Gold Coast,T24,generator,low,high,,,,Gold Coast,,,,,pending
+Australian Hotels Association award winner wine bar Canberra,T24,generator,low,high,,,,Canberra,,,,,pending
+Australian Hotels Association award winner wine bar Hobart,T24,generator,low,high,,,,Hobart,,,,,pending
+Australian Hotels Association award winner wine bar Darwin,T24,generator,low,high,,,,Darwin,,,,,pending
+Australian Hotels Association award winner wine bar Newcastle,T24,generator,low,high,,,,Newcastle,,,,,pending
+Australian Hotels Association member list Melbourne,T25,generator,low,high,,,,Melbourne,,,,,pending
+Australian Hotels Association member list Brisbane,T25,generator,low,high,,,,Brisbane,,,,,pending
+Australian Hotels Association member list Perth,T25,generator,low,high,,,,Perth,,,,,pending
+Australian Hotels Association member list Adelaide,T25,generator,low,high,,,,Adelaide,,,,,pending
+Australian Hotels Association member list Gold Coast,T25,generator,low,high,,,,Gold Coast,,,,,pending
+wine bar directory Melbourne site:.com.au,T26,generator,low,high,,,,Melbourne,,,,,pending
+wine bar directory Brisbane site:.com.au,T26,generator,low,high,,,,Brisbane,,,,,pending
+wine bar directory Perth site:.com.au,T26,generator,low,high,,,,Perth,,,,,pending
+wine bar directory Adelaide site:.com.au,T26,generator,low,high,,,,Adelaide,,,,,pending
+wine bar directory Gold Coast site:.com.au,T26,generator,low,high,,,,Gold Coast,,,,,pending
+hotel group new opening Australia 2025 OR 2026,T27,generator,low,high,,hotel group,,Australia,,,,,pending
+hotel F&B manager new opening Australia 2025 OR 2026,T27,generator,low,high,,hotel F&B manager,,Australia,,,,,pending
+pub group new opening Australia 2025 OR 2026,T27,generator,low,high,,pub group,,Australia,,,,,pending
+brewery venue new opening Australia 2025 OR 2026,T27,generator,low,high,,brewery venue,,Australia,,,,,pending
+catering company new opening Australia 2025 OR 2026,T27,generator,low,high,,catering company,,Australia,,,,,pending
+wine bar Melbourne award OR winner OR finalist 2024 OR 2025 OR 2026,T28,generator,low,medium,,,,Melbourne,,,,,pending
+wine bar Brisbane award OR winner OR finalist 2024 OR 2025 OR 2026,T28,generator,low,medium,,,,Brisbane,,,,,pending
+Australian Hotels Association member directory Melbourne,T29,generator,low,high,,,,Melbourne,,,,,pending
+Australian Hotels Association member directory Brisbane,T29,generator,low,high,,,,Brisbane,,,,,pending
+Australian Hotels Association member directory Perth,T29,generator,low,high,,,,Perth,,,,,pending
+Australian Hotels Association member directory Adelaide,T29,generator,low,high,,,,Adelaide,,,,,pending
+Australian Hotels Association member directory Gold Coast,T29,generator,low,high,,,,Gold Coast,,,,,pending
+wine bar Melbourne just opened OR now open OR opening soon,T30,generator,low,high,,,,Melbourne,,,,,pending
+wine bar Brisbane just opened OR now open OR opening soon,T30,generator,low,high,,,,Brisbane,,,,,pending
+wine bar Perth just opened OR now open OR opening soon,T30,generator,low,high,,,,Perth,,,,,pending
+wine bar Adelaide just opened OR now open OR opening soon,T30,generator,low,high,,,,Adelaide,,,,,pending
+wine bar Gold Coast just opened OR now open OR opening soon,T30,generator,low,high,,,,Gold Coast,,,,,pending
+wine bar Ballarat contact email phone,T31,generator,low,high,,,,,,,,,pending
+wine bar Bendigo contact email phone,T31,generator,low,high,,,,,,,,,pending
+wine bar Mildura contact email phone,T31,generator,low,high,,,,,,,,,pending
+wine bar Shepparton contact email phone,T31,generator,low,high,,,,,,,,,pending
+wine bar Warrnambool contact email phone,T31,generator,low,high,,,,,,,,,pending
+wine bar Ballarat owner OR director OR manager,T32,generator,low,high,,,,,,,,,pending
+wine bar Bendigo owner OR director OR manager,T32,generator,low,high,,,,,,,,,pending
+wine bar Mildura owner OR director OR manager,T32,generator,low,high,,,,,,,,,pending
+wine bar Shepparton owner OR director OR manager,T32,generator,low,high,,,,,,,,,pending
+wine bar Warrnambool owner OR director OR manager,T32,generator,low,high,,,,,,,,,pending
+wine bar Ballarat site:.com.au,T33,generator,low,high,,,,,,,,,pending
+wine bar Bendigo site:.com.au,T33,generator,low,high,,,,,,,,,pending
+wine bar Mildura site:.com.au,T33,generator,low,high,,,,,,,,,pending
+wine bar Shepparton site:.com.au,T33,generator,low,high,,,,,,,,,pending
+wine bar Warrnambool site:.com.au,T33,generator,low,high,,,,,,,,,pending
+wine bar new opening 2025 OR 2026 Australia,T34,generator,low,high,,,,Australia,,,,,pending
+wine bar new opening 2025 OR 2026 Sydney,T34,generator,low,high,,,,Sydney,,,,,pending
+wine bar new opening 2025 OR 2026 Melbourne,T34,generator,low,high,,,,Melbourne,,,,,pending
+wine bar new opening 2025 OR 2026 Brisbane,T34,generator,low,high,,,,Brisbane,,,,,pending
+wine bar new opening 2025 OR 2026 Perth,T34,generator,low,high,,,,Perth,,,,,pending
+restaurant group new opening 2025 OR 2026 Australia,T35,generator,low,high,,restaurant group,,Australia,,,,,pending
+restaurant owner new opening 2025 OR 2026 Australia,T35,generator,low,high,,restaurant owner,,Australia,,,,,pending
+hotel group new opening 2025 OR 2026 Australia,T35,generator,low,high,,hotel group,,Australia,,,,,pending
+hotel F&B manager new opening 2025 OR 2026 Australia,T35,generator,low,high,,hotel F&B manager,,Australia,,,,,pending
+pub group new opening 2025 OR 2026 Australia,T35,generator,low,high,,pub group,,Australia,,,,,pending
+wine bar Ballarat new opening 2025 OR 2026,T36,generator,low,high,,,,,,,,,pending
+wine bar Ballarat just opened 2025 OR 2026,T36,generator,low,high,,,,,,,,,pending
+wine bar Ballarat now open 2025 OR 2026,T36,generator,low,high,,,,,,,,,pending
+wine bar Ballarat opening soon 2025 OR 2026,T36,generator,low,high,,,,,,,,,pending
+wine bar Ballarat new venue 2025 OR 2026,T36,generator,low,high,,,,,,,,,pending
+Australian Hotels Association wine bar Ballarat,T37,generator,low,high,,,,,,,,,pending
+Australian Hotels Association wine bar Bendigo,T37,generator,low,high,,,,,,,,,pending
+Australian Hotels Association wine bar Mildura,T37,generator,low,high,,,,,,,,,pending
+Australian Hotels Association wine bar Shepparton,T37,generator,low,high,,,,,,,,,pending
+Australian Hotels Association wine bar Warrnambool,T37,generator,low,high,,,,,,,,,pending
+wine bar Ballarat OR Australia contact,T38,generator,low,high,,,,Australia,,,,,pending
+wine bar Ballarat OR Sydney contact,T38,generator,low,high,,,,Sydney,,,,,pending
+wine bar Ballarat OR Melbourne contact,T38,generator,low,high,,,,Melbourne,,,,,pending
+wine bar Ballarat OR Brisbane contact,T38,generator,low,high,,,,Brisbane,,,,,pending
+wine bar Ballarat OR Perth contact,T38,generator,low,high,,,,Perth,,,,,pending
+new wine bar Australia 2025 OR 2026,T39,generator,low,high,,,,Australia,,,,,pending
+new wine bar Sydney 2025 OR 2026,T39,generator,low,high,,,,Sydney,,,,,pending
+new wine bar Melbourne 2025 OR 2026,T39,generator,low,high,,,,Melbourne,,,,,pending
+new wine bar Brisbane 2025 OR 2026,T39,generator,low,high,,,,Brisbane,,,,,pending
+new wine bar Perth 2025 OR 2026,T39,generator,low,high,,,,Perth,,,,,pending
+wine bar Australia award OR winner OR finalist,T40,generator,low,high,,,,Australia,,,,,pending
+wine bar Sydney award OR winner OR finalist,T40,generator,low,high,,,,Sydney,,,,,pending
+wine bar Melbourne award OR winner OR finalist,T40,generator,low,high,,,,Melbourne,,,,,pending
+wine bar Brisbane award OR winner OR finalist,T40,generator,low,high,,,,Brisbane,,,,,pending
+wine bar Perth award OR winner OR finalist,T40,generator,low,high,,,,Perth,,,,,pending

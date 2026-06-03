@@ -11,12 +11,16 @@ def select_eligible_keywords(keywords_csv: Path, config: dict) -> list[dict]:
     """Read keywords CSV, filter by status and cooldown, sort by priority.
 
     Returns list of keyword dicts sorted by priority (high > medium > low),
-    then by discovery_quality_score descending.
+    then by discovery_quality_score descending, with penalties for repeated failures.
     """
     enforce_cooldown = config.get("cooldown_enforcement", True)
     max_kw = config.get("max_keywords_per_run", 5)
     priority_weights = config.get("priority_weights", {"high": 1.0, "medium": 0.7, "low": 0.4})
     now = datetime.now()
+
+    # Auto-pause: keywords with 5+ runs and 0 leads → Paused
+    _AUTO_PAUSE_THRESHOLD = 5
+    rows_to_writeback = []
 
     rows = []
     with open(keywords_csv, "r", encoding="utf-8-sig") as f:
@@ -24,6 +28,17 @@ def select_eligible_keywords(keywords_csv: Path, config: dict) -> list[dict]:
         for row in reader:
             status = (row.get("keyword_status") or "").strip()
             if status not in _ACTIVE_STATUSES:
+                continue
+
+            # Auto-pause check: 5+ runs, 0 leads → mark Paused
+            try:
+                total_runs = int(row.get("total_runs") or 0)
+                total_leads = int(row.get("total_leads_collected") or 0)
+            except ValueError:
+                total_runs, total_leads = 0, 0
+            if total_runs >= _AUTO_PAUSE_THRESHOLD and total_leads == 0:
+                row["keyword_status"] = "Paused"
+                rows_to_writeback.append(row)
                 continue
 
             if enforce_cooldown:
@@ -37,6 +52,10 @@ def select_eligible_keywords(keywords_csv: Path, config: dict) -> list[dict]:
 
             rows.append(row)
 
+    # Write back auto-paused keywords
+    if rows_to_writeback:
+        _writeback_paused(keywords_csv, rows_to_writeback)
+
     # Status boost: New keywords get a bonus so untested keywords aren't starved
     _STATUS_BOOST = {"New": 3.0, "Active": 0.0, "Testing": 0.0}
 
@@ -49,12 +68,39 @@ def select_eligible_keywords(keywords_csv: Path, config: dict) -> list[dict]:
             quality = 0.0
         status = (kw.get("keyword_status") or "").strip()
         boost = _STATUS_BOOST.get(status, 0.0)
+        # Run count penalty: keywords with many runs but no results sink lower
+        try:
+            runs = int(kw.get("total_runs") or 0)
+            leads = int(kw.get("total_leads_collected") or 0)
+        except ValueError:
+            runs, leads = 0, 0
+        if runs > 0 and leads == 0:
+            run_penalty = min(runs * 0.5, 4.0)  # cap at -4.0
+        else:
+            run_penalty = 0.0
         # Jitter to rotate among same-score keywords across runs
         jitter = random.uniform(-0.5, 0.5)
-        return (-weight, -(quality + boost + jitter))
+        return (-weight, -(quality + boost - run_penalty + jitter))
 
     rows.sort(key=_sort_key)
     return rows[:max_kw]
+
+
+def _writeback_paused(keywords_csv: Path, paused_rows: list[dict]):
+    """Write back auto-paused keyword statuses to the CSV file."""
+    import shutil
+    tmp_path = keywords_csv.with_suffix(".csv.tmp")
+    paused_ids = {r["keyword_id"] for r in paused_rows}
+    with open(keywords_csv, "r", encoding="utf-8-sig") as src, \
+         open(tmp_path, "w", encoding="utf-8-sig", newline="") as dst:
+        reader = csv.DictReader(src)
+        writer = csv.DictWriter(dst, fieldnames=reader.fieldnames)
+        writer.writeheader()
+        for row in reader:
+            if row.get("keyword_id") in paused_ids:
+                row["keyword_status"] = "Paused"
+            writer.writerow(row)
+    shutil.move(str(tmp_path), str(keywords_csv))
 
 
 def expand_templates(keywords: list[dict], expansions: dict[str, list[str]]) -> list[dict]:

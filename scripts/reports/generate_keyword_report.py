@@ -195,7 +195,7 @@ def main():
     duration = "未知"
 
     if args.auto_timing:
-        timing = RunTimer.load()
+        timing = RunTimer.load("b")
         if timing:
             timestamp = timing["start"]
             duration = format_duration(timing["duration_seconds"])

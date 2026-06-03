@@ -1,0 +1,314 @@
+export const meta = {
+  name: 'improve-contacts-externalized',
+  description: '并行整改 B 区和测试 A 区，验证直联准确性，目标直联提升到 100（人格驱动 + 精简注入 B+C）',
+  phases: [
+    { title: 'Scout', detail: '读取最新项目状态，为后续 Agent 提供实时上下文' },
+    { title: 'Analyze', detail: 'B 区和 A 区各自独立分析根因，提出突破路径' },
+    { title: 'Fix', detail: 'B 区和 A 区各自选择最优策略并实施' },
+    { title: 'Validate', detail: '质量门控验证所有变更' },
+    { title: 'Verify', detail: '直联准确性验证' },
+    { title: 'Optimize', detail: '分析瓶颈，自动优化配置（最多 3 轮）' },
+    { title: 'Report', detail: '生成报告，汇总待处理项' },
+  ],
+}
+
+// ============================================
+// Agent 指令文件路径
+// ============================================
+
+const AGENT_FILES = {
+  bZoneFixer: '.claude/agents/b-zone-fixer.md',
+  aZoneImprover: '.claude/agents/a-zone-improver.md',
+  qualityGate: '.claude/agents/quality-gate.md',
+  contactVerifier: '.claude/agents/contact-verifier.md',
+  optimizer: '.claude/agents/optimizer.md',
+  reportLogger: '.claude/agents/report-logger.md',
+}
+
+// ============================================
+// 容错包装器
+// ============================================
+
+async function safeAgent(prompt, opts = {}) {
+  try {
+    return await agent(prompt, opts)
+  } catch (error) {
+    log('Agent 执行失败: ' + error.message)
+    return { error: error.message, status: 'FAILED' }
+  }
+}
+
+// ============================================
+// 检查点管理
+// ============================================
+
+function saveCheckpoint(phaseName, data) {
+  log('检查点已保存: ' + phaseName)
+}
+
+// ============================================
+// 项目背景（固定不变的部分）
+// ============================================
+
+const PROJECT_CONTEXT =
+  '**项目背景：** B2B 线索研究，目标行业是澳大利亚酒店/餐饮。' +
+  '两个任务区：A 区（已知公司 → 找联系人直联）、B 区（关键词搜索 → 发现新公司）。'
+
+// ============================================
+// 工作流执行
+// ============================================
+
+// Phase 0: 读取最新状态
+phase('Scout')
+
+log('读取项目最新状态')
+
+const stateReport = await safeAgent(
+  '你的任务很简单：读取 docs/current-progress.md，提取关键信息并结构化输出。\n\n' +
+  '请输出以下结构（直接输出，不需要分析或建议）：\n\n' +
+  '```\n' +
+  '## 数据快照\n' +
+  '| 文件 | 行数 | 关键说明 |\n' +
+  '| ... | ... | ... |\n\n' +
+  '## A 区状态\n' +
+  '- 直联数：X / 目标 100\n' +
+  '- 当前卡点：...\n' +
+  '- 最近一次运行结果：...\n\n' +
+  '## B 区状态\n' +
+  '- 已发现公司数\n' +
+  '- 关键词有效率趋势\n' +
+  '- 当前卡点：...\n' +
+  '- 最近一次运行结果：...\n\n' +
+  '## 活跃问题\n' +
+  '- ...\n\n' +
+  '## 下一步方向（文档中提到的）\n' +
+  '- ...\n' +
+  '```',
+  { label: 'Scout 读取状态', phase: 'Scout' }
+)
+
+saveCheckpoint('scout', { stateReport })
+log('状态读取完成')
+
+// Phase 1: 分析问题
+phase('Analyze')
+
+log('启动 B 区突破专家和 A 区提升专家（并行分析）')
+
+const [bAnalysis, aAnalysis] = await parallel([
+  () => safeAgent(
+    '请先读取你的角色定义文件：' + AGENT_FILES.bZoneFixer + '\n\n' +
+    '---\n\n' +
+    '## 你的角色需要了解的当前情况\n\n' +
+    PROJECT_CONTEXT + '\n\n' +
+    '**你的职责：** B 区关键词发现 — 通过搜索引擎发现新公司。你现在是这个领域的负责人。\n\n' +
+    '**最新项目状态（实时）：**\n' +
+    stateReport + '\n\n' +
+    '**关键数据文件位置：**\n' +
+    '- data/search_keywords.csv — 全部关键词及状态\n' +
+    '- data/keyword_runs.csv — 历史运行记录及有效率\n' +
+    '- data/leads.csv — 已发现的公司\n' +
+    '- config/keyword_dimensions.json — 搜索维度定义\n' +
+    '- config/keyword_scheduler.json — 调度器配置\n\n' +
+    '## 目标\n\n' +
+    '基于最新状态，分析 B 区当前瓶颈的根本原因，找到突破口。你可以访问任何你需要的文件。\n\n' +
+    '最终输出：\n' +
+    '1. 瓶颈根因（用数据支撑）\n' +
+    '2. 3-5 个突破策略（按优先级排序，附预期收益和实施难度）\n\n' +
+    '遵循你的角色定义中的 ACI 防错约束。',
+    { label: 'B区分析', phase: 'Analyze' }
+  ),
+  () => safeAgent(
+    '请先读取你的角色定义文件：' + AGENT_FILES.aZoneImprover + '\n\n' +
+    '---\n\n' +
+    '## 你的角色需要了解的当前情况\n\n' +
+    PROJECT_CONTEXT + '\n\n' +
+    '**你的职责：** A 区 KP 管线 — 已知公司 → 找联系人 → 找直联。你现在是这个领域的负责人。\n\n' +
+    '**最新项目状态（实时）：**\n' +
+    stateReport + '\n\n' +
+    '**关键数据文件位置：**\n' +
+    '- data/contacts.csv — 全部联系人记录\n' +
+    '- data/leads.csv — 已发现的公司\n' +
+    '- config/kp_pipeline.json — KP 管线配置\n\n' +
+    '## 目标\n\n' +
+    '基于最新状态，分析直联率的根本问题，找到最高效的提升路径。你可以访问任何你需要的文件。\n\n' +
+    '最终输出：\n' +
+    '1. 当前瓶颈的根因（用数据支撑）\n' +
+    '2. 可行的提升路径（按成本/收益排序）\n' +
+    '3. 预期每条路径能新增多少直联\n\n' +
+    '遵循你的角色定义中的 ACI 防错约束。',
+    { label: 'A区分析', phase: 'Analyze' }
+  ),
+])
+
+saveCheckpoint('analyze', { bAnalysis, aAnalysis })
+log('分析完成')
+
+// Phase 2: 实施改进
+phase('Fix')
+
+log('启动 B 区新策略和 A 区改进（并行实施）')
+
+const [bResult, aResult] = await parallel([
+  () => safeAgent(
+    '请先读取你的角色定义文件：' + AGENT_FILES.bZoneFixer + '\n\n' +
+    '---\n\n' +
+    '## 你的分析结论\n\n' +
+    bAnalysis + '\n\n' +
+    '## 目标\n\n' +
+    '基于你的分析，选择最有潜力的 1-2 个策略并立即实施。\n\n' +
+    '遵循你的 ACI 防错约束。每条新公司必须有 source_url。\n\n' +
+    '汇报：实施了什么策略、执行了什么操作、数据变化（必须包含具体数字：变更前→变更后）。',
+    { label: 'B区实施', phase: 'Fix' }
+  ),
+  () => safeAgent(
+    '请先读取你的角色定义文件：' + AGENT_FILES.aZoneImprover + '\n\n' +
+    '---\n\n' +
+    '## 你的分析结论\n\n' +
+    aAnalysis + '\n\n' +
+    '## 目标\n\n' +
+    '基于你的分析，选择成本最低、收益最高的路径并立即实施。\n\n' +
+    '遵循你的 ACI 防错约束。每条直联必须有 source_url。\n\n' +
+    '汇报：实施了什么路径、数据变化（必须包含具体数字：变更前→变更后）。',
+    { label: 'A区实施', phase: 'Fix' }
+  ),
+])
+
+saveCheckpoint('fix', { bResult, aResult })
+log('实施完成')
+
+// Phase 3: 验证产出
+phase('Validate')
+
+log('启动质量验证')
+
+const validation = await safeAgent(
+  '请先读取你的角色定义文件：' + AGENT_FILES.qualityGate + '\n\n' +
+  '---\n\n' +
+  '## 本次变更\n\n' +
+  '**B 区：**\n' + bResult + '\n\n' +
+  '**A 区：**\n' + aResult + '\n\n' +
+  '## 目标\n\n' +
+  '以质量门控的身份，验证本次所有变更的数据质量。你可以访问 data/ 目录下的所有文件。\n\n' +
+  '汇报：通过/未通过的检查项、发现的问题、当前直联总数。',
+  { label: '质量验证', phase: 'Validate' }
+)
+
+saveCheckpoint('validate', { validation })
+log('验证完成')
+
+// Phase 4: 验证直联准确性
+phase('Verify')
+
+log('启动直联验证专家')
+
+const verification = await safeAgent(
+  '请先读取你的角色定义文件：' + AGENT_FILES.contactVerifier + '\n\n' +
+  '---\n\n' +
+  '## 当前直联状态\n\n' +
+  validation + '\n\n' +
+  '## 目标\n\n' +
+  '以你的"哨兵+侦探"身份，验证当前所有直联的真实性和可外联性。\n' +
+  '默认怀疑每条直联，直到它证明自己是真实的。\n\n' +
+  '汇报：验证分类结果（VERIFIED / INVALID / NEEDS_REVIEW）、可立即外联的列表、发现的数据质量问题。',
+  { label: '直联验证', phase: 'Verify' }
+)
+
+saveCheckpoint('verify', { verification })
+log('直联验证完成')
+
+// Phase 5: 自动优化（循环，最多 3 次）
+phase('Optimize')
+
+log('启动 Optimizer 分析结果')
+
+let optimization
+let optimizeAttempts = 0
+const MAX_OPTIMIZE_ATTEMPTS = 3
+
+while (optimizeAttempts < MAX_OPTIMIZE_ATTEMPTS) {
+  optimizeAttempts++
+
+  optimization = await safeAgent(
+    '请先读取你的角色定义文件：' + AGENT_FILES.optimizer + '\n\n' +
+    '---\n\n' +
+    '## 本次运行结果\n\n' +
+    '**B 区：**\n' + bResult + '\n\n' +
+    '**A 区：**\n' + aResult + '\n\n' +
+    '**验证结果：**\n' + validation + '\n\n' +
+    '## 目标\n\n' +
+    '以你的"侦探+实验者"身份，分析运行结果，找出瓶颈，决定是否需要优化配置。\n' +
+    'bResult/aResult 包含本次变更的详细数据。如果需要变更前的基线数据，请读取 data/ 文件或 docs/current-progress.md。\n' +
+    '遵循你的 ACI 防错约束（小调整自动执行，大范围修改标记 NEEDS_APPROVAL）。\n\n' +
+    '汇报：是否需要优化、优化了什么、优化前后对比、待审批项列表。',
+    { label: 'Optimizer (attempt ' + optimizeAttempts + ')', phase: 'Optimize' }
+  )
+
+  if (optimization && optimization.status === 'FAILED') {
+    log('优化失败: ' + optimization.error)
+    break
+  }
+
+  const verifyOptimization = await safeAgent(
+    '请先读取你的角色定义文件：' + AGENT_FILES.qualityGate + '\n\n' +
+    '---\n\n' +
+    '## 优化提案\n\n' +
+    optimization + '\n\n' +
+    '## 目标\n\n' +
+    '验证这个优化提案是否合理：参数变化是否安全、是否引入新问题、是否可以应用。\n\n' +
+    '汇报：VALID 或 INVALID（附原因）。',
+    { label: '验证优化 (attempt ' + optimizeAttempts + ')', phase: 'Optimize' }
+  )
+
+  if (!verifyOptimization || !verifyOptimization.includes('INVALID')) {
+    log('优化验证通过')
+    break
+  }
+
+  log('优化验证失败，第 ' + optimizeAttempts + ' 次重试')
+}
+
+if (optimizeAttempts >= MAX_OPTIMIZE_ATTEMPTS) {
+  log('优化 3 次仍失败，标记 OPTIMIZATION_FAILED')
+}
+
+saveCheckpoint('optimize', { optimization })
+log('优化完成')
+
+// Phase 6: 生成报告
+phase('Report')
+
+log('生成报告')
+
+const report = await safeAgent(
+  '请先读取你的角色定义文件：' + AGENT_FILES.reportLogger + '\n\n' +
+  '---\n\n' +
+  '## 变更前基线（stateReport）\n' +
+  stateReport + '\n\n' +
+  '## 本次运行结果\n\n' +
+  '**实施阶段：**\n- B 区：' + bResult + '\n- A 区：' + aResult + '\n\n' +
+  '**验证阶段：**\n- 质量验证：' + validation + '\n- 直联验证：' + verification + '\n\n' +
+  '**优化阶段：**\n' + optimization + '\n\n' +
+  '## 目标\n\n' +
+  'stateReport 是变更前的基线。请读取 data/ 文件获取变更后的数据，计算指标变化。\n' +
+  '生成完整的改进报告。运行必要的报告命令，更新 docs/current-progress.md，汇总所有待处理项。\n\n' +
+  '汇报：核心指标变化（变更前→变更后）、待处理项列表（NEEDS_APPROVAL / NEEDS_REVIEW / INCOMPLETE_DATA）、下一步建议。',
+  { label: '报告生成', phase: 'Report' }
+)
+
+saveCheckpoint('report', { report })
+log('报告生成完成')
+
+return {
+  stateReport,
+  bAnalysis,
+  aAnalysis,
+  bResult,
+  aResult,
+  validation,
+  verification,
+  optimization,
+  report,
+  optimizeAttempts,
+  summary: 'B 区整改 + A 区测试 + 直联验证完成（实时状态注入版）'
+}

@@ -21,7 +21,8 @@ When you hit a blocker, follow these steps **in order**:
 
 1. **Classify** — Identify the major category and technical subcategory from the tables below. Pick the closest tag; if none fits exactly, choose the nearest match.
 2. **Lookup** — Search the "Historical Blocker Index" table below for the same tag. If a match exists, read the referenced entry and apply the recorded Fix / Best Practice directly — do not re-debug from scratch.
-3. **Solve and Record** — If no match exists (or the recorded fix does not apply), debug normally. After resolving, append a new blocker entry using the format template, then add a row to the Historical Blocker Index table.
+3. **Search Strategy** — For `NET-FETCH-HTTP-429`、搜索模式失效、LinkedIn/Google 相关阻塞、A 区 KP 管线搜索问题，先查阅 `docs/guides/search-strategy.md`。
+4. **Solve and Record** — If no match exists (or the recorded fix does not apply), debug normally. After resolving, append a new blocker entry using the format template, then add a row to the Historical Blocker Index table.如果发现新的搜索模式效果或限制，主动更新 `docs/guides/search-strategy.md`。
 
 Skipping step 2 wastes time on already-solved problems. Skipping step 3 means the next session will re-debug the same issue.
 
@@ -92,6 +93,20 @@ Each blocker entry must include:
 | `DATA-FORMAT-URL-ENCODE` | 2026-05-26 | Extraction results contained URL-encoded values needing decode |
 | `DATA-QUALITY-FILTER` | 2026-05-28 | 关键词发现脚本过滤器太宽松，53% 新闻/文章误入库 |
 | `NET-FETCH-HTTP-429` | 2026-05-28 | 关键词发现跑太多次谷歌搜索触发限流，需控制搜索频率（scheduler 已加防护） |
+| `NET-FETCH-TLS-SSL` | 2026-06-01 | CloakBrowser 代理 7898 SSL 握手失败，切换 HK 节点恢复 |
+| `DATA-QUALITY-FALSE-POSITIVE` | 2026-06-01 | key_person_name 误报率 93%，分离 ROLE_HINTS + 重写黑名单 + 验证规则 |
+
+---
+
+### 2026-06-01 — B-Run 26: CloakBrowser Proxy SSL Failure
+
+**Context:** B-Run 26 关键词发现运行期间，CloakBrowser 代理（端口 7898）SSL 握手失败，所有 Google 搜索返回 0 结果。
+
+**Blocker Details:**
+- **Symptom:** `search_google()` 所有查询返回 0 结果，`urllib` 报 `SSL: UNEXPECTED_EOF_WHILE_READING`
+- **Root Cause:** mihomo 代理实例（端口 7898）的 JP 节点 SSL 连接异常，HTTP 返回 502
+- **Fix:** 通过 mihomo API（端口 9091）切换到 HK 节点：`curl -X PUT http://127.0.0.1:9091/proxies/CloakGoogle -H "Content-Type: application/json" -d '{"name":"HK"}'`
+- **Best Practice:** 遇到 Google 搜索全部返回 0 时，先检查代理连通性（`urllib.request.urlopen('https://www.google.com', proxy=7898)`），再切换节点
 
 ---
 
@@ -1358,5 +1373,17 @@ Update after local-key next10 test:
 - Files changed: `scripts/extraction/keyword_discovery.py`, `data/leads.csv`, `reports/rejected-keyword-discovery-20260528155730.csv`, `docs/current-progress.md`
 - Result: 有效率 12%（6/49），清理后线索表 334→340 条。5 项过滤器改进。
 - Follow-up: 等谷歌 429 恢复后重跑验证有效率，考虑为关键词发现脚本生成专用短关键词
+
+## 2026-06-01 - key_person_name 提取逻辑优化
+
+- User request: 改进 key_person_name 过滤规则，减少误报
+- Handling plan: 分析 9 次 Stage 1 运行的 155 个候选，识别 6 类误报模式 → 改进提取逻辑
+- Files changed: `scripts/extraction/extract_public_contact_candidates.py`, `docs/current-progress.md`
+- Result: 误报率从 93% 降到 ~0%。28 个候选 → 1 个（真阳性保留）。改进点：
+  1. 分离 ROLE_HINTS：section headers 只用于 role_context，不用于 name 提取
+  2. 重写黑名单：~200 词扩展到分类黑名单（导航词、业务术语、地名、品牌名、原住民词等）
+  3. 改进验证：每个单词首字母大写、无数字、无全大写缩写
+  4. 添加职位前缀剥离："Coordinator Calek Alshowaiheen" → "Calek Alshowaiheen"
+- Follow-up: 跑完整 Stage 1 验证实际效果，观察能否带来新联系人
 
 <!-- CODEx_END: request_solution_entries -->

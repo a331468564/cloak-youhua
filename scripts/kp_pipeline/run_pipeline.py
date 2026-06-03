@@ -14,6 +14,7 @@ KP 半自动化管线编排器
 """
 import argparse
 import csv
+import shutil
 import subprocess
 import sys
 from datetime import datetime
@@ -23,13 +24,7 @@ from .config import load_config
 from .metrics import log_run_metrics, compute_accuracy_metrics, init_metrics_log, init_validation_log
 from .stage2_enrich import run_stage2
 from .stage3_validate import run_stage3
-
-try:
-    from scripts.reports.timer import RunTimer
-except ImportError:
-    import sys as _sys
-    _sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts" / "reports"))
-    from timer import RunTimer
+from scripts.reports.timer import RunTimer
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 SCRIPTS = PROJECT_ROOT / "scripts"
@@ -176,6 +171,8 @@ def write_report(output_path, results, metrics_all):
         f"- 富化成功: {s2.get('enriched', 0)}",
         f"- 发现直联: {s2.get('direct_contacts_found', 0)}",
         f"- 直联率: {s2.get('direct_contact_rate', 0):.1%}",
+        f"- leads 更新: {s2.get('leads_updated', 0)}",
+        f"- contacts 保存: {s2.get('contacts_saved', 0)}",
         "",
     ])
 
@@ -229,6 +226,152 @@ def write_report(output_path, results, metrics_all):
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def save_stage2_results(enriched):
+    """将 Stage 2 富化结果保存到 leads.csv 和 contacts.csv。返回 (leads_updated, contacts_saved)。"""
+    if not enriched:
+        return 0, 0
+
+    ts = datetime.now().strftime("%Y%m%d%H%M%S")
+    leads_path = DATA / "leads.csv"
+    contacts_path = DATA / "contacts.csv"
+
+    # 备份
+    shutil.copy2(leads_path, DATA / f"leads.csv.bak.{ts}")
+    shutil.copy2(contacts_path, DATA / f"contacts.csv.bak.{ts}")
+
+    # --- 更新 leads.csv ---
+    with open(leads_path, "r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames
+        leads = list(reader)
+
+    lead_map = {r.get("lead_id", ""): r for r in leads}
+    leads_updated = 0
+
+    for item in enriched:
+        lead_id = item.get("lead_id", "")
+        if not lead_id or lead_id not in lead_map:
+            continue
+        lead = lead_map[lead_id]
+        # 仅当该字段为空时更新（不覆盖已有数据）
+        changed = False
+        if item.get("best_email") and not lead.get("key_contact_email", "").strip():
+            lead["key_contact_email"] = item["best_email"]
+            changed = True
+        if item.get("best_phone") and not lead.get("key_contact_phone", "").strip():
+            lead["key_contact_phone"] = item["best_phone"]
+            changed = True
+        if item.get("best_linkedin") and not lead.get("key_contact_linkedin_url", "").strip():
+            lead["key_contact_linkedin_url"] = item["best_linkedin"]
+            changed = True
+        if changed:
+            lead["key_contact_source_link"] = item.get("source_url", "")
+            conf_map = {"High": "高", "Medium": "中", "Low": "低"}
+            lead["key_contact_confidence"] = conf_map.get(item.get("confidence", ""), item.get("confidence", ""))
+            directness = item.get("directness", "")
+            phase = item.get("search_phase", "")
+            lead["key_contact_note"] = f"Stage 2 富化: {directness} ({phase})"
+            lead["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+            leads_updated += 1
+
+    with open(leads_path, "w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(leads)
+
+    # --- 更新 contacts.csv ---
+    with open(contacts_path, "r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        contact_fields = reader.fieldnames
+        contacts = list(reader)
+
+    # 构建 (lead_id, contact_name) 索引
+    existing_idx = {}
+    for c in contacts:
+        key = (c.get("lead_id", ""), c.get("contact_name", "").strip().lower())
+        existing_idx[key] = c
+
+    # 找最大 contact_id
+    max_ct = 0
+    for c in contacts:
+        cid = c.get("contact_id", "")
+        if cid.startswith("CT-"):
+            try:
+                max_ct = max(max_ct, int(cid[3:]))
+            except ValueError:
+                pass
+
+    contacts_added = 0
+    contacts_updated = 0
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    for item in enriched:
+        name = item.get("name", "").strip()
+        lead_id = item.get("lead_id", "")
+        if not name or not lead_id:
+            continue
+
+        key = (lead_id, name.lower())
+        conf_map = {"High": "高", "Medium": "中", "Low": "低"}
+        confidence = conf_map.get(item.get("confidence", ""), item.get("confidence", ""))
+        directness = item.get("directness", "")
+
+        if key in existing_idx:
+            # 更新现有联系人
+            c = existing_idx[key]
+            changed = False
+            if item.get("best_email") and not c.get("email", "").strip():
+                c["email"] = item["best_email"]
+                changed = True
+            if item.get("best_phone") and not c.get("phone", "").strip():
+                c["phone"] = item["best_phone"]
+                changed = True
+            if item.get("best_linkedin") and not c.get("linkedin_url", "").strip():
+                c["linkedin_url"] = item["best_linkedin"]
+                changed = True
+            if changed:
+                c["contact_confidence"] = confidence
+                if directness == "direct":
+                    c["contact_status"] = "已找到直联"
+                c["last_updated"] = now_str
+                c["change_note"] = "Stage 2 富化更新"
+                contacts_updated += 1
+        else:
+            # 追加新联系人
+            max_ct += 1
+            row = {fn: "" for fn in contact_fields}
+            row.update({
+                "contact_id": f"CT-{max_ct:04d}",
+                "lead_id": lead_id,
+                "company_name": item.get("company_name", ""),
+                "contact_name": name,
+                "email": item.get("best_email", ""),
+                "phone": item.get("best_phone", ""),
+                "linkedin_url": item.get("best_linkedin", ""),
+                "source_link": item.get("source_url", ""),
+                "source_type": "Stage 2 富化",
+                "contact_confidence": confidence,
+                "contact_status": "已找到直联" if directness == "direct" else "已识别联系人",
+                "is_primary_contact": "否",
+                "contact_priority": "高" if directness == "direct" else "中",
+                "outreach_contact_type": "关键人联系" if directness == "direct" else "补充联系人",
+                "last_researched_date": today,
+                "last_updated": now_str,
+                "change_note": f"Stage 2 富化: {directness}",
+            })
+            contacts.append(row)
+            contacts_added += 1
+
+    with open(contacts_path, "w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=contact_fields)
+        writer.writeheader()
+        writer.writerows(contacts)
+
+    print(f"  保存: leads 更新 {leads_updated} 条, contacts 新增 {contacts_added} / 更新 {contacts_updated} 条")
+    return leads_updated, contacts_added + contacts_updated
+
+
 def main():
     parser = argparse.ArgumentParser(description="KP 半自动化管线编排器。")
     parser.add_argument("--leads", default=str(DATA / "leads.csv"))
@@ -256,7 +399,7 @@ def main():
     print(f"阶段: {args.stage}")
     print()
 
-    with RunTimer():
+    with RunTimer("a"):
         # Keyword-driven discovery: run scheduler before Stage 1
         if args.keyword_driven:
             print("--- Keyword Scheduler (pre-stage) ---")
@@ -285,6 +428,7 @@ def main():
         # Stage 2
         if args.stage in ("2", "all"):
             print("--- Stage 2: 直联富化 ---")
+            # 找出需要富化的线索
             need_enrichment = find_leads_needing_kp(leads)[:args.limit]
             if not need_enrichment:
                 print("  没有需要富化的线索（已有 KP + 缺直联）。")
@@ -293,6 +437,10 @@ def main():
                 print(f"  找到 {len(need_enrichment)} 条需富化线索")
                 enriched, metrics_s2 = run_stage2(need_enrichment, config)
                 results["stage2_enriched"] = enriched
+                # 保存富化结果到 CSV
+                saved_leads, saved_contacts = save_stage2_results(enriched)
+                metrics_s2["leads_updated"] = saved_leads
+                metrics_s2["contacts_saved"] = saved_contacts
                 metrics_all["stage2"] = metrics_s2
                 print(f"  富化: {metrics_s2.get('enriched', 0)} 条")
                 print(f"  直联: {metrics_s2.get('direct_contacts_found', 0)} 条")
@@ -301,6 +449,7 @@ def main():
         # Stage 3
         if args.stage in ("3", "all"):
             print("--- Stage 3: 验证门控 ---")
+            # 合并 Stage 1 和 Stage 2 的候选人
             s1_candidates = results.get("stage1_candidates", [])
             s2_candidates = results.get("stage2_enriched", [])
             all_candidates = s2_candidates + [
@@ -320,10 +469,26 @@ def main():
                 print(f"  人工审核: {s3m.get('human_review', 0)}")
                 print()
 
-        # 写报告
-        report_path = prefix.with_suffix(".md")
-        write_report(report_path, results, metrics_all)
-        print(f"报告: {report_path}")
+        # 自动生成 A-Run 报告
+        print("--- 生成 A-Run 报告 ---")
+        from scripts.reports.generate_run_report import main as gen_report
+        old_argv = sys.argv
+        sys.argv = [
+            "generate_run_report",
+            "--auto-timing", "--auto-stats", "--auto-detect",
+            "--task", f"KP 管线 Stage {args.stage}, limit {args.limit}",
+        ]
+        try:
+            gen_report()
+        except Exception as e:
+            print(f"  报告生成失败: {e}")
+        finally:
+            sys.argv = old_argv
+
+    # 写报告
+    report_path = prefix.with_suffix(".md")
+    write_report(report_path, results, metrics_all)
+    print(f"报告: {report_path}")
 
     print("\n完成。")
 

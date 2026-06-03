@@ -61,7 +61,10 @@
       "condition": "false_positive_rate < 0.15 AND kp_identification_rate > 0.5"
     },
     "stage2_auto": {
-      "condition": "direct_contact_rate > 0.1 AND false_positive_rate < 0.1"
+      "condition": "direct_contact_rate > 0.1 AND false_positive_rate < 0.1",
+      "pause_after_consecutive_zeros": 3,
+      "status": "paused",
+      "pause_reason": "5 consecutive rounds with 0% direct contact rate; candidate pool exhausted; email inference bug fixed (domain filtering added 2026-06-02)"
     },
     "stage3_auto_approve": {
       "condition": "auto_approve_accuracy > 0.95"

@@ -1,0 +1,362 @@
+{
+  "Australia": {
+    "total": 1706525958.888,
+    "breakdown": {
+      "691110": {
+        "value": 58725385.043,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 59807857.856,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 75370798.097,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 249124242.639,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 107721491.797,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 111791422.222,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 457947484.582,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 111823565.343,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 426941965.083,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 47271746.226,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  },
+  "United States": {
+    "total": 7346388131.0,
+    "breakdown": {
+      "691110": {
+        "value": 156103437.0,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 738573755.0,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 515278736.0,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 887539923.0,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 1117645003.0,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 913240729.0,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 1809415665.0,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 31708872.0,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 843000367.0,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 333881644.0,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  },
+  "United Kingdom": {
+    "total": 2525801655.472,
+    "breakdown": {
+      "691110": {
+        "value": 70702046.296,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 162778544.234,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 135182312.315,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 249915981.836,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 201110048.804,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 192123896.17,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 803989064.709,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 15781962.436,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 672302516.173,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 21915282.499,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  },
+  "Canada": {
+    "total": 1627325349.221,
+    "breakdown": {
+      "691110": {
+        "value": 43434599.119,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 117445278.522,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 73537647.615,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 193695965.413,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 177120443.97,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 112756593.744,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 463211898.626,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 65386631.922,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 314233172.472,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 66503117.818,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  },
+  "Germany": {
+    "total": 3064138468.1519995,
+    "breakdown": {
+      "691110": {
+        "value": 150424431.199,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 213968987.032,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 168057483.661,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 506087248.843,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 339371271.865,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 216988959.424,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 899697807.616,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 15279723.956,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 514572136.797,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 39690417.759,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  },
+  "Japan": {
+    "total": 1655391441.0730002,
+    "breakdown": {
+      "691110": {
+        "value": 59212855.331,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 40408381.263,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 146209273.122,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 211311002.411,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 94452390.976,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 131107666.326,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 464578325.587,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 9408535.821,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 451509732.152,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 47193278.084,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  },
+  "South Korea": {
+    "total": 856482254.0,
+    "breakdown": {
+      "691110": {
+        "value": 53459556.0,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 27207342.0,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 68493875.0,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 67789113.0,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 133109250.0,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 86304386.0,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 180999735.0,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 12352832.0,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 157504669.0,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 69261496.0,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  },
+  "New Zealand": {
+    "total": 222143210.46899998,
+    "breakdown": {
+      "691110": {
+        "value": 6737112.85,
+        "desc": "Tableware and kitchenware; of porcelain or china"
+      },
+      "691200": {
+        "value": 18205259.094,
+        "desc": "Ceramic tableware, kitchenware, other household articles and toilet articles; other than of porcelain or china"
+      },
+      "732399": {
+        "value": 14292452.649,
+        "desc": "Iron or steel; table, kitchen and other household articles and parts thereof, of iron or steel n.e.c. in heading no. 7323"
+      },
+      "940171": {
+        "value": 18960067.364,
+        "desc": "Seats; with metal frames, upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940179": {
+        "value": 16420996.482,
+        "desc": "Seats; with metal frames, not upholstered, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940180": {
+        "value": 13502398.925,
+        "desc": "Seats; n.e.c. in heading no. 9401, (excluding medical, surgical, dental, veterinary or barber furniture)"
+      },
+      "940320": {
+        "value": 66674874.096,
+        "desc": "Furniture; metal, other than for office use"
+      },
+      "940340": {
+        "value": 10551268.532,
+        "desc": "Furniture; wooden, for kitchen use"
+      },
+      "940360": {
+        "value": 54078031.504,
+        "desc": "Furniture; wooden, other than for office, kitchen or bedroom use"
+      },
+      "940389": {
+        "value": 2720748.973,
+        "desc": "Furniture; of cane, osier, or similar materials (other than bamboo or rattan)"
+      }
+    }
+  }
+}

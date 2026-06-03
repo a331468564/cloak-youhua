@@ -28,8 +28,6 @@ def get_project_root():
 RUN_SCRIPTS = [
     r"merge_run\d+\.py",
     r"generate_run_report\.py",
-    r"generate_keyword_report\.py",
-    r"generate_summary\.py",
     r"run_pipeline\.py",
 ]
 

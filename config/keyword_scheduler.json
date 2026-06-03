@@ -4,7 +4,7 @@
   "default_cooldown_days": 14,
   "default_country": "Australia",
   "template_expansions": {
-    "[city]": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast", "Canberra", "Hobart"],
+    "[city]": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast", "Canberra", "Hobart", "Fremantle", "Cairns", "Townsville", "Geelong", "Ballarat", "Bendigo", "Wollongong", "Bunbury", "Launceston", "Adelaide Hills", "Sunshine Coast", "Toowoomba", "Newcastle", "Mandurah", "Geraldton", "Albany", "Rockhampton", "Mackay", "Bundaberg", "Hervey Bay", "Darwin"],
     "[country]": ["Australia"]
   },
   "priority_weights": {
@@ -12,7 +12,7 @@
     "medium": 0.7,
     "low": 0.4
   },
-  "max_keywords_per_run": 5,
+  "max_keywords_per_run": 30,
   "extraction_defaults": {
     "follow_links": 2,
     "fetcher": "static",

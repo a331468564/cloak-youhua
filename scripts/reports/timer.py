@@ -1,5 +1,10 @@
 """
 RunTimer — 自动记录脚本执行时间 + 跑前/跑后 lead stats，写入 JSON 供报告脚本读取。
+
+用法：
+  with RunTimer():          # A/B 共用（向后兼容）
+  with RunTimer("a"):       # A区专用 → data/.last_run_timing_a.json
+  with RunTimer("b"):       # B区专用 → data/.last_run_timing_b.json
 """
 
 import csv
@@ -7,7 +12,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-TIMING_FILE = Path("data/.last_run_timing.json")
+_BASE_TIMING = Path("data/.last_run_timing")
 LEADS_CSV = Path("data/leads.csv")
 CONTACTS_CSV = Path("data/contacts.csv")
 
@@ -50,11 +55,18 @@ def _load_lead_stats() -> dict:
 
 
 class RunTimer:
-    """Context manager that records start/end/duration and writes to TIMING_FILE.
+    """Context manager that records start/end/duration and writes to a timing JSON file.
 
     On enter: captures lead stats as "before" snapshot.
     On exit: captures lead stats as "after" snapshot + timing data.
+
+    Args:
+        tag: "a" for A区, "b" for B区, None for shared (backward compatible).
     """
+
+    def __init__(self, tag: str = None):
+        suffix = f"_{tag}" if tag else ""
+        self.timing_file = Path(f"{_BASE_TIMING}{suffix}.json")
 
     def __enter__(self):
         self.start = datetime.now()
@@ -66,8 +78,8 @@ class RunTimer:
         self.duration = self.end - self.start
         self.duration_seconds = self.duration.total_seconds()
         after_stats = _load_lead_stats()
-        TIMING_FILE.parent.mkdir(parents=True, exist_ok=True)
-        TIMING_FILE.write_text(
+        self.timing_file.parent.mkdir(parents=True, exist_ok=True)
+        self.timing_file.write_text(
             json.dumps(
                 {
                     "start": self.start.isoformat(timespec="seconds"),
@@ -83,8 +95,14 @@ class RunTimer:
         return False
 
     @staticmethod
-    def load() -> dict | None:
-        """Load the last timing record, or None if not available."""
-        if not TIMING_FILE.exists():
+    def load(tag: str = None) -> dict | None:
+        """Load the last timing record, or None if not available.
+
+        Args:
+            tag: "a" for A区, "b" for B区, None for shared.
+        """
+        suffix = f"_{tag}" if tag else ""
+        timing_file = Path(f"{_BASE_TIMING}{suffix}.json")
+        if not timing_file.exists():
             return None
-        return json.loads(TIMING_FILE.read_text(encoding="utf-8"))
+        return json.loads(timing_file.read_text(encoding="utf-8"))

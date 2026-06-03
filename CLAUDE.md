@@ -56,6 +56,7 @@ B2B lead research for Australian restaurant/hotel industry. Two task zones:
 ## Commands Quick Reference
 
 ```bash
+# 完整管线（直接说"跑一轮"即可）
 # A区 — KP 管线（表单收集）
 python -m scripts.kp_pipeline.run_pipeline --stage all --limit 40
 
@@ -90,6 +91,26 @@ python scripts/reports/generate_summary.py
 |-------|---------|---------|
 | `/kp-discovery` | KP pipeline tasks | KP 三阶段流程 + 阻塞处理 |
 | `/keyword-discovery` | Keyword discovery tasks | 关键词调度器 + 发现脚本 + 过滤器 |
+
+## 完整管线执行规则
+
+当用户说"跑一轮"、"执行管线"、"run pipeline"时，按以下步骤执行：
+
+1. **读取状态** — 读取 `docs/current-progress.md` 和 `.session_state.json`
+2. **创建锁** — 写入 `.run_lock`（过期时间 10 分钟后）
+3. **并行执行 A 区和 B 区**（同时启动两个 Agent，不互相等待）：
+   - Agent 1: `python -m scripts.kp_pipeline.run_pipeline --stage all --limit 10`
+   - Agent 2: `python -m scripts.keyword_scheduler.scheduler --limit 5`（如果 B 区未饱和）
+4. **等待两个 Agent 都完成**
+5. **验证产出** — 检查每条记录是否有 `source_url`，无来源的数据标记 `needs_review`
+6. **生成报告** — `python scripts/reports/generate_run_report.py --auto-stats --auto-timing`
+7. **更新状态** — 更新 `docs/current-progress.md` 和 `.session_state.json`
+8. **释放锁** — 删除 `.run_lock`
+9. **汇报结果** — 向用户汇报本轮产出
+
+**关键：**
+- **A 区和 B 区必须并行执行**（在同一消息中同时调用两个 Agent，设置 `run_in_background: true`）
+- **不要只分析状态，要实际执行脚本**
 
 ## Proxy Rotation — CloakBrowser Only
 

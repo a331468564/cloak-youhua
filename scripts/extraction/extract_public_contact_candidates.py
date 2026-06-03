@@ -15,12 +15,6 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))  # Add scripts directory to path
 from workflow_checker import checker as workflow_checker
 
-try:
-    from scripts.reports.timer import RunTimer
-except ImportError:
-    sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts" / "reports"))
-    from timer import RunTimer
-
 
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # Go up from scripts/extraction to project root
@@ -165,6 +159,7 @@ LINK_HINTS = {
 }
 
 ROLE_HINTS = [
+    # Actual job titles — used for both role_context and key_person_name extraction
     "owner",
     "founder",
     "co-founder",
@@ -181,7 +176,8 @@ ROLE_HINTS = [
     "events",
     "projects",
     "general manager",
-    # Section headers that may appear before names
+    # Section headers — used ONLY for role_context snippets, NOT for name extraction
+    # (they cause too many false positives when used in the name regex)
     "leadership",
     "management",
     "team",
@@ -190,8 +186,28 @@ ROLE_HINTS = [
     "crew",
 ]
 
+# Role hints that are valid for person name extraction (excludes section headers)
+_ROLE_HINTS_FOR_NAMES = [
+    "owner",
+    "founder",
+    "co-founder",
+    "director",
+    "managing director",
+    "chief executive",
+    "ceo",
+    "operations",
+    "procurement",
+    "purchasing",
+    "food and beverage",
+    "f&b",
+    "culinary",
+    "events",
+    "projects",
+    "general manager",
+]
+
 # Sort roles by length (longest first) to match multi-word roles before single-word ones
-_SORTED_ROLE_HINTS = sorted(ROLE_HINTS, key=len, reverse=True)
+_SORTED_ROLE_HINTS = sorted(_ROLE_HINTS_FOR_NAMES, key=len, reverse=True)
 
 # Pattern for person names near role words (e.g., "John Smith, Director" or "Director: John Smith" or "John Smith CEO")
 # Use non-greedy matching for name to avoid capturing part of multi-word roles
@@ -309,111 +325,174 @@ def decode_email(email):
 
 
 def extract_person_names(text):
-    """Extract person names found near role words."""
+    """Extract person names found near role words.
+
+    Uses pattern: [Capitalized Words] + [space] + [role_word]
+    Then filters through multiple layers to reduce false positives.
+    """
     names = []
-    # Common English words that should not appear in person names
-    _COMMON_WORDS = {
-        'the', 'and', 'for', 'with', 'our', 'your', 'hotel', 'restaurant', 'group', 'pty', 'ltd',
-        'read', 'more', 'click', 'here', 'learn', 'find', 'out', 'get', 'in', 'touch', 'contact', 'us', 'about',
-        'array', 'commitment', 'series', 'stellar', 'genuine', 'local', 'extraordinary',
-        'leadership', 'management', 'team', 'people', 'staff', 'crew', 'personnel',
-        'an', 'of', 'in', 'on', 'at', 'to', 'for', 'by', 'from', 'with', 'through',
-        'street', 'road', 'avenue', 'lane', 'drive', 'place', 'court', 'way',
-        'elevating', 'pushing', 'passion', 'excellence', 'motivating',
-        'north', 'south', 'east', 'west', 'central', 'upper', 'lower',
-        'new', 'old', 'first', 'last', 'next', 'previous', 'current',
-        'menu', 'open', 'close', 'skip', 'content', 'home', 'page',
-        'sign', 'subscribe', 'newsletter', 'latest', 'news', 'articles', 'resources',
+
+    # ---- Blacklist: words that should NEVER appear in a person name ----
+    _BLACKLIST_WORDS = {
+        # Common English function words
+        'the', 'and', 'for', 'with', 'our', 'your', 'an', 'of', 'in', 'on', 'at',
+        'to', 'by', 'from', 'through', 'or', 'a', 're', 'f',
+        # UI / navigation
+        'menu', 'open', 'close', 'skip', 'content', 'home', 'page', 'sign',
+        'subscribe', 'newsletter', 'latest', 'news', 'articles', 'resources',
+        'read', 'more', 'click', 'here', 'learn', 'find', 'out', 'get', 'touch',
+        'contact', 'us', 'about', 'book', 'now', 'back', 'today', 'enquire',
+        'gallery', 'log', 'cart', 'items', 'account',
+        # Hospitality / business terms
+        'hotel', 'restaurant', 'group', 'pty', 'ltd', 'hotels', 'restaurants',
+        'venues', 'accommodation', 'spa', 'meetings', 'events', 'weddings',
+        'conferences', 'functions', 'catering', 'hospitality', 'management',
+        'leadership', 'team', 'people', 'staff', 'crew', 'personnel',
+        'operations', 'procurement', 'purchasing', 'culinary', 'beverage',
+        'asset', 'assets', 'fund', 'funds', 'wealth', 'credit', 'equity',
+        'property', 'properties', 'portfolio', 'investors', 'investment',
+        'advisory', 'board', 'company', 'companies', 'services', 'service',
+        # Business descriptors
         'business', 'practices', 'respect', 'community', 'culture', 'integrity',
-        'entrepreneurs', 'passionate', 'dedication', 'hard', 'work', 'transformed',
-        'innovative', 'customer', 'satisfaction', 'connection', 'values', 'focus',
-        'continuous', 'improvement', 'fresh', 'exciting', 'encouraging', 'return',
-        'fostering', 'industry', 'built', 'company', 'delights', 'customers',
-        'positively', 'impacts', 'love', 'deep', 'both', 'shared', 'dream',
-        'creating', 'offered', 'memorable', 'experiences', 'drawing', 'diverse',
-        'backgrounds', 'acumen', 'tirelessly', 'establish', 'prided', 'exceptional',
-        'service', 'high', 'quality', 'food', 'welcoming', 'atmosphere', 'dedication',
-        'transformed', 'small', 'startup', 'renowned', 'brand', 'known', 'innovative',
-        'dining', 'concepts', 'centric', 'approach', 'core', 'values', 'focus',
-        'satisfaction', 'connection', 'providing', 'finest', 'ingredients', 'ensuring',
-        'meal', 'meets', 'highest', 'standards', 'taste', 'presentation', 'prioritize',
-        'creating', 'inclusive', 'environment', 'guest', 'feels', 'valued', 'appreciated',
-        'commitment', 'continuous', 'innovation', 'improvement', 'keeps', 'dining',
-        'experience', 'fresh', 'exciting', 'encouraging', 'customers', 'return',
-        'fostering', 'culture', 'respect', 'integrity', 'passion', 'culinary', 'industry',
-        'built', 'company', 'delights', 'customers', 'positively', 'impacts', 'community',
-        'years', 'experience', 'partner', 'collaborations', 'pop', 'restaurants',
-        'culture', 'passion', 'excellence', 'commitment', 'community', 'group',
-        'like', 'minded', 'share', 'same', 'core', 'values', 'customer', 'focus',
-        'prioritize', 'needs', 'strive', 'provide', 'exceptional', 'service',
-        'memorable', 'dining', 'experiences', 'every', 'guest', 'innovation',
-        'continuously', 'seek', 'creative', 'solutions', 'fresh', 'ideas', 'enhance',
-        'menu', 'offerings', 'improve', 'overall', 'dining', 'experience', 'integrity',
-        'operate', 'honestly', 'transparency', 'ensuring', 'actions', 'reflect',
-        'commitment', 'ethical', 'business', 'practices', 'respect', 'community',
-        'managing', 'director', 'general', 'manager', 'chief', 'executive', 'officer',
-        'owner', 'founder', 'co-founder', 'operations', 'procurement', 'purchasing',
-        'food', 'beverage', 'culinary', 'events', 'projects', 'eleven', 'barrack',
-        'watermans', 'explore', 'art', 'scroll', 'local', 'staycation', 'guest',
-        'visiting', 'cairns', 'surrounds', 'whether', 'you', 're', 'having', 'a',
-        'or', 'visiting', 'our', 'f', 'cards', 'gift', 'spaces', 'whats', 'privacy',
-        'venues', 'king', 'clarence', 'inspired', 'best', 'first', 'hokkaido', 'curry',
-        'soup', 'melbourne', 'enchanting', 'discovery', 'travels', 'japan', 'waku',
-        'swiftly', 'ca', 'accommodation', 'major', 'albion', 'beauty', 'sodashi',
-        'spa', 'meetings', 'offers', 'price', 'guarantee', 'careers', 'story',
-        'destinations', 'superyacht', 'marina', 'program', 'aims', 'focus', 'youth',
-        'collaborations', 'performing', 'artists', 'alongside', 'wi', 'torres', 'strait',
-        'islander', 'bulmba', 'ja', 'showcases', 'stories', 'aboriginal', 'peoples',
-        'plays', 'vital', 'role', 'scene', 'managed', 'arts', 'queensland', 'beautiful',
-        'poolside', 'turners', 'talking', 'clean', 'megan', 'larsen', 'lets', 'om',
-        'yoga', 'retreats', 'around', 'byron', 'bay', 'bites', 'howard', 'smith',
-        'wharves', 'colour', 'bites', 'howard', 'smith', 'wharves', 'colour',
-        # Country and place names that may appear in text
-        'kuwait', 'kyrgyzstan', 'lao', 'latvia', 'lebanon', 'lesotho', 'liberia', 'libya',
-        'liechtenstein', 'lithuania', 'luxembourg', 'madagascar', 'malawi', 'malaysia',
-        'maldives', 'mali', 'malta', 'mauritania', 'mauritius', 'mexico', 'micronesia',
-        'moldova', 'monaco', 'mongolia', 'montenegro', 'morocco', 'mozambique', 'myanmar',
-        'namibia', 'nauru', 'nepal', 'netherlands', 'nicaragua', 'niger', 'nigeria',
-        'north', 'korea', 'norway', 'oman', 'pakistan', 'palau', 'panama', 'papua',
-        'guinea', 'paraguay', 'peru', 'philippines', 'poland', 'portugal', 'qatar',
-        'romania', 'russia', 'rwanda', 'saint', 'kitts', 'nevis', 'lucia', 'vincent',
-        'grenadines', 'samoa', 'san', 'marino', 'tome', 'principe', 'saudi', 'arabia',
-        'senegal', 'serbia', 'seychelles', 'sierra', 'leone', 'singapore', 'slovakia',
-        'slovenia', 'solomon', 'islands', 'somalia', 'africa', 'sudan', 'suriname',
-        'swaziland', 'sweden', 'switzerland', 'syria', 'taiwan', 'tajikistan', 'tanzania',
-        'thailand', 'togo', 'tonga', 'trinidad', 'tobago', 'tunisia', 'turkey',
-        'turkmenistan', 'tuvalu', 'uganda', 'ukraine', 'emirates', 'kingdom', 'states',
-        'uruguay', 'uzbekistan', 'vanuatu', 'venezuela', 'vietnam', 'yemen', 'zambia',
-        'zimbabwe',
-        # Business/product names that may appear near role words
-        'coconut', 'bowl', 'cafe', 'bar', 'grill', 'bistro', 'pub', 'tavern', 'lounge',
-        'kitchen', 'eatery', 'diner', 'bakery', 'pizzeria', 'trattoria', 'osteria',
-        'brasserie', 'rotisserie', 'steakhouse', 'seafood', 'sushi', 'ramen', 'noodle',
-        'pizza', 'burger', 'taco', 'burrito', 'wrap', 'sandwich', 'salad', 'soup',
-        'coffee', 'tea', 'juice', 'smoothie', 'cocktail', 'wine', 'beer', 'spirit',
+        'passion', 'excellence', 'dedication', 'innovative', 'customer',
+        'satisfaction', 'values', 'focus', 'quality', 'food', 'dining',
+        'experience', 'brand', 'premium', 'professional', 'specialists',
+        # Navigation / section headers
+        'destinations', 'story', 'careers', 'privacy', 'sustainability',
+        'awards', 'media', 'subscribe', 'enquiry', 'enquiries',
+        # Common place/region words in AU hospitality
+        'australia', 'sydney', 'melbourne', 'brisbane', 'perth', 'adelaide',
+        'cairns', 'byron', 'gold', 'coast', 'queensland', 'victoria',
+        'south', 'north', 'east', 'west', 'central', 'regional',
+        # Country / region names that appear in navigation menus
+        'hong', 'kong', 'indonesia', 'zealand', 'australia', 'kuta', 'bali',
+        'japan', 'china', 'india', 'korea', 'singapore', 'thailand',
+        # Business / brand names from false positives
+        'coconut', 'bowl', 'cafe', 'bar', 'grill', 'bistro', 'pub', 'tavern',
+        'lounge', 'kitchen', 'eatery', 'diner', 'bakery', 'pizzeria',
+        'explore', 'art', 'scroll', 'discover', 'featured', 'spotlight',
+        'highlight', 'showcase', 'gallery', 'studio', 'workshop', 'lab',
+        'hub', 'space', 'place', 'room', 'house', 'shed', 'yard', 'park',
+        # Number words that look like names (e.g., "Eleven Barrack Watermans")
+        'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
+        'nine', 'ten', 'eleven', 'twelve', 'first', 'second', 'third',
+        # Indigenous acknowledgment terms
+        'wurundjeri', 'woi', 'wurrung', 'whadjuk', 'nyoongar', 'kulin',
+        'jagera', 'turrbal', 'aboriginal', 'torres', 'strait', 'islander',
+        'traditional', 'owners', 'custodians', 'peoples', 'country', 'lands',
+        'waters', 'acknowledges', 'pays', 'respect',
+        # Business structure words
+        'pty', 'ltd', 'limited', 'group', 'holdings', 'enterprises',
+        'international', 'global', 'pacific', 'asia', 'portfolio',
+        # Article / blog title words
+        'building', 'stronger', 'through', 'inclusion', 'cultural', 'diversity',
+        'week', 'operator', 'improves', 'motel', 'operations', 'aren',
+        'more', 'motels', 'being', 'built', 'right', 'how', 'why',
+        # Company name fragments from false positives
+        'blanco', 'horner', 'white', 'top', 'trilogy', 'spinifex',
+        'brave', 'statement', 'heavens', 'capella', 'aurora',
+        'lancemore', 'ovolo', 'crystalbrook', 'meriton',
+        # Event / package terms
+        'elopement', 'package', 'corporate', 'private', 'celebrations',
+        'conference', 'venue', 'hire', 'bundle', 'locks', 'love',
+        'bio', 'packaging', 'hour', 'delivery', 'notice', 'buffets',
+        'stations', 'canapes', 'curated', 'packages',
+        # Navigation menu items
+        'unmissable', 'live', 'featured', 'weekly', 'specials', 'happenings',
+        'menus', 'order', 'online', 'pick', 'gift', 'cards', 'vouchers',
+        'whats', 'whats-on', 'whatsnew',
+        # Other noise
+        'sample', 'logo', 'what', 'say', 'blogs', 'sustainable', 'cleaning',
+        'starts', 'small', 'changes', 'recruit', 'global', 'staffing',
+        'subsidiary', 'expansion', 'services', 'short', 'term', 'labour',
+        'hire', 'reach', 'alliance', 'college', 'education', 'marion',
+        'leadwell', 'resorts', 'causeway', 'paua',
+    }
+
+    # Section header words that can appear before person names (e.g., "Leadership Jayantha Warnakula CEO")
+    _SECTION_HEADERS = {
+        'leadership', 'management', 'team', 'people', 'staff', 'crew',
+        'group', 'board', 'directors', 'executives', 'founders',
     }
 
     for match in PERSON_NAME_NEAR_ROLE_RE.finditer(text):
         name = match.group(1)
-        if name and len(name) > 3 and len(name) < 50:
-            # Filter out common false positives
-            lowered = name.lower()
-            # Must start with uppercase letter (likely a name)
-            if not name[0].isupper():
-                continue
-            # Must have at least 2 words (first + last name)
-            if len(name.split()) < 2:
-                continue
-            # Filter out names that contain common English words as whole words
-            name_words = set(lowered.split())
-            if name_words.intersection(_COMMON_WORDS):
-                continue
-            # Filter out names that look like phrases (contain too many common words)
-            common_word_count = sum(1 for word in name.split() if word.lower() in _COMMON_WORDS)
-            if common_word_count > 0:
-                continue
-            names.append(name.strip())
+        if not name or len(name) <= 3 or len(name) >= 50:
+            continue
+
+        # Must start with uppercase letter
+        if not name[0].isupper():
+            continue
+
+        words = name.split()
+
+        # Strip section header prefix (e.g., "Leadership Jayantha Warnakula" -> "Jayantha Warnakula")
+        if len(words) >= 3 and words[0].lower() in _SECTION_HEADERS:
+            words = words[1:]
+            name = ' '.join(words)
+
+        # Strip section header suffix (e.g., "Shane Gross Group" -> "Shane Gross")
+        if len(words) >= 3 and words[-1].lower() in _SECTION_HEADERS:
+            words = words[:-1]
+            name = ' '.join(words)
+
+        # Must have 2-3 words (first + last [+ middle])
+        if len(words) < 2 or len(words) > 3:
+            continue
+
+        # Each word must start with uppercase (proper noun pattern)
+        if not all(w[0].isupper() for w in words if len(w) > 1):
+            continue
+
+        # No word should be in the blacklist
+        if any(w.lower() in _BLACKLIST_WORDS for w in words):
+            continue
+
+        # No word should be all-uppercase (likely an acronym, not a name)
+        if any(w.isupper() and len(w) > 2 for w in words):
+            continue
+
+        # No word should contain digits
+        if any(c.isdigit() for w in words for c in w):
+            continue
+
+        # Reject if name looks like a phrase (all words are common English)
+        # Heuristic: if 2+ words are very short (< 3 chars each), likely not a name
+        if sum(1 for w in words if len(w) < 3) >= 2:
+            continue
+
+        # Strip job title prefixes if present (e.g., "Coordinator Calek Alshowaiheen" -> "Calek Alshowaiheen")
+        cleaned_name = _strip_title_prefix(name)
+        names.append(cleaned_name.strip())
+
     return list(set(names))
+
+
+# Job title prefixes to strip from person names
+_TITLE_PREFIXES = [
+    'coordinator', 'manager', 'director', 'executive', 'officer', 'chef',
+    'supervisor', 'lead', 'head', 'senior', 'junior', 'assistant', 'associate',
+    'principal', 'chief', 'vice', 'deputy', 'president', 'chairman', 'chairwoman',
+]
+
+
+def _strip_title_prefix(name):
+    """Remove job title prefixes from person names.
+
+    Examples:
+        "Coordinator Calek Alshowaiheen" -> "Calek Alshowaiheen"
+        "Manager John Smith" -> "John Smith"
+        "Paul Salter" -> "Paul Salter" (no prefix, unchanged)
+    """
+    words = name.split()
+    if len(words) < 3:
+        return name  # Can't have a prefix with only 2 words
+
+    # Check if first word is a known title prefix
+    if words[0].lower() in _TITLE_PREFIXES:
+        return ' '.join(words[1:])
+
+    return name
 
 
 def clean_value(value):
@@ -782,10 +861,12 @@ def extract_from_page(lead, url, rows, seen, fetcher_mode, existing_data=None):
                 break
 
     lowered = text.lower()
+    role_snippets = []
     for role in ROLE_HINTS:
         idx = lowered.find(role)
         if idx >= 0:
             snippet = clean_value(text[max(0, idx - 120): min(len(text), idx + 180)])
+            role_snippets.append((role, snippet))
             add_candidate(
                 rows,
                 seen,
@@ -799,8 +880,12 @@ def extract_from_page(lead, url, rows, seen, fetcher_mode, existing_data=None):
                 existing_data,
             )
 
-    # Extract person names near role words
-    person_names = extract_person_names(text)
+    # Extract person names near role words — from both full text and role_context snippets
+    # Snippets are cleaner (single-line, trimmed) so they catch names the full text misses
+    person_names = set(extract_person_names(text))
+    for role, snippet in role_snippets:
+        for name in extract_person_names(snippet):
+            person_names.add(name)
     for name in person_names:
         # Find the role associated with this name
         name_idx = text.find(name)
@@ -924,59 +1009,57 @@ def main():
 
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     prefix = Path(args.output_prefix) if args.output_prefix else REPORTS / f"au-public-contact-candidates-{ts}"
+    rows = []
+    errors = []
+    seen = {}
 
-    with RunTimer():
-        rows = []
-        errors = []
-        seen = {}
+    # Load existing data to avoid duplicates using workflow checker
+    existing_data = None
+    if args.skip_existing:
+        existing_data = workflow_checker.load_existing_data()
+        print(f"Loaded existing data: {len(existing_data['emails'])} emails, {len(existing_data['phones'])} phones, {len(existing_data['contact_names'])} contact names")
 
-        # Load existing data to avoid duplicates using workflow checker
-        existing_data = None
-        if args.skip_existing:
-            existing_data = workflow_checker.load_existing_data()
-            print(f"Loaded existing data: {len(existing_data['emails'])} emails, {len(existing_data['phones'])} phones, {len(existing_data['contact_names'])} contact names")
+    input_rows = read_csv(args.input)
+    if args.skip < 0:
+        raise SystemExit("--skip must be zero or greater")
+    for lead in input_rows[args.skip:args.skip + args.limit]:
+        add_lead_level_candidates(lead, rows, seen, existing_data)
+        url = normalize_url(lead.get("website"))
+        if not url:
+            continue
+        try:
+            links = extract_from_page(lead, url, rows, seen, args.fetcher, existing_data)
+            for link in links[:args.follow_links]:
+                time.sleep(args.delay)
+                try:
+                    extract_from_page(lead, link, rows, seen, args.fetcher, existing_data)
+                except Exception as exc:
+                    errors.append(f"{lead.get('company_name')} ({link}): {exc.__class__.__name__}: {exc}")
+        except Exception as exc:
+            errors.append(f"{lead.get('company_name')} ({url}): {exc.__class__.__name__}: {exc}")
+        time.sleep(args.delay)
 
-        input_rows = read_csv(args.input)
-        if args.skip < 0:
-            raise SystemExit("--skip must be zero or greater")
-        for lead in input_rows[args.skip:args.skip + args.limit]:
-            add_lead_level_candidates(lead, rows, seen, existing_data)
-            url = normalize_url(lead.get("website"))
-            if not url:
-                continue
-            try:
-                links = extract_from_page(lead, url, rows, seen, args.fetcher, existing_data)
-                for link in links[:args.follow_links]:
-                    time.sleep(args.delay)
-                    try:
-                        extract_from_page(lead, link, rows, seen, args.fetcher, existing_data)
-                    except Exception as exc:
-                        errors.append(f"{lead.get('company_name')} ({link}): {exc.__class__.__name__}: {exc}")
-            except Exception as exc:
-                errors.append(f"{lead.get('company_name')} ({url}): {exc.__class__.__name__}: {exc}")
-            time.sleep(args.delay)
-
-        rows = sorted(rows, key=sort_key)
-        fields = [
-            "priority_score",
-            "review_bucket",
-            "queue_rank",
-            "lead_id",
-            "company_name",
-            "source_url",
-            "source_count",
-            "additional_source_urls",
-            "candidate_type",
-            "candidate_value",
-            "candidate_context",
-            "confidence_suggestion",
-            "save_recommendation",
-        ]
-        write_csv(prefix.with_suffix(".csv"), rows, fields)
-        write_markdown(prefix.with_suffix(".md"), rows, errors, args.input, args.skip, args.limit, args.follow_links, args.fetcher)
-        print(f"Wrote {len(rows)} candidates to {prefix.with_suffix('.csv')} and {prefix.with_suffix('.md')}")
-        if errors:
-            print(f"Errors: {len(errors)}")
+    rows = sorted(rows, key=sort_key)
+    fields = [
+        "priority_score",
+        "review_bucket",
+        "queue_rank",
+        "lead_id",
+        "company_name",
+        "source_url",
+        "source_count",
+        "additional_source_urls",
+        "candidate_type",
+        "candidate_value",
+        "candidate_context",
+        "confidence_suggestion",
+        "save_recommendation",
+    ]
+    write_csv(prefix.with_suffix(".csv"), rows, fields)
+    write_markdown(prefix.with_suffix(".md"), rows, errors, args.input, args.skip, args.limit, args.follow_links, args.fetcher)
+    print(f"Wrote {len(rows)} candidates to {prefix.with_suffix('.csv')} and {prefix.with_suffix('.md')}")
+    if errors:
+        print(f"Errors: {len(errors)}")
 
 
 if __name__ == "__main__":
