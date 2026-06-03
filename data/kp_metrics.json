@@ -782,5 +782,29 @@
     "skipped": 0,
     "google_searches_used": 30,
     "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S2-20260603-084020",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-03T08:46:14.210720",
+    "candidates_processed": 10,
+    "companies_processed": 10,
+    "enriched": 0,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 30,
+    "direct_contact_rate": 0.0
+  },
+  {
+    "run_id": "S2-20260603-084530",
+    "stage": "stage2_enrich",
+    "timestamp": "2026-06-03T08:51:26.920654",
+    "candidates_processed": 10,
+    "companies_processed": 10,
+    "enriched": 0,
+    "direct_contacts_found": 0,
+    "skipped": 0,
+    "google_searches_used": 30,
+    "direct_contact_rate": 0.0
   }
 ]

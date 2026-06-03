@@ -145,7 +145,7 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-02T22:00:06"
+    "updated": "2026-06-03T08:54:14"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
@@ -153,7 +153,7 @@
   },
   "zoominfo.com": {
     "status": "blocked",
-    "updated": "2026-06-02T22:59:45"
+    "updated": "2026-06-03T08:48:56"
   },
   "prospeo.io": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-02T22:02:03"
+    "updated": "2026-06-03T08:46:12"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
@@ -909,8 +909,8 @@
     "updated": "2026-06-02T18:35:18"
   },
   "instagram.com": {
-    "status": "blocked",
-    "updated": "2026-06-02T18:37:28"
+    "status": "scrapling_ok",
+    "updated": "2026-06-03T08:55:12"
   },
   "matthewshospitality.com.au": {
     "status": "scrapling_ok",
@@ -931,5 +931,9 @@
   "au.finance.yahoo.com": {
     "status": "scrapling_ok",
     "updated": "2026-06-02T22:02:28"
+  },
+  "thelocalproject.com.au": {
+    "status": "scrapling_ok",
+    "updated": "2026-06-03T08:43:08"
   }
 }
