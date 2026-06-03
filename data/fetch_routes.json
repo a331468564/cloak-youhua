@@ -145,15 +145,15 @@
   },
   "contactout.com": {
     "status": "blocked",
-    "updated": "2026-06-03T08:54:14"
+    "updated": "2026-06-03T09:45:56"
   },
   "ibisworld.com": {
     "status": "scrapling_ok",
     "updated": "2026-05-30T15:09:11"
   },
   "zoominfo.com": {
-    "status": "blocked",
-    "updated": "2026-06-03T08:48:56"
+    "status": "scrapling_ok",
+    "updated": "2026-06-03T09:46:33"
   },
   "prospeo.io": {
     "status": "scrapling_ok",
@@ -161,7 +161,7 @@
   },
   "rocketreach.co": {
     "status": "blocked",
-    "updated": "2026-06-03T08:46:12"
+    "updated": "2026-06-03T09:51:42"
   },
   "google.com.hk": {
     "status": "scrapling_ok",
